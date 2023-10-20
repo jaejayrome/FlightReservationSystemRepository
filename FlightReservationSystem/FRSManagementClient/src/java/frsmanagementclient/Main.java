@@ -4,17 +4,24 @@
  */
 package frsmanagementclient;
 
+import ejb.stateless.TestSessionBeanRemote;
+import entity.Employee;
+import javax.ejb.EJB;
+
 /**
  *
  * @author jeromegoh
  */
 public class Main {
 
+    @EJB
+    private static TestSessionBeanRemote testSessionBean;
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        System.out.println(testSessionBean.addEmployee("Jerome"));
     }
     
 }
