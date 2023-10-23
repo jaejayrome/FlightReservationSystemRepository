@@ -4,7 +4,7 @@
  */
 package frsmanagementclient;
 
-import ejb.stateless.TestSessionBeanRemote;
+//import ejb.stateless.TestSessionBeanRemote;
 import entity.Employee;
 import javax.ejb.EJB;
 

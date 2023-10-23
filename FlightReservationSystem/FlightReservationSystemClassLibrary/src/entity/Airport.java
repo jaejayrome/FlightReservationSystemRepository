@@ -17,7 +17,8 @@ import javax.persistence.Id;
  */
 @Entity
 public class Airport implements Serializable {
-
+    
+    // attributes
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +34,10 @@ public class Airport implements Serializable {
     private String state; 
     @Column(nullable = false)
     private String country;
-
+    
+    // relationships
+    
+    // constructor
     public Airport() {
     }
     
@@ -44,7 +48,8 @@ public class Airport implements Serializable {
         this.state = state;
         this.country = country;
     }
-
+    
+    // getters and setters
     public String getAirportName() {
         return airportName;
     }

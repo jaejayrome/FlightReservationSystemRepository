@@ -21,7 +21,8 @@ import javax.persistence.OneToMany;
  */
 @Entity
 public class AircraftType implements Serializable {
-
+    
+    // attributes
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,10 +35,12 @@ public class AircraftType implements Serializable {
     @Column(nullable = false)
     private BigDecimal passengerSeatCapacity;
     
+    // relationships
     // owned entity specify the mapping
     @OneToMany (mappedBy = "aircraftType") 
     private List<AircraftConfiguration> aircraftConfigurations; 
     
+    // constructors
     public AircraftType() {
     }
 
@@ -47,7 +50,8 @@ public class AircraftType implements Serializable {
         this.passengerSeatCapacity = passengerSeatCapacity;
         this.aircraftConfigurations = new ArrayList<AircraftConfiguration>();
     }
-
+    
+    // getters and setters
     public List<AircraftConfiguration> getAircraftConfigurations() {
         return aircraftConfigurations;
     }
