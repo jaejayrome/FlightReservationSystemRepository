@@ -5,8 +5,8 @@
         <data xmlns="http://www.netbeans.org/ns/j2ee-ejbjarproject/3">
             <name>FlightReservationSystem-ejb</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
+            <included-library dirs="200">reference.FlightReservationSystemClassLibrary.jar</included-library>
             <included-library dirs="200">libs.Jakarta_EE_8_API_Library.classpath</included-library>
-            <included-library dirs="200">reference.FlightReservationSystemLibrary.jar</included-library>
             <source-roots>
                 <root id="src.dir" name="Source Packages"/>
             </source-roots>
@@ -16,7 +16,7 @@
         </data>
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
             <reference>
-                <foreign-project>FlightReservationSystemLibrary</foreign-project>
+                <foreign-project>FlightReservationSystemClassLibrary</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>
