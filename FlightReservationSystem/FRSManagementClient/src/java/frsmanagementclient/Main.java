@@ -14,14 +14,13 @@ import javax.ejb.EJB;
  */
 public class Main {
 
-    @EJB
-    private static TestSessionBeanRemote testSessionBean;
+
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        System.out.println(testSessionBean.addEmployee("Jerome"));
+//        System.out.println(testSessionBean.addEmployee("Jerome"));
     }
     
 }

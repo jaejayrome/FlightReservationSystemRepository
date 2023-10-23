@@ -20,7 +20,6 @@ import util.enumerations.JobTitle;
  */
 @Entity
 public class Employee implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
