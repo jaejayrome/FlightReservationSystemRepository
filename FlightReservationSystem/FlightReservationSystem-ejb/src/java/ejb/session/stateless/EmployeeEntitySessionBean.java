@@ -12,6 +12,7 @@ import util.enumerations.EmploymentType;
 import util.enumerations.GenderType;
 import util.enumerations.JobTitle;
 import util.exception.EmployeeNotFoundException;
+import util.exception.InvalidLoginCredentialsException;
 
 /**
  *
@@ -36,5 +37,30 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanLocal
         } else {
             return employee;
         }
+    }
+    
+    public JobTitle authenticateEmployeeDetails(String username, String password) throws InvalidLoginCredentialsException{
+        String query = "SELECT employee FROM Employee employee WHERE employee.loginUsername = :username";
+        Employee employee = (Employee)em.createQuery(query)
+                .setParameter("username", username)
+                .getSingleResult();
+        if (employee == null) {
+            throw new InvalidLoginCredentialsException("Your have entered an invalid username!");
+        } else if (!employee.getLoginPassword().equals(password)) {
+            throw new InvalidLoginCredentialsException("You have entered an invalid password!");
+        } else {
+            employee.setIsLoggedIn(true);
+            return employee.getJobTitle();
+        }
+    }
+    
+    // can be done better
+    public JobTitle retrieveJobTitleById(long id) {
+        try {
+        return this.retrieveEmployeeById(id).getJobTitle();
+        } catch (EmployeeNotFoundException exception) {
+            System.out.println("No Employee Has Been Found!");
+        }
+        return null;
     }
 }

@@ -10,6 +10,7 @@ import util.enumerations.EmploymentType;
 import util.enumerations.GenderType;
 import util.enumerations.JobTitle;
 import util.exception.EmployeeNotFoundException;
+import util.exception.InvalidLoginCredentialsException;
 
 /**
  *
@@ -19,4 +20,6 @@ import util.exception.EmployeeNotFoundException;
 public interface EmployeeEntitySessionBeanLocal {
     public long createNewEmployee(String firstName, String lastName, GenderType gender, String email, String phoneNumber, JobTitle jobTitle, EmploymentType typeOfEmployment, String loginUsername, String loginPassword);
     public Employee retrieveEmployeeById(long id) throws EmployeeNotFoundException;
+    public JobTitle authenticateEmployeeDetails(String username, String password) throws InvalidLoginCredentialsException;
+    
 }

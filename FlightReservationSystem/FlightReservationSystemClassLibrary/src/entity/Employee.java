@@ -52,6 +52,9 @@ public class Employee implements Serializable {
     @Column(nullable = false)
     private String loginPassword;
     
+    @Column(nullable = false)
+    private boolean isLoggedIn;
+    
     public Employee() {
     }
     
@@ -65,6 +68,14 @@ public class Employee implements Serializable {
         this.employmentType = employmentType;
         this.loginUsername = loginUsername;
         this.loginPassword = loginPassword;
+    }
+
+    public boolean isIsLoggedIn() {
+        return isLoggedIn;
+    }
+
+    public void setIsLoggedIn(boolean isLoggedIn) {
+        this.isLoggedIn = isLoggedIn;
     }
 
     public String getFirstName() {
