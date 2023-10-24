@@ -4,7 +4,11 @@
  */
 package ejb.session.stateless;
 
+import entity.AircraftType;
+import java.math.BigDecimal;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  *
@@ -12,7 +16,14 @@ import javax.ejb.Stateless;
  */
 @Stateless
 public class AircraftTypeEntitySessionBean implements AircraftTypeEntitySessionBeanLocal {
-
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
+    private EntityManager em;
+    
+    @Override
+    public long createNewAircraftType(String aircraftTypeName, String manufacturer, BigDecimal passengerSeatCapacity) {
+        AircraftType aircraftType = new AircraftType(aircraftTypeName, manufacturer, passengerSeatCapacity);
+        em.persist(aircraftType);
+        em.flush();
+        return aircraftType.getId();
+    }
 }

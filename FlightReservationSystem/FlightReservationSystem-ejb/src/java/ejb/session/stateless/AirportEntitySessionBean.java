@@ -22,6 +22,7 @@ public class AirportEntitySessionBean implements AirportEntitySessionBeanLocal {
     public long createNewAirport(String airportName, String iataAirportCode, String city, String state, String country) {
         Airport airport = new Airport (airportName, iataAirportCode, city, state, country);
         em.persist(airport);
+        em.flush();
         return airport.getId();
     }
 

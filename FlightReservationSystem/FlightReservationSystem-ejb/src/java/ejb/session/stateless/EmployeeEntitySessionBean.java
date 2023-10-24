@@ -4,7 +4,14 @@
  */
 package ejb.session.stateless;
 
+import entity.Employee;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import util.enumerations.EmploymentType;
+import util.enumerations.GenderType;
+import util.enumerations.JobTitle;
+import util.exception.EmployeeNotFoundException;
 
 /**
  *
@@ -12,7 +19,22 @@ import javax.ejb.Stateless;
  */
 @Stateless
 public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanLocal {
-
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
+    private EntityManager em;
+    
+    public long createNewEmployee(String firstName, String lastName, GenderType gender, String email, String phoneNumber, JobTitle jobTitle, EmploymentType typeOfEmployment, String loginUsername, String loginPassword) {
+        Employee employee = new Employee(firstName, lastName, gender, email, phoneNumber, jobTitle, typeOfEmployment, loginUsername, loginPassword);
+        em.persist(employee);
+        em.flush();
+        return employee.getId();
+    }
+    
+    public Employee retrieveEmployeeById(long id) throws EmployeeNotFoundException {
+        Employee employee = em.find(Employee.class, id);
+        if (employee == null) {
+            throw new EmployeeNotFoundException("Employee has not been found yet!");
+        } else {
+            return employee;
+        }
+    }
 }

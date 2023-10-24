@@ -27,20 +27,28 @@ public class Employee implements Serializable {
     
     @Column(nullable = false)
     private String firstName; 
+    
     @Column(nullable = false)
     private String lastName;
+    
     @Column(nullable = false)
     private GenderType gender;
-    @Column(nullable = false, unique = true)
-    private String email; 
-    @Column(nullable = false, unique = true)
-    private String phoneNumber;
+    
     @Column(nullable = false)
-    private JobTitle jobTitle; 
+    private String email; 
+    
+    @Column(nullable = false)
+    private String phoneNumber;
+    
+    @Column(nullable = false)
+    private JobTitle jobTitle;
+    
     @Column(nullable = false)
     private EmploymentType employmentType;
-    @Column(nullable = false, unique = true)
+    
+    @Column(nullable = false)
     private String loginUsername;
+    
     @Column(nullable = false)
     private String loginPassword;
     
