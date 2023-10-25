@@ -19,4 +19,5 @@ public interface AircraftConfigurationEntitySessionBeanLocal {
     public AircraftConfiguration getAircraftConfigurationById(long id);
     public List<AircraftConfiguration> getAllAircraftConfigurationPerAircraftType(String aircraftTypeName);
     public List<AircraftConfiguration> getAllAircraftConfigurations();
+    public AircraftConfiguration getAircraftConfigurationPerConfigurationName(String configurationName);
 }

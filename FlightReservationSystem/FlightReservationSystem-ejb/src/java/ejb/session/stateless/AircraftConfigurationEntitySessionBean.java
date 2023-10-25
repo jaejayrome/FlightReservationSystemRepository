@@ -26,17 +26,23 @@ public class AircraftConfigurationEntitySessionBean implements AircraftConfigura
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager em;
     
-    // this can be used to fulfill 
-    // view aircraft configuration details
+
     @Override
     public AircraftConfiguration getAircraftConfigurationById(long id) {
         AircraftConfiguration aircraftConfiguration = em.find(AircraftConfiguration.class, id);
         return aircraftConfiguration;
     }
     
+    // use case for this should be as such
+    // chooes the desired aircraft type to make a configuration with
+    // enter the configuration name
     @Override
     public long createNewAircraftConfiguration(AircraftType aircraftType, String configurationName) {
         AircraftConfiguration aircraftConfiguration = new AircraftConfiguration(configurationName, aircraftType);
+        // associating aircraftType with aircraftConfiguration
+        int init = aircraftType.getAircraftConfigurations().size();
+        aircraftType.getAircraftConfigurations().add(aircraftConfiguration);
+        
         em.persist(aircraftConfiguration);
         em.flush();
         return aircraftConfiguration.getId();
@@ -54,6 +60,11 @@ public class AircraftConfigurationEntitySessionBean implements AircraftConfigura
     @Override
     public List<AircraftConfiguration> getAllAircraftConfigurations() {
         return em.createQuery("SELECT a FROM AircraftConfiguration a").getResultList();
+    }
+    
+    @Override
+    public AircraftConfiguration getAircraftConfigurationPerConfigurationName(String configurationName) {
+        return (AircraftConfiguration) em.createQuery("SELECT a FROM AircraftConfiguration a WHERE a.configurationName = :name").setParameter("name", configurationName).getSingleResult();
     }
     
     

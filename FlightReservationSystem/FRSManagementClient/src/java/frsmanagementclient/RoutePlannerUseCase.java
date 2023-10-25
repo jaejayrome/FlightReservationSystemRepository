@@ -4,17 +4,28 @@
  */
 package frsmanagementclient;
 
+import ejb.session.stateless.EmployeeUseCaseSessionBeanRemote;
+import entity.FlightRoute;
+import javax.ejb.EJB;
+import util.enumerations.JobTitle;
+
 /**
  *
  * @author jeromegoh
  */
 public class RoutePlannerUseCase {
+    
+    @EJB
+    private EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote;
 
     public RoutePlannerUseCase() {
     }
     
-    public void createFlightRoute() {
-        
+    
+    public void createFlightRoute(String origin, String destination) {
+//        
+//        FlightRoute flightRoute = new FlightRoute(origin, destination);
+//        employeeUseCaseSessionBeanRemote.employeeCommandOne(JobTitle.ROUTE_PLANNER, flightRoute);
     }
     
     public void viewAllFlightRoutes() {
@@ -24,6 +35,7 @@ public class RoutePlannerUseCase {
     public void deleteFlighRoute() {
         
     }
+
     
     
 }

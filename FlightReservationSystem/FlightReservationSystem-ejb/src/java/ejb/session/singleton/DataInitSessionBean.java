@@ -52,6 +52,9 @@ public class DataInitSessionBean  {
     }
     
     public void checkDatabaseInitialised() throws InitialDatabaseException{
+        // there's an issue i don't know why which is when i delete the entire database
+        // i would have to load the schema once so basically not run the intiialise data portion
+        // then i run it once more with the test data
         try {
             employeeEntitySessionBeanLocal.retrieveEmployeeById(1l);
         } catch (EmployeeNotFoundException exception) {
@@ -61,7 +64,7 @@ public class DataInitSessionBean  {
     
     public void initialiseData() {
         System.out.println("Seeding the database with initial data");
-        // create a new airport
+//        // create a new airport
         airportEntitySessionBeanLocal.createNewAirport("Singapore Changi Airport", "SIN", "Singapore", "Singapore", "Singapore");
         airportEntitySessionBeanLocal.createNewAirport("Kuala Lumpur International Airport", "KUL", "Kuala Lumpur", "Kuala Lumpur", "Malaysia");
         airportEntitySessionBeanLocal.createNewAirport("Ngurah Rai International Airport", "DPS", "Depansar", "Depansar", "Indonesia");

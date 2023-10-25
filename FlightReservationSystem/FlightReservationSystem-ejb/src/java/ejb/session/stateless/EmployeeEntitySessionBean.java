@@ -7,6 +7,7 @@ package ejb.session.stateless;
 import entity.Employee;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
@@ -37,12 +38,17 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanLocal
     public EmployeeEntitySessionBean() {
         // cache retrieval strategy
         props.put("javax.persistence.cache.retrieveMode", "USE");
-        // cache store mode strategy
-        em.setProperty("javax.persistence.cache.storeMode", "USE");
+        
     }
     
+//    @PostConstruct
+//    public void initialise() {
+//        // cache store mode strategy
+//        if (this.em != null) em.setProperty("javax.persistence.cache.storeMode", "USE");
+//    }
     
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    
+//    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public long createNewEmployee(String firstName, String lastName, GenderType gender, String email, String phoneNumber, JobTitle jobTitle, EmploymentType typeOfEmployment, String loginUsername, String loginPassword) {
         Employee employee = new Employee(firstName, lastName, gender, email, phoneNumber, jobTitle, typeOfEmployment, loginUsername, loginPassword);
         em.persist(employee);
@@ -50,7 +56,7 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanLocal
         return employee.getId();
     }
     
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+//    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Employee retrieveEmployeeById(long id) throws EmployeeNotFoundException {
         Employee employee = em.find(Employee.class, id, this.props);
         if (employee == null) {
@@ -61,7 +67,7 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanLocal
         }
     }
     
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+//    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Employee authenticateEmployeeDetails(String username, String password) throws InvalidLoginCredentialsException{
         String query = "SELECT employee FROM Employee employee WHERE employee.loginUsername = :username";
         Employee employee = (Employee)em.createQuery(query)

@@ -4,8 +4,12 @@
  */
 package ejb.session.stateless;
 
+import entity.AircraftConfiguration;
+import entity.AircraftType;
 import entity.Employee;
+import java.util.List;
 import javax.ejb.Remote;
+import util.enumerations.JobTitle;
 import util.exception.InvalidLoginCredentialsException;
 
 /**
@@ -16,5 +20,9 @@ import util.exception.InvalidLoginCredentialsException;
 public interface EmployeeUseCaseSessionBeanRemote {
     public Employee doLogin(String username, String password) throws InvalidLoginCredentialsException;
     public void doLogout(long employeeId);
-//    public void command1(long ); 
+    public void employeeCommandOne(JobTitle jobTitle, Object object);
+    public List<AircraftType> getAllAircraftTypes();
+    public long createAircraftConfigurationForFleetManager(JobTitle jobTitle, String aircraftType, String configurationName);
+    public List<AircraftConfiguration> viewAllAircraftConfiguration();
+    public AircraftConfiguration viewAircraftConfigurationDetails(String configurationName);
 }

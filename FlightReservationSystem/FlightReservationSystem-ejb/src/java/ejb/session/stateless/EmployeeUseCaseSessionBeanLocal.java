@@ -4,8 +4,12 @@
  */
 package ejb.session.stateless;
 
+import entity.AircraftConfiguration;
+import entity.AircraftType;
 import entity.Employee;
+import java.util.List;
 import javax.ejb.Local;
+import util.enumerations.JobTitle;
 import util.exception.InvalidLoginCredentialsException;
 
 /**
@@ -15,4 +19,9 @@ import util.exception.InvalidLoginCredentialsException;
 @Local
 public interface EmployeeUseCaseSessionBeanLocal {
     public Employee doLogin(String username, String password) throws InvalidLoginCredentialsException;
+    public void doLogout(long employeeId);
+    public void employeeCommandOne(JobTitle jobTitle, Object object);
+    public List<AircraftType> getAllAircraftTypes();
+    public List<AircraftConfiguration> viewAllAircraftConfiguration();
+    public AircraftConfiguration viewAircraftConfigurationDetails(String configurationName);
 }
