@@ -4,7 +4,11 @@
  */
 package ejb.session.stateless;
 
+import entity.FlightRoute;
+import java.util.List;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  *
@@ -13,6 +17,33 @@ import javax.ejb.Stateless;
 @Stateless
 public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBeanLocal {
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    public FlightRouteEntitySessionBean() {
+    }
+
+    @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
+    private EntityManager em;
+
+    @Override
+    public long createFlightRoute(FlightRoute flightRoute) {
+        em.persist(flightRoute);
+        em.flush();
+        return flightRoute.getId();
+    }
+    
+    // never check for exceptions yet
+    @Override
+    public FlightRoute getFlightRouteById(long id) {
+        return em.find(FlightRoute.class, id);
+    }
+    
+    @Override
+    public List<FlightRoute> getAllFlightRoutes() {
+        return em.createQuery("SELECT flightroute FROM FlightRoute flightroute").getResultList();
+    }
+    
+    public FlightRoute deleteFlightRoute(long id) {
+        FlightRoute flightRoute = this.getFlightRouteById(id);
+        // delete need to be careful about the associations
+        return null;
+    }
 }

@@ -4,11 +4,11 @@
  */
 package ejb.session.stateless;
 
+import entity.Employee;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import util.enumerations.JobTitle;
 import util.exception.InvalidLoginCredentialsException;
 
 /**
@@ -36,14 +36,15 @@ public class EmployeeUseCaseSessionBean implements EmployeeUseCaseSessionBeanRem
     }
     
     @Override
-    public JobTitle doLogin(String username, String password) throws InvalidLoginCredentialsException {
+    public Employee doLogin(String username, String password) throws InvalidLoginCredentialsException {
        return employeeEntitySessionBeanLocal.authenticateEmployeeDetails(username, password);
     }
     
     @Override
-    public void test() {
-        System.out.println("called");
+    public void doLogout(long employeeId) {
+       employeeEntitySessionBeanLocal.processLogout(employeeId);
     }
+    
     
     
 }

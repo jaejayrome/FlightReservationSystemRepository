@@ -4,8 +4,8 @@
  */
 package ejb.session.stateless;
 
+import entity.Employee;
 import javax.ejb.Local;
-import util.enumerations.JobTitle;
 import util.exception.InvalidLoginCredentialsException;
 
 /**
@@ -14,6 +14,5 @@ import util.exception.InvalidLoginCredentialsException;
  */
 @Local
 public interface EmployeeUseCaseSessionBeanLocal {
-    public JobTitle doLogin(String username, String password) throws InvalidLoginCredentialsException;
-    public void test();
+    public Employee doLogin(String username, String password) throws InvalidLoginCredentialsException;
 }

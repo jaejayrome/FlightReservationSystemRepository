@@ -5,8 +5,8 @@
 package frsmanagementclient;
 
 import ejb.session.stateless.EmployeeUseCaseSessionBeanRemote;
+import entity.Employee;
 import java.util.Scanner;
-import javax.ejb.EJB;
 import util.enumerations.JobTitle;
 import util.exception.InvalidLoginCredentialsException;
 
@@ -16,11 +16,18 @@ import util.exception.InvalidLoginCredentialsException;
  */
 public class RunApp {
         
-    @EJB
+    
     private EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote;
+    private Employee currentEmployee;
     
     public RunApp() {
     }
+    
+    public RunApp(EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote) {
+        this.employeeUseCaseSessionBeanRemote = employeeUseCaseSessionBeanRemote;
+        this.currentEmployee = null;
+    }
+    
     
     
     public void showLoginScreen() {
@@ -100,15 +107,14 @@ public class RunApp {
         System.out.print("Enter Password: ");
         String password = scanner.next();
  
-//        try {
-            System.out.println(employeeUseCaseSessionBeanRemote == null);
-            employeeUseCaseSessionBeanRemote.test();
-//            JobTitle jobTitle = employeeUseCaseSessionBeanRemote.doLogin(username, password);
-//            showUseCaseOptions(scanner, jobTitle);
-//        } catch (InvalidLoginCredentialsException exception) {
-//            System.out.println(exception.getMessage());
-//            doLogin(scanner);
-//        } 
+        try {
+            this.currentEmployee = employeeUseCaseSessionBeanRemote.doLogin(username, password);
+            // this shouild continue to happen 
+            showUseCaseOptions(scanner, this.currentEmployee.getJobTitle());
+        } catch (InvalidLoginCredentialsException exception) {
+            System.out.println(exception.getMessage());
+            doLogin(scanner);
+        } 
     }
     
     public void showUseCaseOptions(Scanner scanner, JobTitle jobtitle) {
@@ -117,9 +123,12 @@ public class RunApp {
                 System.out.println("Press '1' to Create Aircraft Configuration");
                 System.out.println("Press '2' to View All Aircraft Configurations");
                 System.out.println("Press '3' to View Specific Aircraft Configuration Details");
+                System.out.println("Press '0' to Logout from this session");
                 System.out.print("> ");
-                FleetManagerUseCase fleetManagerUseCase = new FleetManagerUseCase();
+                FleetManagerUseCase fleetManagerUseCase = new FleetManagerUseCase(employeeUseCaseSessionBeanRemote, this.currentEmployee);
                 switch (scanner.nextInt()) {
+                    case 0: 
+                        doLogout(scanner);
                     case 1: 
                         fleetManagerUseCase.creatAircraftConfiguration();
                         break;
@@ -137,9 +146,12 @@ public class RunApp {
                 System.out.println("Press '1' to Create Flight Route");
                 System.out.println("Press '2' to View All Flight Routes");
                 System.out.println("Press '3' to Delete Flight Route");
+                System.out.println("Press '0' to Logout from this session");
                 System.out.print("> ");
                 RoutePlannerUseCase routerPlannerUseCase = new RoutePlannerUseCase();
                 switch (scanner.nextInt()) {
+                    case 0: 
+                        doLogout(scanner);
                     case 1: 
                         routerPlannerUseCase.createFlightRoute();
                     case 2: 
@@ -155,9 +167,12 @@ public class RunApp {
             case SALES_MANAGER:
                 System.out.println("Press '1' to View Seats Inventory");
                 System.out.println("Press '2' to View Flight Reservations");
+                System.out.println("Press '0' to Logout from this session");
                 System.out.print("> ");
                 SalesManagerUseCase salesManagerUseCase = new SalesManagerUseCase();
                 switch (scanner.nextInt()) {
+                    case 0: 
+                        doLogout(scanner);
                     case 1: 
                         salesManagerUseCase.viewSeatsinventory();
                         break;
@@ -176,9 +191,12 @@ public class RunApp {
                 System.out.println("Press '4' to Create Flight Schedule Plan");
                 System.out.println("Press '5' to View All Flight Schedule Plans");
                 System.out.println("Press '6' to View Flight Schedule Plan Details");
+                System.out.println("Press '0' to Logout from this session");
                 System.out.print("> ");
                 ScheduleManagerUseCase scheduleManagerUseCase = new ScheduleManagerUseCase();
                 switch (scanner.nextInt()) {
+                    case 0: 
+                        doLogout(scanner);
                     case 1: 
                         scheduleManagerUseCase.createFlight();
                         break;
@@ -203,6 +221,14 @@ public class RunApp {
                 break;
         }
      
+    }
+    
+    public void doLogout(Scanner scanner) {
+        if (this.currentEmployee != null) {
+            employeeUseCaseSessionBeanRemote.doLogout(this.currentEmployee.getId());
+            System.out.println("You have sucessfully logged out!");
+            doLogin(scanner);
+        }
     }
     
     public void invalidOption() {

@@ -4,8 +4,8 @@
  */
 package ejb.session.stateless;
 
+import entity.Employee;
 import javax.ejb.Remote;
-import util.enumerations.JobTitle;
 import util.exception.InvalidLoginCredentialsException;
 
 /**
@@ -14,6 +14,7 @@ import util.exception.InvalidLoginCredentialsException;
  */
 @Remote
 public interface EmployeeUseCaseSessionBeanRemote {
-    public JobTitle doLogin(String username, String password) throws InvalidLoginCredentialsException;
-    public void test();
+    public Employee doLogin(String username, String password) throws InvalidLoginCredentialsException;
+    public void doLogout(long employeeId);
+//    public void command1(long ); 
 }

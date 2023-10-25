@@ -26,8 +26,5 @@ public class AirportEntitySessionBean implements AirportEntitySessionBeanLocal {
         return airport.getId();
     }
 
-
-    
-    
     
 }

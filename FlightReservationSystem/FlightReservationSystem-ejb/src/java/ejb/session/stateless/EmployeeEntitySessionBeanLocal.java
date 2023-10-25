@@ -20,6 +20,7 @@ import util.exception.InvalidLoginCredentialsException;
 public interface EmployeeEntitySessionBeanLocal {
     public long createNewEmployee(String firstName, String lastName, GenderType gender, String email, String phoneNumber, JobTitle jobTitle, EmploymentType typeOfEmployment, String loginUsername, String loginPassword);
     public Employee retrieveEmployeeById(long id) throws EmployeeNotFoundException;
-    public JobTitle authenticateEmployeeDetails(String username, String password) throws InvalidLoginCredentialsException;
+    public Employee authenticateEmployeeDetails(String username, String password) throws InvalidLoginCredentialsException;
+    public void processLogout(long employeeId);
     
 }

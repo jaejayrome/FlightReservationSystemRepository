@@ -14,9 +14,12 @@ import javax.ejb.EJB;
 public class Main {
     
   
-
+    @EJB
+    private static EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote;
+    
     public static void main(String[] args) {
-        RunApp runApp = new RunApp();
+        
+        RunApp runApp = new RunApp(employeeUseCaseSessionBeanRemote);
         runApp.showLoginScreen();
     }
     

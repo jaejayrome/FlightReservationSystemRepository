@@ -26,4 +26,13 @@ public class AircraftTypeEntitySessionBean implements AircraftTypeEntitySessionB
         em.flush();
         return aircraftType.getId();
     }
+    
+    @Override
+    public AircraftType getAircraftTypeFromName(String name) {
+        String query = "SELECT a FROM AircraftType a WHERE a.aircraftTypeName = :name";
+         AircraftType aircraftType =(AircraftType) em.createQuery(query)
+          .setParameter("name", name)
+          .getSingleResult();
+        return aircraftType;
+    }
 }
