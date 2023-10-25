@@ -4,7 +4,15 @@
  */
 package ejb.session.stateless;
 
+import entity.AircraftType;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.ejb.Stateless;
+import javax.persistence.CacheRetrieveMode;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  *
@@ -12,7 +20,37 @@ import javax.ejb.Stateless;
  */
 @Stateless
 public class AircraftTypeEntitySessionBean implements AircraftTypeEntitySessionBeanLocal {
+    @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
+    private EntityManager em;
+    
+    Map<String, Object> props = new HashMap<String, Object>();
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    public AircraftTypeEntitySessionBean() {
+        props.put("javax.persistence.cache.retrieveMode", "USE");
+    }
+    
+    @Override
+    public long createNewAircraftType(String aircraftTypeName, String manufacturer, BigDecimal passengerSeatCapacity) {
+        AircraftType aircraftType = new AircraftType(aircraftTypeName, manufacturer, passengerSeatCapacity);
+        em.persist(aircraftType);
+        em.flush();
+        return aircraftType.getId();
+    }
+    
+    @Override
+    public AircraftType getAircraftTypeFromName(String name) {
+        String query = "SELECT a FROM AircraftType a WHERE a.aircraftTypeName = :name";
+         AircraftType aircraftType =(AircraftType) em.createQuery(query)
+          .setParameter("name", name)
+          .getSingleResult();
+        return aircraftType;
+    }
+    
+    @Override
+    public List<AircraftType> getAllAircraftTypes() {
+        String query = "SELECT a FROM AircraftType a";
+        List<AircraftType> results =  em.createQuery(query).setHint("javax.persistence.cache.retrieveMode", CacheRetrieveMode.USE).getResultList();
+        return results;
+    }
+    
 }

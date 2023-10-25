@@ -4,7 +4,10 @@
  */
 package ejb.session.stateless;
 
+import entity.Airport;
+import javax.persistence.EntityManager;
 import javax.ejb.Stateless;
+import javax.persistence.PersistenceContext;
 
 /**
  *
@@ -12,7 +15,16 @@ import javax.ejb.Stateless;
  */
 @Stateless
 public class AirportEntitySessionBean implements AirportEntitySessionBeanLocal {
+    @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
+    private EntityManager em;
+    
+    @Override
+    public long createNewAirport(String airportName, String iataAirportCode, String city, String state, String country) {
+        Airport airport = new Airport (airportName, iataAirportCode, city, state, country);
+        em.persist(airport);
+        em.flush();
+        return airport.getId();
+    }
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    
 }

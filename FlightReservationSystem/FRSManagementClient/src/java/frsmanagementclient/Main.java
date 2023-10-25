@@ -4,19 +4,22 @@
  */
 package frsmanagementclient;
 
+import ejb.session.stateless.EmployeeUseCaseSessionBeanRemote;
+import javax.ejb.EJB;
+
 /**
  *
  * @author jeromegoh
  */
 public class Main {
-
-
-
-    /**
-     * @param args the command line arguments
-     */
+    
+  
+    @EJB
+    private static EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote;
+    
     public static void main(String[] args) {
-        RunApp runApp = new RunApp();
+        
+        RunApp runApp = new RunApp(employeeUseCaseSessionBeanRemote);
         runApp.showLoginScreen();
     }
     

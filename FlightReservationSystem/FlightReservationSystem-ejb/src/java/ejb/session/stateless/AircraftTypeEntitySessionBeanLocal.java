@@ -4,6 +4,9 @@
  */
 package ejb.session.stateless;
 
+import entity.AircraftType;
+import java.math.BigDecimal;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -12,5 +15,7 @@ import javax.ejb.Local;
  */
 @Local
 public interface AircraftTypeEntitySessionBeanLocal {
-    
+    public long createNewAircraftType(String aircraftTypeName, String manufacturer, BigDecimal passengerSeatCapacity);
+    public AircraftType getAircraftTypeFromName(String name);
+    public List<AircraftType> getAllAircraftTypes();
 }

@@ -4,7 +4,10 @@
  */
 package ejb.session.stateless;
 
+import entity.Partner;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  *
@@ -12,7 +15,14 @@ import javax.ejb.Stateless;
  */
 @Stateless
 public class PartnerEntitySessionBean implements PartnerEntitySessionBeanLocal {
-
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
+    private EntityManager em;
+     
+    @Override
+    public long createNewPartner(String companyName, String loginUsername, String loginPassword) {
+        Partner partner = new Partner(companyName, loginUsername, loginPassword);
+        em.persist(partner);
+        em.flush();
+        return partner.getId();
+    }
 }

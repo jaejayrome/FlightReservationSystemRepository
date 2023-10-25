@@ -5,6 +5,7 @@
 package entity;
 
 import java.io.Serializable;
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,6 +19,7 @@ import util.enumerations.JobTitle;
  *
  * @author jeromegoh
  */
+@Cacheable(true)
 @Entity
 public class Employee implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -27,22 +29,33 @@ public class Employee implements Serializable {
     
     @Column(nullable = false)
     private String firstName; 
+    
     @Column(nullable = false)
     private String lastName;
+    
     @Column(nullable = false)
     private GenderType gender;
-    @Column(nullable = false, unique = true)
-    private String email; 
-    @Column(nullable = false, unique = true)
-    private String phoneNumber;
+    
     @Column(nullable = false)
-    private JobTitle jobTitle; 
+    private String email; 
+    
+    @Column(nullable = false)
+    private String phoneNumber;
+    
+    @Column(nullable = false)
+    private JobTitle jobTitle;
+    
     @Column(nullable = false)
     private EmploymentType employmentType;
-    @Column(nullable = false, unique = true)
+    
+    @Column(nullable = false)
     private String loginUsername;
+    
     @Column(nullable = false)
     private String loginPassword;
+    
+    @Column(nullable = false)
+    private boolean isLoggedIn;
     
     public Employee() {
     }
@@ -57,6 +70,14 @@ public class Employee implements Serializable {
         this.employmentType = employmentType;
         this.loginUsername = loginUsername;
         this.loginPassword = loginPassword;
+    }
+
+    public boolean isIsLoggedIn() {
+        return isLoggedIn;
+    }
+
+    public void setIsLoggedIn(boolean isLoggedIn) {
+        this.isLoggedIn = isLoggedIn;
     }
 
     public String getFirstName() {

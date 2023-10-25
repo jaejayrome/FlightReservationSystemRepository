@@ -4,7 +4,11 @@
  */
 package ejb.session.stateless;
 
+import entity.Flight;
+import java.util.List;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  *
@@ -13,6 +17,61 @@ import javax.ejb.Stateless;
 @Stateless
 public class FlightEntitySessionBean implements FlightEntitySessionBeanLocal {
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
+    private EntityManager em;
+    
+    @Override
+    public long createFlight(Flight flight) {
+        em.persist(flight);
+        em.flush();
+        return flight.getId();
+    }
+    
+    @Override
+    public List<Flight> viewAllFlights() {
+        return em.createQuery("SELECT flight FROM Flight flight").getResultList();
+    }
+    
+    // remember to throw any exception if needed
+    @Override
+    public Flight getFlightById(long id) {
+        return em.find(Flight.class, id);
+    }
+    
+    // remember to throw any exception if needed
+    @Override
+    public long getIdByFlightNumber(String flightNumber) {
+        Flight flight = (Flight)(em.createQuery("SELECT flight FROM Flight flight WHERE flight.flightNumber = :number").setParameter("number", flightNumber).getSingleResult());
+        return flight.getId();
+    }
+    
+    @Override
+    public long updateFlightNumber(long id, String newFlightNumber) {
+        Flight flight = this.getFlightById(id);
+        flight.setFlightNumber(newFlightNumber);
+        return flight.getId();
+    }
+    
+    @Override
+    public long updateFlightEnabled(long id, boolean enabled) {
+        Flight flight = this.getFlightById(id);
+        flight.setEnabled(enabled);
+        return flight.getId();
+    }
+    
+    // remember to ensure that we do this properly 
+    @Override
+    public long updateFlightCustomers(long id, List<Long> newCustomerList) {
+        Flight flight = this.getFlightById(id);
+        flight.setCustomersUIDList(newCustomerList);
+        return flight.getId();
+    }
+    
+    @Override
+    public long udpateFlightIsOneWay(long id, boolean isOneWay) {
+        Flight flight = this.getFlightById(id);
+        flight.setIsOneWay(isOneWay);
+        return flight.getId();
+    }
+
 }

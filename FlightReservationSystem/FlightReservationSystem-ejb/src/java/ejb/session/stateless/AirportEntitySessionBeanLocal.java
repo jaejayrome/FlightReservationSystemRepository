@@ -12,5 +12,5 @@ import javax.ejb.Local;
  */
 @Local
 public interface AirportEntitySessionBeanLocal {
-    
+    public long createNewAirport(String airportName, String iataAirportCode, String city, String state, String country);
 }

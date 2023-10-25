@@ -12,5 +12,5 @@ import javax.ejb.Local;
  */
 @Local
 public interface PartnerEntitySessionBeanLocal {
-    
+    public long createNewPartner(String companyName, String loginUsername, String loginPassword);
 }
