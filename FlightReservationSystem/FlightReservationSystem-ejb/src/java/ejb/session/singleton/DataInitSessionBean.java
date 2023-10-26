@@ -14,6 +14,7 @@ import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import util.enumerations.AircraftTypeName;
 import util.enumerations.EmploymentType;
 import util.enumerations.GenderType;
 import util.enumerations.JobTitle;
@@ -126,7 +127,7 @@ public class DataInitSessionBean  {
         partnerEntitySessionBeanLocal.createNewPartner("Skyscanner", "skyscanner", "password");
         
         // initialise 2 aircraft type // BOEIGN 747 and BOEING 737
-        aircraftTypeEntitySessionBeanLocal.createNewAircraftType("737", "Boeing", new BigDecimal(366));
-        aircraftTypeEntitySessionBeanLocal.createNewAircraftType("747", "Boeing", new BigDecimal(215));
+        aircraftTypeEntitySessionBeanLocal.createNewAircraftType(AircraftTypeName.BOEING_737, new BigDecimal(215));
+        aircraftTypeEntitySessionBeanLocal.createNewAircraftType(AircraftTypeName.BOEING_747, new BigDecimal(416));
     }
 }

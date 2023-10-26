@@ -4,7 +4,10 @@
  */
 package ejb.session.stateless;
 
+import entity.CabinClass;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  *
@@ -13,6 +16,17 @@ import javax.ejb.Stateless;
 @Stateless
 public class CabinClassEntitySessionBean implements CabinClassEntitySessionBeanLocal {
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
+    private EntityManager em;
+    
+    @Override
+    public long createCabinClass(CabinClass cabinClass) {
+        em.persist(cabinClass);
+        em.flush();
+        return cabinClass.getId();
+        // associate cabinClass with aircraftConfiguration
+        // association done on the other side already
+    }
+
+
 }

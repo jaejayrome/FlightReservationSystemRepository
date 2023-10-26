@@ -5,6 +5,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.ArrayList;
 import javax.persistence.Column;
@@ -15,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -32,6 +34,9 @@ public class AircraftConfiguration implements Serializable {
     @Column(nullable = false)
     private String configurationName; 
     
+    @Column(nullable = false)
+    private BigDecimal numCabinClass;
+    
     // relationships
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -40,14 +45,35 @@ public class AircraftConfiguration implements Serializable {
     @ManyToMany
     private List<CabinClass> cabinClassList;
     
+    @OneToMany (mappedBy = "aircraftConfiguration")
+    private List<Flight> flightList; 
+    
     // constructors
     public AircraftConfiguration() {
     }
 
-    public AircraftConfiguration(String configurationName, AircraftType aircraftType) {
+    public AircraftConfiguration(String configurationName, AircraftType aircraftType, BigDecimal numCabinClass) {
         this.configurationName = configurationName;
         this.aircraftType = aircraftType;
+        this.numCabinClass = numCabinClass;
         this.cabinClassList = new ArrayList<CabinClass>();
+        this.flightList = new ArrayList<Flight>();
+    }
+
+    public BigDecimal getNumCabinClass() {
+        return numCabinClass;
+    }
+
+    public void setNumCabinClass(BigDecimal numCabinClass) {
+        this.numCabinClass = numCabinClass;
+    }
+
+    public List<Flight> getFlightList() {
+        return flightList;
+    }
+
+    public void setFlightList(List<Flight> flightList) {
+        this.flightList = flightList;
     }
 
     public List<CabinClass> getCabinClassList() {

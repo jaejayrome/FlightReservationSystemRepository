@@ -4,7 +4,10 @@
  */
 package ejb.session.stateless;
 
-import entity.CabinClass;
+import entity.Airport;
+import entity.Flight;
+import entity.FlightRoute;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -12,6 +15,8 @@ import javax.ejb.Local;
  * @author jeromegoh
  */
 @Local
-public interface CabinClassEntitySessionBeanLocal {
-    public long createCabinClass(CabinClass cabinClass);
+public interface RoutePlannerUseCaseSessionBeanLocal {
+    public long createNewFlightRoute(FlightRoute flightRoute);
+    public List<FlightRoute> viewAllFlightRoute();
+    public List<Airport> getAllAirport();
 }

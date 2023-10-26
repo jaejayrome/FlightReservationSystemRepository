@@ -4,12 +4,15 @@
  */
 package frsmanagementclient;
 
-import ejb.session.stateless.EmployeeUseCaseSessionBeanRemote;
+import ejb.session.stateless.FleetManagerUseCaseSessionBeanRemote;
 import entity.AircraftConfiguration;
 import entity.AircraftType;
 import entity.Employee;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import util.enumerations.CabinClassType;
 import util.enumerations.JobTitle;
 
 /**
@@ -17,19 +20,21 @@ import util.enumerations.JobTitle;
  * @author jeromegoh
  */
 public class FleetManagerUseCase {
-    private EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote;
+    private FleetManagerUseCaseSessionBeanRemote fleetManagerUseCaseSessionBeanRemote;
     private Employee currentEmployee;
     private List<AircraftType> aircraftTypeList;
     private Scanner scanner;
+    private HashMap<Integer, CabinClassType> hashMap;
     
     public FleetManagerUseCase() {
     }
     
-    public FleetManagerUseCase(EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote, Employee currentEmployee) {
-        this.employeeUseCaseSessionBeanRemote = employeeUseCaseSessionBeanRemote;
+    public FleetManagerUseCase(FleetManagerUseCaseSessionBeanRemote fleetManagerUseCaseSessionBean, Employee currentEmployee) {
+        this.fleetManagerUseCaseSessionBeanRemote = fleetManagerUseCaseSessionBean;
         this.currentEmployee = currentEmployee;
-        this.aircraftTypeList = employeeUseCaseSessionBeanRemote.getAllAircraftTypes();
+        this.aircraftTypeList = this.fleetManagerUseCaseSessionBeanRemote.getAllAircraftTypes();
         this.scanner = new Scanner(System.in);
+        this.hashMap = new HashMap<Integer, CabinClassType>();
     }
     
     /*
@@ -46,35 +51,67 @@ public class FleetManagerUseCase {
                if(!name.isEmpty()) {
                 System.out.print("Enter the name of the configuration: ");
                 String configurationName = this.scanner.nextLine();
-                employeeUseCaseSessionBeanRemote.createAircraftConfigurationForFleetManager(JobTitle.FLEET_MANAGER, name, configurationName);
+                
+                // last step 
+                // initialise the cabin class
+                List<CabinClassType> cabinClassNameList = new ArrayList<CabinClassType>();
+                List<Integer> numAislesList = new ArrayList<Integer>();
+                List<Integer> numRowsList = new ArrayList<Integer>();
+                List<Integer> numSeatsAbreastList = new ArrayList<Integer>();
+                List<String> seatingConfigurationList = new ArrayList<String>();
+                promptUserForCabinClass(cabinClassNameList, numAislesList, numRowsList, numSeatsAbreastList, seatingConfigurationList);
+                
+                fleetManagerUseCaseSessionBeanRemote.createAircraftConfigurationForFleetManager(JobTitle.FLEET_MANAGER, name, configurationName
+                    , cabinClassNameList, numAislesList, numRowsList, numSeatsAbreastList, seatingConfigurationList);
                }
            }
     }
     
     public void viewAllAircraftConfiguration() {
-          List<AircraftConfiguration> aircraftConfigurations =employeeUseCaseSessionBeanRemote.viewAllAircraftConfiguration();
+          List<AircraftConfiguration> aircraftConfigurations= fleetManagerUseCaseSessionBeanRemote.viewAllAircraftConfiguration();
           int counter = 1;
           for (AircraftConfiguration aircraftConfiguration : aircraftConfigurations) {
                     printSingleAircraftConfiguration(aircraftConfiguration, counter);
                     counter+=1;                
-            }
+          }
+    }
     
-//        if (aircraftTypeList.size() > 0) {
-//            int counter = 1;
-//            for (AircraftType aircraftType : aircraftTypeList) {
-//                List<AircraftConfiguration> aircraftConfigurations = aircraftType.getAircraftConfigurations();
-//                for (AircraftConfiguration aircraftConfiguration : aircraftConfigurations) {
-//                    printSingleAircraftConfiguration(aircraftConfiguration, counter, aircraftType);
-//                    counter+=1;
-//                }
-//            }
-//        }
+    public void promptUserForCabinClass(List<CabinClassType> cabinClassNameList, List<Integer> numAislesList, List<Integer> numRowsList, List<Integer> numSeatsAbreastList, List<String> seatingConfigurationList) {
+        System.out.println("Enter the number of cabin classes you would like to add for this configuration");
+        System.out.print("> ");
+        int number = scanner.nextInt();
+        for (int i = 1; i <= number; i++) {
+            System.out.println("Details for cabin class #" + i);
+            initialiseMap();
+            printAllCabinClassTypes();
+            System.out.println("Choose the cabin class type");
+            System.out.print("> ");
+            int choice = scanner.nextInt();
+            cabinClassNameList.add(hashMap.get(choice));
+            System.out.println("Enter the number of aisles");
+            System.out.print("> ");
+            int numAisles = scanner.nextInt();
+            numAislesList.add(numAisles);
+            System.out.println("Enter the number of rows");
+            System.out.print("> ");
+            int numRows = scanner.nextInt();
+            numRowsList.add(numRows);
+            System.out.println("Enter the number of seats abreast");
+            System.out.print("> ");
+            int numSeatsAbreast = scanner.nextInt();
+            numSeatsAbreastList.add(numSeatsAbreast);
+            System.out.println("Enter the seating configuration");
+            System.out.println("e.g 3-4-3 or 2-3-2");
+            System.out.print("> ");
+            String seatingConfiguration = scanner.next();
+            seatingConfigurationList.add(seatingConfiguration);
+        }
     }
     
     public void viewAircraftConfigurationDetails() {
         System.out.println("Enter Configuration Name: ");
         String configurationName = scanner.nextLine();
-        AircraftConfiguration aircraftConfiguration = employeeUseCaseSessionBeanRemote.viewAircraftConfigurationDetails(configurationName);
+        AircraftConfiguration aircraftConfiguration = fleetManagerUseCaseSessionBeanRemote.viewAircraftConfigurationDetails(configurationName);
         printSingleAircraftConfiguration(aircraftConfiguration, 1);
     }
     
@@ -82,17 +119,31 @@ public class FleetManagerUseCase {
         System.out.println("Aircraft Configuration #" + counter);
         System.out.println("Configuration Name: " + aircraftConfiguration.getConfigurationName());
         System.out.println("Configuration Aircraft Type Name: " + aircraftConfiguration.getAircraftType().getAircraftTypeName());
-        System.out.println("Configuration Aircraft Type Manufacturer: " + aircraftConfiguration.getAircraftType().getManufacturer());
+        // System.out.println("Configuration Aircraft Type Manufacturer: " + aircraftConfiguration.getAircraftType().getManufacturer());
         System.out.println("-----------------------------------------------");
     }
     
     public void printAircraftType() {
         for (AircraftType aircraftType: aircraftTypeList) {
             System.out.println("Name: " + aircraftType.getAircraftTypeName());
-            System.out.println("Manufacturer: " + aircraftType.getManufacturer());
+//            System.out.println("Manufacturer: " + aircraftType.getManufacturer());
             System.out.println("Passenger Seat Capacity : " + aircraftType.getPassengerSeatCapacity());
             System.out.println("-----------------------------------------------");
         }
+    }
+    
+    public void printAllCabinClassTypes() {
+        System.out.println("Press 1 for First Class");
+        System.out.println("Press 2 for Business Class");
+        System.out.println("Press 3 for Premium Economy Class");
+        System.out.println("Press 4 for Economy Class");
+    }
+    
+    public void initialiseMap() {
+        hashMap.put(1, CabinClassType.FIRST);
+        hashMap.put(2, CabinClassType.BUSINESS);
+        hashMap.put(3, CabinClassType.PREMIUM_ECONOMY);
+        hashMap.put(4, CabinClassType.ECONOMY);
     }
     
 }

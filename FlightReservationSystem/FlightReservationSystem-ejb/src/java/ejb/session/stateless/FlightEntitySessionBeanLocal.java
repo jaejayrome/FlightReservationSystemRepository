@@ -19,7 +19,4 @@ public interface FlightEntitySessionBeanLocal {
     public Flight getFlightById(long id);
     public long getIdByFlightNumber(String flightNumber);
     public long updateFlightNumber(long id, String newFlightNumber);
-    public long updateFlightEnabled(long id, boolean enabled);
-    public long updateFlightCustomers(long id, List<Long> newCustomerList);
-    public long udpateFlightIsOneWay(long id, boolean isOneWay);
 }

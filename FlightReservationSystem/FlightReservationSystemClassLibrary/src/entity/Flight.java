@@ -15,7 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import util.enumerations.FlightStatus;
 
 /**
  *
@@ -33,14 +33,11 @@ public class Flight implements Serializable {
     @Column(nullable = false)
     private String flightNumber; 
     @Column(nullable = false)
-    private boolean enabled;
-    @Column(nullable = false)
-    private List<Long> customersUIDList; 
-    @Column(nullable = false)
-    private boolean isOneWay;
+    private FlightStatus status;
     
     // relationships
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
     private AircraftConfiguration aircraftConfiguration;
     
     @ManyToOne(optional = false)
@@ -55,11 +52,9 @@ public class Flight implements Serializable {
     public Flight() {
     }
 
-    public Flight(String flightNumber, boolean enabled, List<Long> customersUIDList, boolean isOneWay, AircraftConfiguration aircraftConfiguration, FlightRoute flightRoute) {
+    public Flight(String flightNumber, FlightStatus status, AircraftConfiguration aircraftConfiguration, FlightRoute flightRoute) {
         this.flightNumber = flightNumber;
-        this.enabled = enabled;
-        this.customersUIDList = customersUIDList;
-        this.isOneWay = isOneWay;
+        this.status = status;
         this.aircraftConfiguration = aircraftConfiguration;
         this.flightRoute = flightRoute;
         this.flightSchedulePlanList = new ArrayList<FlightSchedulePlan>();
@@ -99,30 +94,13 @@ public class Flight implements Serializable {
         this.flightNumber = flightNumber;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public FlightStatus getStatus() {
+        return status;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setStatus(FlightStatus status) {
+        this.status = status;
     }
-
-    public List<Long> getCustomersUIDList() {
-        return customersUIDList;
-    }
-
-    public void setCustomersUIDList(List<Long> customersUIDList) {
-        this.customersUIDList = customersUIDList;
-    }
-
-    public boolean isIsOneWay() {
-        return isOneWay;
-    }
-
-    public void setIsOneWay(boolean isOneWay) {
-        this.isOneWay = isOneWay;
-    }
-    
 
     public Long getId() {
         return id;

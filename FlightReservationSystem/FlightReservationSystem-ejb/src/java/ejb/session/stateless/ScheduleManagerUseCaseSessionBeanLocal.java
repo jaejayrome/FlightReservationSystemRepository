@@ -4,7 +4,6 @@
  */
 package ejb.session.stateless;
 
-import entity.CabinClass;
 import javax.ejb.Local;
 
 /**
@@ -12,6 +11,6 @@ import javax.ejb.Local;
  * @author jeromegoh
  */
 @Local
-public interface CabinClassEntitySessionBeanLocal {
-    public long createCabinClass(CabinClass cabinClass);
+public interface ScheduleManagerUseCaseSessionBeanLocal {
+    
 }

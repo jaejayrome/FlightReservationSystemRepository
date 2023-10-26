@@ -5,81 +5,79 @@
 package entity;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.ManyToOne;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import util.enumerations.SeatStatus;
 
 /**
  *
  * @author jeromegoh
  */
 @Entity
-public class Fare implements Serializable {
-    
+public class Seat implements Serializable {
+
     // attributes
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-   @Column(nullable = false)
-   private String fareBasicCode;
-   @Column(nullable = false)
-   private BigDecimal fareAmount;
-   
-   // relationships
-   @ManyToOne(optional = false)
-   @JoinColumn(nullable = false)
-   private CabinClass cabinClass;
-   
-//   @ManyToOne(optional = false)
-//   @JoinColumn(nullable = false)
-//   private FlightSchedulePlan flightSchedulePlan;
-   
-   // constructors
-    public Fare() {
-    }
+    @Column(nullable = false)
+    private String seatNumber;
+    
+    @Column(nullable = false)
+    private SeatStatus seatStatus;
+    
+    // relationships
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private CabinClass cabinClass;
+    
+    // constructors
 
-    public Fare(String fareBasicCode, BigDecimal fareAmount, CabinClass cabinClass) {
-        this.fareBasicCode = fareBasicCode;
-        this.fareAmount = fareAmount;
+    public Seat() {
+    }
+    
+
+    public Seat(String seatNumber, SeatStatus seatStatus, CabinClass cabinClass) {
+        this.seatNumber = seatNumber;
+        this.seatStatus = seatStatus;
         this.cabinClass = cabinClass;
-//        this.flightSchedulePlan = flightSchedulePlan;
     }
     
     // getters and setters
-    
-    public CabinClass getCabinClass() {    
+
+    public String getSeatNumber() {
+        return seatNumber;
+    }
+
+    public void setSeatNumber(String seatNumber) {
+        this.seatNumber = seatNumber;
+    }
+
+    public SeatStatus getSeatStatus() {
+        return seatStatus;
+    }
+
+    public void setSeatStatus(SeatStatus seatStatus) {
+        this.seatStatus = seatStatus;
+    }
+
+    public CabinClass getCabinClass() {
         return cabinClass;
     }
 
     public void setCabinClass(CabinClass cabinClass) {
         this.cabinClass = cabinClass;
     }
-
-    public String getFareBasicCode() {
-        return fareBasicCode;
-    }
-
-    public void setFareBasicCode(String fareBasicCode) {
-        this.fareBasicCode = fareBasicCode;
-    }
-
-    public BigDecimal getFareAmount() {
-        return fareAmount;
-    }
-
-    public void setFareAmount(BigDecimal fareAmount) {
-        this.fareAmount = fareAmount;
-    }
     
     
+
     public Long getId() {
         return id;
     }
@@ -98,10 +96,10 @@ public class Fare implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Fare)) {
+        if (!(object instanceof Seat)) {
             return false;
         }
-        Fare other = (Fare) object;
+        Seat other = (Seat) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -110,7 +108,7 @@ public class Fare implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.Fare[ id=" + id + " ]";
+        return "entity.Seat[ id=" + id + " ]";
     }
     
 }

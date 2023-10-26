@@ -5,21 +5,29 @@
 package frsmanagementclient;
 
 import ejb.session.stateless.EmployeeUseCaseSessionBeanRemote;
+import ejb.session.stateless.FleetManagerUseCaseSessionBeanRemote;
 import javax.ejb.EJB;
+import ejb.session.stateless.RoutePlannerUseCaseSessionBeanRemote;
 
 /**
  *
  * @author jeromegoh
  */
 public class Main {
-    
+
+    @EJB
+    private static FleetManagerUseCaseSessionBeanRemote fleetManagerUseCaseSessionBean;
+
+    @EJB
+    private static RoutePlannerUseCaseSessionBeanRemote routePlannerUseCaseSessionBeanRemote;
   
     @EJB
     private static EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote;
     
+   
     public static void main(String[] args) {
         
-        RunApp runApp = new RunApp(employeeUseCaseSessionBeanRemote);
+        RunApp runApp = new RunApp(employeeUseCaseSessionBeanRemote, routePlannerUseCaseSessionBeanRemote, fleetManagerUseCaseSessionBean);
         runApp.showLoginScreen();
     }
     

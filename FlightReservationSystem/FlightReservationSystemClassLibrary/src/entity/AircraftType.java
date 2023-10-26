@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import util.enumerations.AircraftTypeName;
 
 /**
  *
@@ -31,9 +32,8 @@ public class AircraftType implements Serializable {
     private Long id;
     
     @Column(nullable = false)
-    private String aircraftTypeName;
-    @Column(nullable = false)
-    private String manufacturer;
+    private AircraftTypeName aircraftTypeName;
+    
     @Column(nullable = false)
     private BigDecimal passengerSeatCapacity;
     
@@ -46,9 +46,8 @@ public class AircraftType implements Serializable {
     public AircraftType() {
     }
 
-    public AircraftType(String aircraftTypeName, String manufacturer, BigDecimal passengerSeatCapacity) {
+    public AircraftType(AircraftTypeName aircraftTypeName, BigDecimal passengerSeatCapacity) {
         this.aircraftTypeName = aircraftTypeName;
-        this.manufacturer = manufacturer;
         this.passengerSeatCapacity = passengerSeatCapacity;
         this.aircraftConfigurations = new ArrayList<AircraftConfiguration>();
     }
@@ -62,20 +61,12 @@ public class AircraftType implements Serializable {
         this.aircraftConfigurations = aircraftConfigurations;
     }
 
-    public String getAircraftTypeName() {
+    public AircraftTypeName getAircraftTypeName() {
         return aircraftTypeName;
     }
 
-    public void setAircraftTypeName(String aircraftTypeName) {
+    public void setAircraftTypeName(AircraftTypeName aircraftTypeName) {
         this.aircraftTypeName = aircraftTypeName;
-    }
-
-    public String getManufacturer() {
-        return manufacturer;
-    }
-
-    public void setManufacturer(String manufacturer) {
-        this.manufacturer = manufacturer;
     }
 
     public BigDecimal getPassengerSeatCapacity() {

@@ -19,10 +19,5 @@ import util.exception.InvalidLoginCredentialsException;
 @Remote
 public interface EmployeeUseCaseSessionBeanRemote {
     public Employee doLogin(String username, String password) throws InvalidLoginCredentialsException;
-    public void doLogout(long employeeId);
-    public void employeeCommandOne(JobTitle jobTitle, Object object);
-    public List<AircraftType> getAllAircraftTypes();
-    public long createAircraftConfigurationForFleetManager(JobTitle jobTitle, String aircraftType, String configurationName);
-    public List<AircraftConfiguration> viewAllAircraftConfiguration();
-    public AircraftConfiguration viewAircraftConfigurationDetails(String configurationName);
+    public void doLogout(long employeeId);    
 }

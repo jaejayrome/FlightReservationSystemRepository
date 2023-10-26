@@ -13,6 +13,10 @@
     <class>entity.FlightSchedule</class>
     <class>entity.FlightSchedulePlan</class>
     <class>entity.Partner</class>
+    <class>entity.Seat</class>
+    <class>entity.Customer</class>
+    <class>entity.FlightReservation</class>
+    <class>entity.FlightBooking</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>
