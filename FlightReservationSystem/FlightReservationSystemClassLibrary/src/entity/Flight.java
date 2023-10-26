@@ -40,7 +40,8 @@ public class Flight implements Serializable {
     private boolean isOneWay;
     
     // relationships
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
     private AircraftConfiguration aircraftConfiguration;
     
     @ManyToOne(optional = false)

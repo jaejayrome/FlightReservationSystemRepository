@@ -6,6 +6,7 @@ package ejb.session.stateless;
 
 import entity.AircraftConfiguration;
 import entity.AircraftType;
+import entity.CabinClass;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
@@ -37,12 +38,21 @@ public class AircraftConfigurationEntitySessionBean implements AircraftConfigura
     // chooes the desired aircraft type to make a configuration with
     // enter the configuration name
     @Override
-    public long createNewAircraftConfiguration(AircraftType aircraftType, String configurationName) {
+    public long createNewAircraftConfiguration(AircraftType aircraftType, String configurationName, List<CabinClass> cabinClassList) {
         AircraftConfiguration aircraftConfiguration = new AircraftConfiguration(configurationName, aircraftType);
         // associating aircraftType with aircraftConfiguration
         int init = aircraftType.getAircraftConfigurations().size();
         aircraftType.getAircraftConfigurations().add(aircraftConfiguration);
+        // associating aircraftConfiguraiton with cabin class
+        int initialise = aircraftConfiguration.getCabinClassList().size();
+        List<CabinClass> existingList = aircraftConfiguration.getCabinClassList();
+        existingList.addAll(cabinClassList);
         
+        // associate cabin class to aircraft configuration
+        cabinClassList.stream().forEach(cabinClass -> {
+            int initAgain = cabinClass.getAircraftConfigurationList().size();
+            cabinClass.getAircraftConfigurationList().add(aircraftConfiguration);
+        });
         em.persist(aircraftConfiguration);
         em.flush();
         return aircraftConfiguration.getId();

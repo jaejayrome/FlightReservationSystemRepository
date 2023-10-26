@@ -5,6 +5,7 @@
 package ejb.session.stateless;
 
 import entity.Airport;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ejb.Stateless;
 import javax.persistence.PersistenceContext;
@@ -24,6 +25,11 @@ public class AirportEntitySessionBean implements AirportEntitySessionBeanLocal {
         em.persist(airport);
         em.flush();
         return airport.getId();
+    }
+    
+    @Override
+    public List<Airport> getAllAirports() {
+        return em.createQuery("SELECT a FROM Airport a").getResultList();
     }
 
     

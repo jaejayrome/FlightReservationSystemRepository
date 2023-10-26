@@ -5,10 +5,12 @@
 package frsmanagementclient;
 
 import ejb.session.stateless.EmployeeUseCaseSessionBeanRemote;
+import ejb.session.stateless.FleetManagerUseCaseSessionBeanRemote;
 import entity.Employee;
 import java.util.Scanner;
 import util.enumerations.JobTitle;
 import util.exception.InvalidLoginCredentialsException;
+import ejb.session.stateless.RoutePlannerUseCaseSessionBeanRemote;
 
 /**
  *
@@ -18,13 +20,17 @@ public class RunApp {
         
     
     private EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote;
+    private RoutePlannerUseCaseSessionBeanRemote routePlannerUseCaseSessionBeanRemote;
+    private FleetManagerUseCaseSessionBeanRemote fleetManagerUseCaseSessionBean;
     private Employee currentEmployee;
     
     public RunApp() {
     }
     
-    public RunApp(EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote) {
+    public RunApp(EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote, RoutePlannerUseCaseSessionBeanRemote routePlannerUseCaseSessionBeanRemote, FleetManagerUseCaseSessionBeanRemote fleetManagerUseCaseSessionBeanRemote) {
         this.employeeUseCaseSessionBeanRemote = employeeUseCaseSessionBeanRemote;
+        this.routePlannerUseCaseSessionBeanRemote = routePlannerUseCaseSessionBeanRemote;
+        this.fleetManagerUseCaseSessionBean = fleetManagerUseCaseSessionBean;
         this.currentEmployee = null;
     }
     
@@ -128,7 +134,7 @@ public class RunApp {
                 System.out.print("> ");
                 System.out.println(" ");
                 System.out.println("-------------------------------");
-                FleetManagerUseCase fleetManagerUseCase = new FleetManagerUseCase(employeeUseCaseSessionBeanRemote, this.currentEmployee);
+                FleetManagerUseCase fleetManagerUseCase = new FleetManagerUseCase(fleetManagerUseCaseSessionBean, this.currentEmployee);
                 switch (scanner.nextInt()) {
                     case 0: 
                         doLogout(scanner);
@@ -158,7 +164,7 @@ public class RunApp {
                 System.out.print("> ");
                 System.out.println("");
                 System.out.println("-------------------------------");
-                RoutePlannerUseCase routerPlannerUseCase = new RoutePlannerUseCase();
+                RoutePlannerUseCase routerPlannerUseCase = new RoutePlannerUseCase(routePlannerUseCaseSessionBeanRemote, this.currentEmployee);
                 switch (scanner.nextInt()) {
                     case 0: 
                         doLogout(scanner);

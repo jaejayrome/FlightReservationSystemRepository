@@ -27,6 +27,7 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
     public long createFlightRoute(FlightRoute flightRoute) {
         em.persist(flightRoute);
         em.flush();
+        // missing associatation with flight Route and flight
         return flightRoute.getId();
     }
     

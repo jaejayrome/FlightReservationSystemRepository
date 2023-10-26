@@ -20,8 +20,4 @@ import util.exception.InvalidLoginCredentialsException;
 public interface EmployeeUseCaseSessionBeanLocal {
     public Employee doLogin(String username, String password) throws InvalidLoginCredentialsException;
     public void doLogout(long employeeId);
-    public void employeeCommandOne(JobTitle jobTitle, Object object);
-    public List<AircraftType> getAllAircraftTypes();
-    public List<AircraftConfiguration> viewAllAircraftConfiguration();
-    public AircraftConfiguration viewAircraftConfigurationDetails(String configurationName);
 }

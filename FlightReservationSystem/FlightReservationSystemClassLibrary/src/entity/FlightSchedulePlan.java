@@ -35,8 +35,8 @@ public class FlightSchedulePlan implements Serializable {
     
     // relationships
     // relationship is optional as a FSP don't need a F
-    @ManyToOne(optional = true)
-    @JoinColumn(nullable = true)
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
     private Flight flight;
     
     // user would be prompted to enter many fares for the same FSP

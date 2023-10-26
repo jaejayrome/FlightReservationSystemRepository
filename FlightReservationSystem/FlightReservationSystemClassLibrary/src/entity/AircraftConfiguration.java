@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -40,6 +41,9 @@ public class AircraftConfiguration implements Serializable {
     @ManyToMany
     private List<CabinClass> cabinClassList;
     
+    @OneToMany (mappedBy = "aircraftConfiguration")
+    private List<Flight> flightList; 
+    
     // constructors
     public AircraftConfiguration() {
     }
@@ -48,6 +52,15 @@ public class AircraftConfiguration implements Serializable {
         this.configurationName = configurationName;
         this.aircraftType = aircraftType;
         this.cabinClassList = new ArrayList<CabinClass>();
+        this.flightList = new ArrayList<Flight>();
+    }
+
+    public List<Flight> getFlightList() {
+        return flightList;
+    }
+
+    public void setFlightList(List<Flight> flightList) {
+        this.flightList = flightList;
     }
 
     public List<CabinClass> getCabinClassList() {
