@@ -7,6 +7,7 @@ package ejb.session.stateless;
 import entity.AircraftConfiguration;
 import entity.AircraftType;
 import entity.CabinClass;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
@@ -39,7 +40,8 @@ public class AircraftConfigurationEntitySessionBean implements AircraftConfigura
     // enter the configuration name
     @Override
     public long createNewAircraftConfiguration(AircraftType aircraftType, String configurationName, List<CabinClass> cabinClassList) {
-        AircraftConfiguration aircraftConfiguration = new AircraftConfiguration(configurationName, aircraftType);
+        BigDecimal numCabinClass = new BigDecimal(cabinClassList.size());
+        AircraftConfiguration aircraftConfiguration = new AircraftConfiguration(configurationName, aircraftType, numCabinClass);
         // associating aircraftType with aircraftConfiguration
         int init = aircraftType.getAircraftConfigurations().size();
         aircraftType.getAircraftConfigurations().add(aircraftConfiguration);

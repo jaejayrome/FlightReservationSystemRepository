@@ -7,12 +7,14 @@ package entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import util.enumerations.FlightRouteStatus;
 
 /**
  *
@@ -26,7 +28,10 @@ public class FlightRoute implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    // flight route doesn't hold any attributes
+    
+    @Column(nullable = false)
+    private FlightRouteStatus flightRouteStatus;
+    
     
     // relationships
     // force every single flight route to have an origin and destination
@@ -43,13 +48,22 @@ public class FlightRoute implements Serializable {
     public FlightRoute() {
     }
 
-    public FlightRoute(Airport origin, Airport destination) {
+    public FlightRoute(Airport origin, Airport destination, FlightRouteStatus flightRouteStatus) {
         this.origin = origin;
         this.destination = destination;
+        this.flightRouteStatus = flightRouteStatus;
         this.flightList = new ArrayList<Flight>();
     }
     
     // getters and setters
+
+    public FlightRouteStatus getFlightRouteStatus() {
+        return flightRouteStatus;
+    }
+
+    public void setFlightRouteStatus(FlightRouteStatus flightRouteStatus) {
+        this.flightRouteStatus = flightRouteStatus;
+    }
 
     public List<Flight> getFlightList() {
         return flightList;

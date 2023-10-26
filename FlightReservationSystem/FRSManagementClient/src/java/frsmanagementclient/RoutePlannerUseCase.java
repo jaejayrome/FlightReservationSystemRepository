@@ -10,6 +10,7 @@ import entity.Airport;
 import entity.FlightRoute;
 import java.util.List;
 import java.util.Scanner;
+import util.enumerations.FlightRouteStatus;
 
 /**
  *
@@ -46,7 +47,7 @@ public class RoutePlannerUseCase {
             // filter out the airports of chocie
             Airport originAirport = airports.stream().filter(x -> x.getIataAirportCode().equals(origin)).findFirst().get();
             Airport destinationAirport = airports.stream().filter(x -> x.getIataAirportCode().equals(destination)).findFirst().get();
-            FlightRoute flightRoute = new FlightRoute(originAirport, destinationAirport);
+            FlightRoute flightRoute = new FlightRoute(originAirport, destinationAirport, FlightRouteStatus.ACTIVE);
             routePlannerUseCaseSessionBeanRemote.createNewFlightRoute(flightRoute);
         }
     }

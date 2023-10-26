@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import util.enumerations.FlightSchedulePlanStatus;
 
 /**
  *
@@ -33,15 +34,20 @@ public class FlightSchedulePlan implements Serializable {
     @Column(nullable = false)
     private ScheduleType scheduleType;
     
+    @Column(nullable = false)
+    private FlightSchedulePlanStatus status;
+    
+    @Column(nullable = false)
+    private String flightNumber;
+    
     // relationships
     // relationship is optional as a FSP don't need a F
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Flight flight;
     
-    // user would be prompted to enter many fares for the same FSP
     @OneToMany(mappedBy = "flightSchedulePlan")
-    private List<Fare> fareList;
+    private List<CabinClass> cabinClassList;
     
     @OneToMany(mappedBy= "flightSchedulePlan")
     private List<FlightSchedule> flightScheduleList;
@@ -50,19 +56,47 @@ public class FlightSchedulePlan implements Serializable {
     public FlightSchedulePlan() {
     }
 
-    public FlightSchedulePlan(ScheduleType scheduleType, Flight flight) {
+    public FlightSchedulePlan(ScheduleType scheduleType, Flight flight, FlightSchedulePlanStatus status, String flightNumber) {
         this.scheduleType = scheduleType;
         this.flight = flight; 
-        this.fareList = new ArrayList<Fare>();
+        this.status = status;
+        this.flightNumber = flightNumber;
+        this.cabinClassList = new ArrayList<CabinClass>();
         this.flightScheduleList = new ArrayList<FlightSchedule>();
     }
     
     // getters and setters
+
+    public FlightSchedulePlanStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(FlightSchedulePlanStatus status) {
+        this.status = status;
+    }
+
+    public String getFlightNumber() {
+        return flightNumber;
+    }
+
+    public void setFlightNumber(String flightNumber) {
+        this.flightNumber = flightNumber;
+    }
+    
+    
+
+    public List<CabinClass> getCabinClassList() {
+        return cabinClassList;
+    }
+
+    public void setCabinClassList(List<CabinClass> cabinClassList) {
+        this.cabinClassList = cabinClassList;
+    }
+    
     public List<FlightSchedule> getFlightScheduleList() {
         return flightScheduleList;
     }
-
-
+    
     public void setFlightScheduleList(List<FlightSchedule> flightScheduleList) {    
         this.flightScheduleList = flightScheduleList;
     }
@@ -73,14 +107,6 @@ public class FlightSchedulePlan implements Serializable {
 
     public void setFlight(Flight flight) {
         this.flight = flight;
-    }
-
-    public List<Fare> getFareList() {
-        return fareList;
-    }
-    
-    public void setFareList(List<Fare> fareList) {    
-        this.fareList = fareList;
     }
 
     public ScheduleType getScheduleType() {

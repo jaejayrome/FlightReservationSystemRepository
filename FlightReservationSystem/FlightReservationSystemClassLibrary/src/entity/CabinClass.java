@@ -14,8 +14,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 
 /**
  *
@@ -54,6 +56,14 @@ public class CabinClass implements Serializable {
     @OneToMany(mappedBy= "cabinClass")
     private List<Fare> fareList;
     
+    @OneToMany(mappedBy = "cabinClass")
+    private List<Seat> seatList;
+    
+    // careful! this must be optional because we can create one w/o having a flight assigned to it 
+    @ManyToOne (optional = true)
+    @JoinColumn (nullable = true)
+    private FlightSchedulePlan flightSchedulePlan;
+    
     // constructors
     public CabinClass() {
     }
@@ -69,9 +79,27 @@ public class CabinClass implements Serializable {
         this.numBalanceSeats = numBalanceSeats;
         this.aircraftConfigurationList = new ArrayList<AircraftConfiguration>();
         this.fareList = new ArrayList<Fare>();
+        this.seatList = new ArrayList<Seat>();
     }
     
      // getters and settters
+
+    public FlightSchedulePlan getFlightSchedulePlan() {
+        return flightSchedulePlan;
+    }
+
+    public void setFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) {
+        this.flightSchedulePlan = flightSchedulePlan;
+    }
+
+    public List<Seat> getSeatList() {
+        return seatList;
+    }
+
+    public void setSeatList(List<Seat> seatList) {
+        this.seatList = seatList;
+    }
+   
     public List<Fare> getFareList() {
         return fareList;
     }

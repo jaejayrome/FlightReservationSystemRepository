@@ -13,6 +13,7 @@ import javax.ejb.Stateless;
 import javax.persistence.CacheRetrieveMode;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import util.enumerations.AircraftTypeName;
 
 /**
  *
@@ -30,8 +31,8 @@ public class AircraftTypeEntitySessionBean implements AircraftTypeEntitySessionB
     }
     
     @Override
-    public long createNewAircraftType(String aircraftTypeName, String manufacturer, BigDecimal passengerSeatCapacity) {
-        AircraftType aircraftType = new AircraftType(aircraftTypeName, manufacturer, passengerSeatCapacity);
+    public long createNewAircraftType(AircraftTypeName aircraftTypeName, BigDecimal passengerSeatCapacity) {
+        AircraftType aircraftType = new AircraftType(aircraftTypeName, passengerSeatCapacity);
         em.persist(aircraftType);
         em.flush();
         return aircraftType.getId();
@@ -39,9 +40,11 @@ public class AircraftTypeEntitySessionBean implements AircraftTypeEntitySessionB
     
     @Override
     public AircraftType getAircraftTypeFromName(String name) {
+        String[] splittedName = name.split(" ");
+        String enumName = splittedName[0].toUpperCase() + "_" + splittedName[1].toUpperCase();
         String query = "SELECT a FROM AircraftType a WHERE a.aircraftTypeName = :name";
          AircraftType aircraftType =(AircraftType) em.createQuery(query)
-          .setParameter("name", name)
+          .setParameter("name", AircraftTypeName.valueOf(enumName))
           .getSingleResult();
         return aircraftType;
     }

@@ -8,6 +8,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +17,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -44,7 +47,8 @@ public class FlightSchedule implements Serializable {
     @JoinColumn(nullable = false)
     private FlightSchedulePlan flightSchedulePlan;
     
-    
+    @OneToMany(mappedBy="flightSchedule")
+    private List<FlightBooking> flightBookingList;
     // constructors
 
     public FlightSchedule() {
@@ -57,9 +61,18 @@ public class FlightSchedule implements Serializable {
         this.endDate = endDate;
         this.frequency = frequency;
         this.flightSchedulePlan = flightSchedulePlan;
+        this.flightBookingList = new ArrayList<FlightBooking>();
     }
     
     // getters and setters
+
+    public List<FlightBooking> getFlightBookingList() {
+        return flightBookingList;
+    }
+
+    public void setFlightBookingList(List<FlightBooking> flightBookingList) {
+        this.flightBookingList = flightBookingList;
+    }
 
     public FlightSchedulePlan getFlightSchedulePlan() {
         return flightSchedulePlan;

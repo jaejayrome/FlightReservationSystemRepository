@@ -31,7 +31,7 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
     // frequency n days = not 7 
     // if endDate is not null also
     
-    public abstract long createFlightSchedulePlan(ScheduleType type, String flightNumber, List<Date> departureDateList, Duration duration, Date endDate, int frequency);
+    // public  long createFlightSchedulePlan(ScheduleType type, String flightNumber, List<Date> departureDateList, Duration duration, Date endDate, int frequency);
 
     
 }

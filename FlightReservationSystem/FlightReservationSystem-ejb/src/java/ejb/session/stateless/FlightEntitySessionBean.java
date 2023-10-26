@@ -51,27 +51,5 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanLocal {
         flight.setFlightNumber(newFlightNumber);
         return flight.getId();
     }
-    
-    @Override
-    public long updateFlightEnabled(long id, boolean enabled) {
-        Flight flight = this.getFlightById(id);
-        flight.setEnabled(enabled);
-        return flight.getId();
-    }
-    
-    // remember to ensure that we do this properly 
-    @Override
-    public long updateFlightCustomers(long id, List<Long> newCustomerList) {
-        Flight flight = this.getFlightById(id);
-        flight.setCustomersUIDList(newCustomerList);
-        return flight.getId();
-    }
-    
-    @Override
-    public long udpateFlightIsOneWay(long id, boolean isOneWay) {
-        Flight flight = this.getFlightById(id);
-        flight.setIsOneWay(isOneWay);
-        return flight.getId();
-    }
 
 }
