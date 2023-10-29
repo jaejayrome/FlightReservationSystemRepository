@@ -27,8 +27,8 @@ public class MultipleFlightSchedulePlan extends FlightSchedulePlan implements Se
         super();
     }
 
-    public MultipleFlightSchedulePlan(Flight flight, FlightSchedulePlanStatus status) {
-        super(flight, status);
+    public MultipleFlightSchedulePlan(FlightSchedulePlanStatus status) {
+        super(status);
     }
 
     public Long getId() {

@@ -48,8 +48,8 @@ public class RoutePlannerUseCase {
             Airport originAirport = airports.stream().filter(x -> x.getIataAirportCode().equals(origin)).findFirst().get();
             Airport destinationAirport = airports.stream().filter(x -> x.getIataAirportCode().equals(destination)).findFirst().get();
             // intiialised as disabled until a flight has been added
-            FlightRoute flightRoute = new FlightRoute(originAirport, destinationAirport, FlightRouteStatus.DISABLED);
-            routePlannerUseCaseSessionBeanRemote.createNewFlightRoute(flightRoute);
+            FlightRoute flightRoute = new FlightRoute(FlightRouteStatus.DISABLED);
+            routePlannerUseCaseSessionBeanRemote.createNewFlightRoute(originAirport, destinationAirport, flightRoute);
         }
     }
     

@@ -5,6 +5,8 @@
 package ejb.session.stateless;
 
 import entity.FlightSchedulePlan;
+import java.util.ArrayList;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -25,14 +27,20 @@ public class FlightSchedulePlanEntitySessionBean implements FlightSchedulePlanEn
     // need to throw excpetiosn to catch the base case 
     // should also do the association before peristing into the database 
     @Override
-    public long createFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) {
+    public FlightSchedulePlan createFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) {
         em.persist(flightSchedulePlan);
         em.flush();
-        return flightSchedulePlan.getId();
+        return flightSchedulePlan;
     }
     
-//    @Override
-//    public FlightSchedulePlan viewFlightSchedulePlanDetails() {
-//        
-//    }
+    @Override
+    public List<FlightSchedulePlan> viewAllFlightSchedulePlan() {
+        List<FlightSchedulePlan> list = new ArrayList<FlightSchedulePlan>();
+        list.addAll(em.createQuery("SELECT flightSchedulePlan FROM SingleFlightSchedulePlan").getResultList());
+        list.addAll(em.createQuery("SELECT flightSchedulePlan FROM MultipleFlightSchedulePlan").getResultList());
+        list.addAll(em.createQuery("SELECT flightSchedulePlan FROM RecurrentFlightSchedulePlan").getResultList());
+        list.addAll(em.createQuery("SELECT flightSchedulePlan FROM RecurrentWeeklyFlightSchedulePlan").getResultList());
+        return list;
+    }
+
 }

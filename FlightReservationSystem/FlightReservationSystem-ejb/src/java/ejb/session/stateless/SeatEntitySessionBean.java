@@ -4,7 +4,7 @@
  */
 package ejb.session.stateless;
 
-import entity.FlightSchedule;
+import entity.Seat;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -14,20 +14,18 @@ import javax.persistence.PersistenceContext;
  * @author jeromegoh
  */
 @Stateless
-public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySessionBeanLocal {
+public class SeatEntitySessionBean implements SeatEntitySessionBeanLocal {
 
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager em;
-    
-    @Override
-    public FlightSchedule createFlightSchedule(FlightSchedule flightSchedule) {
-        em.persist(flightSchedule);
-        em.flush();
-        
-        return flightSchedule;
-    }
-    
 
     
+   @Override
+   public long createSeat(Seat seat) {
+        em.persist(seat);
+        em.flush();
+        return seat.getId();
+   }
+
 
 }

@@ -36,8 +36,8 @@ public class RecurrentWeeklyFlightSchedulePlan extends FlightSchedulePlan implem
         super();
     }
 
-    public RecurrentWeeklyFlightSchedulePlan(Flight flight, FlightSchedulePlanStatus status, Date endDate) {
-        super(flight, status);
+    public RecurrentWeeklyFlightSchedulePlan(FlightSchedulePlanStatus status, Date endDate) {
+        super(status);
         this.endDate = endDate;
         this.frequency = new BigDecimal(7);
     }

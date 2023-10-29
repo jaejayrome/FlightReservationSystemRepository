@@ -24,11 +24,11 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
     private EntityManager em;
 
     @Override
-    public long createFlightRoute(FlightRoute flightRoute) {
+    public FlightRoute createFlightRoute(FlightRoute flightRoute) {
         em.persist(flightRoute);
         em.flush();
         // missing associatation with flight Route and flight
-        return flightRoute.getId();
+        return flightRoute;
     }
     
     // never check for exceptions yet
@@ -43,10 +43,10 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
     }
     
     @Override
-    public FlightRoute getFlightRouteByCityName(String originCity, String destinationCity) {
-        return (FlightRoute)em.createQuery("SELECT flightRoute FROM FlightRoute flightRoute WHERE flightRoute.origin = :originCity AND flightRoute.destination = :destinationCity")
-                             .setParameter("originCity", originCity)
-                             .setParameter("destinationCity", destinationCity)
+    public FlightRoute getFlightRouteByCityName(String originAiport, String destinationAiport) {
+        return (FlightRoute)em.createQuery("SELECT flightRoute FROM FlightRoute flightRoute WHERE flightRoute.origin.iataAirportCode = :originAiport AND flightRoute.destination.iataAirportCode = :destinationAiport")
+                             .setParameter("originAiport", originAiport)
+                             .setParameter("destinationAirport", destinationAiport)
                              .getSingleResult();
     }
     

@@ -5,6 +5,7 @@
 package ejb.session.stateless;
 
 import entity.FlightSchedulePlan;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -13,5 +14,6 @@ import javax.ejb.Local;
  */
 @Local
 public interface FlightSchedulePlanEntitySessionBeanLocal {
-    public long createFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan);
+    public FlightSchedulePlan createFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan);
+    public List<FlightSchedulePlan> viewAllFlightSchedulePlan();
 }

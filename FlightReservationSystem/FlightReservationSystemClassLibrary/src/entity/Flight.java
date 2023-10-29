@@ -52,11 +52,9 @@ public class Flight implements Serializable {
     public Flight() {
     }
 
-    public Flight(String flightNumber, FlightStatus status, AircraftConfiguration aircraftConfiguration, FlightRoute flightRoute) {
+    public Flight(String flightNumber, FlightStatus status) {
         this.flightNumber = flightNumber;
         this.status = status;
-        this.aircraftConfiguration = aircraftConfiguration;
-        this.flightRoute = flightRoute;
         this.flightSchedulePlanList = new ArrayList<FlightSchedulePlan>();
     }
     

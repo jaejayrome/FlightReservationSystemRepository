@@ -30,12 +30,17 @@ import util.exception.SeatLimitExceedException;
 public class FleetManagerUseCaseSessionBean implements FleetManagerUseCaseSessionBeanRemote, FleetManagerUseCaseSessionBeanLocal {
 
     @EJB
+    private SeatEntitySessionBeanLocal seatEntitySessionBean;
+
+    @EJB
     private CabinClassEntitySessionBeanLocal cabinClassEntitySessionBean;
     @EJB
     private AircraftConfigurationEntitySessionBeanLocal aircraftConfigurationEntitySessionBean;
     
     @EJB
     private AircraftTypeEntitySessionBeanLocal aircraftTypeEntitySessionBean;
+    
+    
     
     @Resource
     private EJBContext ejbContext;
@@ -115,7 +120,10 @@ public class FleetManagerUseCaseSessionBean implements FleetManagerUseCaseSessio
                 stringBuilder.append(i + alphabet);
                 counter +=1;
                 // creating the seat, associate seat with cabin class
-                Seat seat = new Seat(stringBuilder.toString(), SeatStatus.AVAILABLE, cabinClass);
+                Seat seat = new Seat(stringBuilder.toString(), SeatStatus.AVAILABLE);
+                seatEntitySessionBean.createSeat(seat);
+                // association seat -> cabinClass
+                seat.setCabinClass(cabinClass);
                 seatingList.add(seat);
             }
         }

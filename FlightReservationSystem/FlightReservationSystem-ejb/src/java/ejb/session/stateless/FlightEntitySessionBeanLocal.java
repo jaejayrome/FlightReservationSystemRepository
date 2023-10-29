@@ -19,4 +19,5 @@ public interface FlightEntitySessionBeanLocal {
     public Flight getFlightById(long id);
     public long getIdByFlightNumber(String flightNumber);
     public long updateFlightNumber(long id, String newFlightNumber);
+    public Flight checkReturnFlight(String orignCity, String destinationCity);
 }

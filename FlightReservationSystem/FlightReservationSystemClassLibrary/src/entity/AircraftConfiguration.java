@@ -52,9 +52,8 @@ public class AircraftConfiguration implements Serializable {
     public AircraftConfiguration() {
     }
 
-    public AircraftConfiguration(String configurationName, AircraftType aircraftType, BigDecimal numCabinClass) {
+    public AircraftConfiguration(String configurationName, BigDecimal numCabinClass) {
         this.configurationName = configurationName;
-        this.aircraftType = aircraftType;
         this.numCabinClass = numCabinClass;
         this.cabinClassList = new ArrayList<CabinClass>();
         this.flightList = new ArrayList<Flight>();

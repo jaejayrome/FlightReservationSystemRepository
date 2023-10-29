@@ -16,7 +16,7 @@ import javax.ejb.Local;
  */
 @Local
 public interface RoutePlannerUseCaseSessionBeanLocal {
-    public long createNewFlightRoute(FlightRoute flightRoute);
+    public long createNewFlightRoute(Airport originAirport, Airport destinationAirport, FlightRoute flightRoute);
     public List<FlightRoute> viewAllFlightRoute();
     public List<Airport> getAllAirport();
 }
