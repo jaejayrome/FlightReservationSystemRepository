@@ -5,6 +5,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
@@ -30,7 +31,7 @@ public class FlightBooking implements Serializable {
     private Long id;
     
     @Column(nullable = false)
-    private String fareBasisCode;
+    private BigDecimal passengerPrice;
     
     @Column(nullable = false)
     private String flightNumber;
@@ -48,15 +49,14 @@ public class FlightBooking implements Serializable {
     private FlightReservation flightReservation;
 
     // constructor 
-    
     public FlightBooking() {
     }
 
-    public FlightBooking(String fareBasisCode, String flightNumber, FlightSchedule flightSchedule) {
-        this.fareBasisCode = fareBasisCode;
+    public FlightBooking(String fareBasisCode, String flightNumber, FlightSchedule flightSchedule, BigDecimal passengerPrice) {
         this.flightNumber = flightNumber;
         this.reservedSeats = new ArrayList<Seat>();
         this.flightSchedule = flightSchedule;
+        this.passengerPrice = passengerPrice;
     }
     
     // getters and setter
@@ -68,12 +68,12 @@ public class FlightBooking implements Serializable {
         this.flightReservation = flightReservation;
     }
 
-    public String getFareBasisCode() {
-        return fareBasisCode;
+    public BigDecimal getPassengerPrice() {
+        return passengerPrice;
     }
 
-    public void setFareBasisCode(String fareBasisCode) {
-        this.fareBasisCode = fareBasisCode;
+    public void setPassengerPrice(BigDecimal passengerPrice) {
+        this.passengerPrice = passengerPrice;
     }
 
     public String getFlightNumber() {

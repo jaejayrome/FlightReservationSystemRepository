@@ -62,7 +62,7 @@ public class CabinClass implements Serializable {
     // careful! this must be optional because we can create one w/o having a flight assigned to it 
     @ManyToOne (optional = true)
     @JoinColumn (nullable = true)
-    private FlightSchedulePlan flightSchedulePlan;
+    private FlightSchedule flightSchedule;
     
     // constructors
     public CabinClass() {
@@ -84,12 +84,12 @@ public class CabinClass implements Serializable {
     
      // getters and settters
 
-    public FlightSchedulePlan getFlightSchedulePlan() {
-        return flightSchedulePlan;
+    public FlightSchedule getFlightSchedule() {
+        return flightSchedule;
     }
 
-    public void setFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) {
-        this.flightSchedulePlan = flightSchedulePlan;
+    public void setFlightSchedule(FlightSchedule flightSchedule) {
+        this.flightSchedule = flightSchedule;
     }
 
     public List<Seat> getSeatList() {

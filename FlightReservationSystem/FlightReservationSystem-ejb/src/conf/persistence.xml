@@ -17,6 +17,10 @@
     <class>entity.Customer</class>
     <class>entity.FlightReservation</class>
     <class>entity.FlightBooking</class>
+    <class>entity.SingleFlightSchedulePlan</class>
+    <class>entity.MultipleFlightSchedulePlan</class>
+    <class>entity.RecurrentFlightSchedulePlan</class>
+    <class>entity.RecurrentWeeklyFlightSchedulePlan</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

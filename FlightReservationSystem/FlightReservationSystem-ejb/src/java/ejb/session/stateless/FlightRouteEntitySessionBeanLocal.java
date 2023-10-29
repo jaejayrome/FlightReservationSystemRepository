@@ -18,4 +18,5 @@ public interface FlightRouteEntitySessionBeanLocal {
     public List<FlightRoute> getAllFlightRoutes();
     public FlightRoute getFlightRouteById(long id);
     public FlightRoute deleteFlightRoute(long id);
+    public FlightRoute getFlightRouteByCityName(String originCity, String destinationCity);
 }

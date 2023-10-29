@@ -11,6 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import util.enumerations.EmploymentType;
 import util.enumerations.GenderType;
 import util.enumerations.JobTitle;
@@ -27,7 +29,11 @@ public class Employee implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(nullable = false)
+    // bean validation
+    // database validation 
+    @Column(nullable = false, length = 64)
+    @NotNull
+    @Size(min = 1, max = 64)
     private String firstName; 
     
     @Column(nullable = false)

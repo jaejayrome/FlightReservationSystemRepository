@@ -4,6 +4,11 @@
  */
 package ejb.session.stateless;
 
+import entity.Fare;
+import entity.Flight;
+import java.time.Duration;
+import java.util.Date;
+import java.util.List;
 import javax.ejb.Remote;
 
 /**
@@ -12,5 +17,8 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface ScheduleManagerUseCaseSessionBeanRemote {
-    
+    public boolean createNewFlight(String flightNumber, String configurationName, String originCity, String destinationCity);
+    public List<Flight> viewAllFlights();
+    public Flight viewSpecificFlightDetails(String flightNumber);
+    public boolean createNewFlightSchedulePlan(List<Date> departureDateList, Duration duration, Date endDate, int frequency, List<List<Fare>> faresForCabinClassList);
 }

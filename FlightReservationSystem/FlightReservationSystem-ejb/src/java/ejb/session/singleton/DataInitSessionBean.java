@@ -9,6 +9,7 @@ import javax.annotation.PostConstruct;
 import ejb.session.stateless.AirportEntitySessionBeanLocal;
 import ejb.session.stateless.EmployeeEntitySessionBeanLocal;
 import ejb.session.stateless.PartnerEntitySessionBeanLocal;
+import entity.Employee;
 import java.math.BigDecimal;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -49,15 +50,16 @@ public class DataInitSessionBean  {
             checkDatabaseInitialised();
         } catch (InitialDatabaseException exception) {
             initialiseData();
+            System.out.println(exception.getMessage());
         }
     }
-    
+    // 
     public void checkDatabaseInitialised() throws InitialDatabaseException{
         // there's an issue i don't know why which is when i delete the entire database
         // i would have to load the schema once so basically not run the intiialise data portion
         // then i run it once more with the test data
         try {
-            employeeEntitySessionBeanLocal.retrieveEmployeeById(1l);
+            Employee employee = employeeEntitySessionBeanLocal.retrieveEmployeeById(1l);
         } catch (EmployeeNotFoundException exception) {
             throw new InitialDatabaseException("Database has not been seeded yet!");
         }
