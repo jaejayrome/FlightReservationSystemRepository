@@ -7,12 +7,13 @@ package entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import util.enumerations.ScheduleType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -23,16 +24,14 @@ import util.enumerations.FlightSchedulePlanStatus;
  * @author jeromegoh
  */
 @Entity
-public class FlightSchedulePlan implements Serializable {
+@Inheritance(strategy= InheritanceType.JOINED)
+public abstract class FlightSchedulePlan implements Serializable {
     
     // attributes
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column(nullable = false)
-    private ScheduleType scheduleType;
     
     @Column(nullable = false)
     private FlightSchedulePlanStatus status;
@@ -45,9 +44,7 @@ public class FlightSchedulePlan implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Flight flight;
-    
-    @OneToMany(mappedBy = "flightSchedulePlan")
-    private List<CabinClass> cabinClassList;
+
     
     @OneToMany(mappedBy= "flightSchedulePlan")
     private List<FlightSchedule> flightScheduleList;
@@ -56,12 +53,12 @@ public class FlightSchedulePlan implements Serializable {
     public FlightSchedulePlan() {
     }
 
-    public FlightSchedulePlan(ScheduleType scheduleType, Flight flight, FlightSchedulePlanStatus status, String flightNumber) {
-        this.scheduleType = scheduleType;
+    public FlightSchedulePlan(Flight flight, FlightSchedulePlanStatus status) {
+//        this.scheduleType = scheduleType;
         this.flight = flight; 
         this.status = status;
-        this.flightNumber = flightNumber;
-        this.cabinClassList = new ArrayList<CabinClass>();
+//        this.flightNumber = flightNumber;
+        // this.cabinClassList = new ArrayList<CabinClass>();
         this.flightScheduleList = new ArrayList<FlightSchedule>();
     }
     
@@ -73,24 +70,6 @@ public class FlightSchedulePlan implements Serializable {
 
     public void setStatus(FlightSchedulePlanStatus status) {
         this.status = status;
-    }
-
-    public String getFlightNumber() {
-        return flightNumber;
-    }
-
-    public void setFlightNumber(String flightNumber) {
-        this.flightNumber = flightNumber;
-    }
-    
-    
-
-    public List<CabinClass> getCabinClassList() {
-        return cabinClassList;
-    }
-
-    public void setCabinClassList(List<CabinClass> cabinClassList) {
-        this.cabinClassList = cabinClassList;
     }
     
     public List<FlightSchedule> getFlightScheduleList() {
@@ -108,15 +87,6 @@ public class FlightSchedulePlan implements Serializable {
     public void setFlight(Flight flight) {
         this.flight = flight;
     }
-
-    public ScheduleType getScheduleType() {
-        return scheduleType;
-    }
-
-    public void setScheduleType(ScheduleType scheduleType) {
-        this.scheduleType = scheduleType;
-    }
-    
     
     public Long getId() {
         return id;

@@ -134,7 +134,8 @@ public class RunApp {
                 System.out.print("> ");
                 System.out.println(" ");
                 System.out.println("-------------------------------");
-                FleetManagerUseCase fleetManagerUseCase = new FleetManagerUseCase(fleetManagerUseCaseSessionBean, this.currentEmployee);
+                System.out.println("am i null " + (fleetManagerUseCaseSessionBean == null));
+                FleetManagerUseCase fleetManagerUseCase = new FleetManagerUseCase(this.fleetManagerUseCaseSessionBean, this.currentEmployee);
                 switch (scanner.nextInt()) {
                     case 0: 
                         doLogout(scanner);
@@ -170,7 +171,7 @@ public class RunApp {
                         doLogout(scanner);
                         break;
                     case 1: 
-//                         routerPlannerUseCase.createFlightRoute();
+                         routerPlannerUseCase.createFlightRoute();
                     case 2: 
                         routerPlannerUseCase.viewAllFlightRoutes();
                         break;

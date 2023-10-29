@@ -7,12 +7,9 @@ package ejb.session.stateless;
 import entity.Employee;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import util.enumerations.EmploymentType;
@@ -57,11 +54,13 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanLocal
     }
     
 //    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public Employee retrieveEmployeeById(long id) throws EmployeeNotFoundException {
+    
+    public Employee retrieveEmployeeById(long id) throws EmployeeNotFoundException{
         Employee employee = em.find(Employee.class, id, this.props);
         if (employee == null) {
             ejbContext.setRollbackOnly();
             throw new EmployeeNotFoundException("Employee has not been found yet!");
+//            return null;
         } else {
             return employee;
         }
@@ -74,11 +73,11 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanLocal
                 .setParameter("username", username)
                 .getSingleResult();
         if (employee == null) {
-            ejbContext.setRollbackOnly();
-            throw new InvalidLoginCredentialsException("Your have entered an invalid username!");
+             ejbContext.setRollbackOnly();
+             throw new InvalidLoginCredentialsException("Your have entered an invalid username!");
         } else if (!employee.getLoginPassword().equals(password)) {
-            ejbContext.setRollbackOnly();
-            throw new InvalidLoginCredentialsException("You have entered an invalid password!");
+             ejbContext.setRollbackOnly();
+             throw new InvalidLoginCredentialsException("You have entered an invalid password!");
         } else {
             employee.setIsLoggedIn(true);
             return employee;

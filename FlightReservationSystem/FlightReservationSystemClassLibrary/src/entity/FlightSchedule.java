@@ -37,41 +37,39 @@ public class FlightSchedule implements Serializable {
     private Duration flightDuration;
     @Column(nullable = false)
     private Date arrivalTime;
-    @Column(nullable = false)
-    private Date endDate;
-    @Column(nullable = false)
-    private BigDecimal frequency;
-    
+//    @Column(nullable = false)
+//    private Date endDate;
+//    @Column(nullable = false)
+//    private BigDecimal frequency;
+//    
     // relationships
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private FlightSchedulePlan flightSchedulePlan;
     
-    @OneToMany(mappedBy="flightSchedule")
-    private List<FlightBooking> flightBookingList;
+    @OneToMany (mappedBy = "flightSchedule")
+    private List<CabinClass> cabinClassList;
     // constructors
+    
 
     public FlightSchedule() {
     }
 
-    public FlightSchedule(Date departureTime, Duration flightDuration, Date arrivalTime, Date endDate, BigDecimal frequency, FlightSchedulePlan flightSchedulePlan) {
+    public FlightSchedule(Date departureTime, Duration flightDuration, Date arrivalTime, FlightSchedulePlan flightSchedulePlan) {
         this.departureTime = departureTime;
         this.flightDuration = flightDuration;
         this.arrivalTime = arrivalTime;
-        this.endDate = endDate;
-        this.frequency = frequency;
         this.flightSchedulePlan = flightSchedulePlan;
-        this.flightBookingList = new ArrayList<FlightBooking>();
+        this.cabinClassList = new ArrayList<CabinClass>();
     }
     
     // getters and setters
-
-    public List<FlightBooking> getFlightBookingList() {
-        return flightBookingList;
+    public List<CabinClass> getCabinClassList() {
+        return cabinClassList;
     }
 
-    public void setFlightBookingList(List<FlightBooking> flightBookingList) {
-        this.flightBookingList = flightBookingList;
+    public void setCabinClassList(List<CabinClass> cabinClassList) {
+        this.cabinClassList = cabinClassList;
     }
 
     public FlightSchedulePlan getFlightSchedulePlan() {
@@ -82,21 +80,21 @@ public class FlightSchedule implements Serializable {
         this.flightSchedulePlan = flightSchedulePlan;
     }
 
-    public Date getEndDate() {    
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-
-    public BigDecimal getFrequency() {
-        return frequency;
-    }
-    
-    public void setFrequency(BigDecimal frequency) {
-        this.frequency = frequency;
-    }
+//    public Date getEndDate() {    
+//        return endDate;
+//    }
+//
+//    public void setEndDate(Date endDate) {
+//        this.endDate = endDate;
+//    }
+//
+//    public BigDecimal getFrequency() {
+//        return frequency;
+//    }
+//    
+//    public void setFrequency(BigDecimal frequency) {
+//        this.frequency = frequency;
+//    }
 
     public Date getDepartureTime() {
         return departureTime;

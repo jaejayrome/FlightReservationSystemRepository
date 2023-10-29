@@ -42,6 +42,14 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
         return em.createQuery("SELECT flightroute FROM FlightRoute flightroute").getResultList();
     }
     
+    @Override
+    public FlightRoute getFlightRouteByCityName(String originCity, String destinationCity) {
+        return (FlightRoute)em.createQuery("SELECT flightRoute FROM FlightRoute flightRoute WHERE flightRoute.origin = :originCity AND flightRoute.destination = :destinationCity")
+                             .setParameter("originCity", originCity)
+                             .setParameter("destinationCity", destinationCity)
+                             .getSingleResult();
+    }
+    
     public FlightRoute deleteFlightRoute(long id) {
         FlightRoute flightRoute = this.getFlightRouteById(id);
         // delete need to be careful about the associations

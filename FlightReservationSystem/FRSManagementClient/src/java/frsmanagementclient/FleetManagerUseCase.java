@@ -9,9 +9,11 @@ import entity.AircraftConfiguration;
 import entity.AircraftType;
 import entity.Employee;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 import util.enumerations.CabinClassType;
 import util.enumerations.JobTitle;
 
@@ -20,6 +22,7 @@ import util.enumerations.JobTitle;
  * @author jeromegoh
  */
 public class FleetManagerUseCase {
+    
     private FleetManagerUseCaseSessionBeanRemote fleetManagerUseCaseSessionBeanRemote;
     private Employee currentEmployee;
     private List<AircraftType> aircraftTypeList;
@@ -70,7 +73,13 @@ public class FleetManagerUseCase {
     public void viewAllAircraftConfiguration() {
           List<AircraftConfiguration> aircraftConfigurations= fleetManagerUseCaseSessionBeanRemote.viewAllAircraftConfiguration();
           int counter = 1;
-          for (AircraftConfiguration aircraftConfiguration : aircraftConfigurations) {
+          Comparator<AircraftConfiguration> comparator = (x, y) -> x.getAircraftType().getAircraftTypeName().name().compareTo(y.getAircraftType().getAircraftTypeName().name()) == 0 ? 
+                                                                x.getConfigurationName().compareTo(y.getConfigurationName()) 
+                                                                : x.getAircraftType().getAircraftTypeName().name().compareTo(y.getAircraftType().getAircraftTypeName().name());
+          // ensures that list is sorted in accordance to the configuration name and the type
+          List <AircraftConfiguration> sortedList = aircraftConfigurations.stream().sorted(comparator).collect(Collectors.toList());
+          
+          for (AircraftConfiguration aircraftConfiguration : sortedList) {
                     printSingleAircraftConfiguration(aircraftConfiguration, counter);
                     counter+=1;                
           }
