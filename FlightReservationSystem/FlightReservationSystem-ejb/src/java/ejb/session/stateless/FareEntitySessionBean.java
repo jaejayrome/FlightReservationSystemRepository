@@ -4,7 +4,10 @@
  */
 package ejb.session.stateless;
 
+import entity.Fare;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  *
@@ -13,6 +16,15 @@ import javax.ejb.Stateless;
 @Stateless
 public class FareEntitySessionBean implements FareEntitySessionBeanLocal {
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
+    private EntityManager em;
+    
+    @Override
+    public long createFare(Fare fare) {
+        em.persist(fare);
+        em.flush();
+        return fare.getId();
+    }
+
+    
 }

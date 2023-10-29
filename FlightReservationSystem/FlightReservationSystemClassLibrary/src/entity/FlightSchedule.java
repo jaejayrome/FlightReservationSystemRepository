@@ -55,11 +55,10 @@ public class FlightSchedule implements Serializable {
     public FlightSchedule() {
     }
 
-    public FlightSchedule(Date departureTime, Duration flightDuration, Date arrivalTime, FlightSchedulePlan flightSchedulePlan) {
+    public FlightSchedule(Date departureTime, Duration flightDuration, Date arrivalTime) {
         this.departureTime = departureTime;
         this.flightDuration = flightDuration;
         this.arrivalTime = arrivalTime;
-        this.flightSchedulePlan = flightSchedulePlan;
         this.cabinClassList = new ArrayList<CabinClass>();
     }
     

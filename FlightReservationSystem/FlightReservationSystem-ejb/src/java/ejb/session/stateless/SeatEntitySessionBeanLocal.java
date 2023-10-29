@@ -4,8 +4,7 @@
  */
 package ejb.session.stateless;
 
-import entity.Airport;
-import java.util.List;
+import entity.Seat;
 import javax.ejb.Local;
 
 /**
@@ -13,7 +12,6 @@ import javax.ejb.Local;
  * @author jeromegoh
  */
 @Local
-public interface AirportEntitySessionBeanLocal {
-    public Airport createNewAirport(String airportName, String iataAirportCode, String city, String state, String country);
-    public List<Airport> getAllAirports();
+public interface SeatEntitySessionBeanLocal {
+    public long createSeat(Seat seat);
 }

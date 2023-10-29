@@ -44,10 +44,9 @@ public class Seat implements Serializable {
     }
     
 
-    public Seat(String seatNumber, SeatStatus seatStatus, CabinClass cabinClass) {
+    public Seat(String seatNumber, SeatStatus seatStatus) {
         this.seatNumber = seatNumber;
         this.seatStatus = seatStatus;
-        this.cabinClass = cabinClass;
     }
     
     // getters and setters

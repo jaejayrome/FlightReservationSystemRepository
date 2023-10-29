@@ -53,12 +53,9 @@ public abstract class FlightSchedulePlan implements Serializable {
     public FlightSchedulePlan() {
     }
 
-    public FlightSchedulePlan(Flight flight, FlightSchedulePlanStatus status) {
-//        this.scheduleType = scheduleType;
+    public FlightSchedulePlan(FlightSchedulePlanStatus status) {
         this.flight = flight; 
         this.status = status;
-//        this.flightNumber = flightNumber;
-        // this.cabinClassList = new ArrayList<CabinClass>();
         this.flightScheduleList = new ArrayList<FlightSchedule>();
     }
     

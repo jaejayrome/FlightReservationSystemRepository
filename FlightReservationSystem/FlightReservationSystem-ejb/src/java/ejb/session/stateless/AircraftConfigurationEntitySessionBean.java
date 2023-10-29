@@ -41,10 +41,17 @@ public class AircraftConfigurationEntitySessionBean implements AircraftConfigura
     @Override
     public long createNewAircraftConfiguration(AircraftType aircraftType, String configurationName, List<CabinClass> cabinClassList) {
         BigDecimal numCabinClass = new BigDecimal(cabinClassList.size());
-        AircraftConfiguration aircraftConfiguration = new AircraftConfiguration(configurationName, aircraftType, numCabinClass);
+        AircraftConfiguration aircraftConfiguration = new AircraftConfiguration(configurationName, numCabinClass);
+        em.persist(aircraftConfiguration);
+        em.flush();
+        
         // associating aircraftType with aircraftConfiguration
         int init = aircraftType.getAircraftConfigurations().size();
         aircraftType.getAircraftConfigurations().add(aircraftConfiguration);
+        
+        // association: aircraftConfiguration -> aircraftType 
+        aircraftConfiguration.setAircraftType(aircraftType);
+        
         // associating aircraftConfiguraiton with cabin class
         int initialise = aircraftConfiguration.getCabinClassList().size();
         List<CabinClass> existingList = aircraftConfiguration.getCabinClassList();
@@ -55,8 +62,7 @@ public class AircraftConfigurationEntitySessionBean implements AircraftConfigura
             int initAgain = cabinClass.getAircraftConfigurationList().size();
             cabinClass.getAircraftConfigurationList().add(aircraftConfiguration);
         });
-        em.persist(aircraftConfiguration);
-        em.flush();
+
         return aircraftConfiguration.getId();
     }
     

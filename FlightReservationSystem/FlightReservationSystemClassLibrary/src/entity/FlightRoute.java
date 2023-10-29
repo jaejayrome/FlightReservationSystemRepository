@@ -48,9 +48,7 @@ public class FlightRoute implements Serializable {
     public FlightRoute() {
     }
 
-    public FlightRoute(Airport origin, Airport destination, FlightRouteStatus flightRouteStatus) {
-        this.origin = origin;
-        this.destination = destination;
+    public FlightRoute(FlightRouteStatus flightRouteStatus) {
         this.flightRouteStatus = flightRouteStatus;
         this.flightList = new ArrayList<Flight>();
     }

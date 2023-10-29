@@ -28,8 +28,11 @@ public class RoutePlannerUseCaseSessionBean implements RoutePlannerUseCaseSessio
     }
     
     @Override
-    public long createNewFlightRoute(FlightRoute flightRoute) {
-        return flightRouteEntitySessionBean.createFlightRoute(flightRoute);
+    public long createNewFlightRoute(Airport originAirport, Airport destinationAirport, FlightRoute flightRoute) {
+        FlightRoute persistedFlightRoute = flightRouteEntitySessionBean.createFlightRoute(flightRoute);
+        flightRoute.setOrigin(originAirport);
+        flightRoute.setDestination(destinationAirport);
+        return persistedFlightRoute.getId();
     }
     
     @Override
