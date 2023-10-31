@@ -8,6 +8,7 @@ import entity.AircraftConfiguration;
 import entity.AircraftType;
 import java.util.List;
 import javax.ejb.Local;
+import util.enumerations.AircraftTypeName;
 import util.enumerations.CabinClassType;
 import util.enumerations.JobTitle;
 
@@ -18,7 +19,7 @@ import util.enumerations.JobTitle;
 @Local
 public interface FleetManagerUseCaseSessionBeanLocal {
     public List<AircraftType> getAllAircraftTypes();
-    public long createAircraftConfigurationForFleetManager(JobTitle jobTitle, String aircraftTypeString, String configurationName, List<CabinClassType> cabinClassNameList, List<Integer> numAislesList, List<Integer> numRowsList, List<Integer> numSeatsAbreastList, List<String> seatingConfigurationList);
+    public long createAircraftConfigurationForFleetManager(JobTitle jobTitle, AircraftTypeName aircraftTypeName, String configurationName, List<CabinClassType> cabinClassNameList, List<Integer> numAislesList, List<Integer> numRowsList, List<Integer> numSeatsAbreastList, List<String> seatingConfigurationList);
     public List<AircraftConfiguration> viewAllAircraftConfiguration();
     public AircraftConfiguration viewAircraftConfigurationDetails(String configurationName);
 }

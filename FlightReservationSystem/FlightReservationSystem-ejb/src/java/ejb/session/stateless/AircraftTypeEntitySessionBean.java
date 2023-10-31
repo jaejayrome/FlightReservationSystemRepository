@@ -39,12 +39,10 @@ public class AircraftTypeEntitySessionBean implements AircraftTypeEntitySessionB
     }
     
     @Override
-    public AircraftType getAircraftTypeFromName(String name) {
-        String[] splittedName = name.split(" ");
-        String enumName = splittedName[0].toUpperCase() + "_" + splittedName[1].toUpperCase();
+    public AircraftType getAircraftTypeFromName(AircraftTypeName aircraftTypeName) {
         String query = "SELECT a FROM AircraftType a WHERE a.aircraftTypeName = :name";
          AircraftType aircraftType =(AircraftType) em.createQuery(query)
-          .setParameter("name", AircraftTypeName.valueOf(enumName))
+          .setParameter("name", aircraftTypeName)
           .getSingleResult();
         return aircraftType;
     }

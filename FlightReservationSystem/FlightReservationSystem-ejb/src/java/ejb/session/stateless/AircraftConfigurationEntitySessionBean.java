@@ -14,6 +14,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import util.enumerations.AircraftTypeName;
 
 /**
  *
@@ -42,15 +43,16 @@ public class AircraftConfigurationEntitySessionBean implements AircraftConfigura
     public long createNewAircraftConfiguration(AircraftType aircraftType, String configurationName, List<CabinClass> cabinClassList) {
         BigDecimal numCabinClass = new BigDecimal(cabinClassList.size());
         AircraftConfiguration aircraftConfiguration = new AircraftConfiguration(configurationName, numCabinClass);
+        // mandatory relationships
+         // association: aircraftConfiguration -> aircraftType 
+         
+        aircraftConfiguration.setAircraftType(aircraftType);
         em.persist(aircraftConfiguration);
         em.flush();
         
         // associating aircraftType with aircraftConfiguration
         int init = aircraftType.getAircraftConfigurations().size();
         aircraftType.getAircraftConfigurations().add(aircraftConfiguration);
-        
-        // association: aircraftConfiguration -> aircraftType 
-        aircraftConfiguration.setAircraftType(aircraftType);
         
         // associating aircraftConfiguraiton with cabin class
         int initialise = aircraftConfiguration.getCabinClassList().size();
@@ -67,7 +69,7 @@ public class AircraftConfigurationEntitySessionBean implements AircraftConfigura
     }
     
     @Override
-    public List<AircraftConfiguration> getAllAircraftConfigurationPerAircraftType(String aircraftTypeName) {
+    public List<AircraftConfiguration> getAllAircraftConfigurationPerAircraftType(AircraftTypeName aircraftTypeName) {
         AircraftType aircraftType = aircraftTypeEntitySessionBean.getAircraftTypeFromName(aircraftTypeName);
         if (aircraftType != null) {
             return aircraftType.getAircraftConfigurations();
