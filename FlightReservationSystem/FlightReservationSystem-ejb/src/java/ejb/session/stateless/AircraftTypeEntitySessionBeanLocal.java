@@ -17,6 +17,6 @@ import util.enumerations.AircraftTypeName;
 @Local
 public interface AircraftTypeEntitySessionBeanLocal {
     public long createNewAircraftType(AircraftTypeName aircraftTypeName, BigDecimal passengerSeatCapacity);
-    public AircraftType getAircraftTypeFromName(String name);
+    public AircraftType getAircraftTypeFromName(AircraftTypeName aircraftTypeName);
     public List<AircraftType> getAllAircraftTypes();
 }
