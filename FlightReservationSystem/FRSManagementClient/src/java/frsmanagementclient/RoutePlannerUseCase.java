@@ -8,9 +8,11 @@ import entity.Employee;
 import ejb.session.stateless.RoutePlannerUseCaseSessionBeanRemote;
 import entity.Airport;
 import entity.FlightRoute;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import util.enumerations.FlightRouteStatus;
+import util.util.Pair;
 
 /**
  *
@@ -23,17 +25,14 @@ public class RoutePlannerUseCase {
     private Employee employee;
     private List<Airport> airports;
     private Scanner scanner;
-    
-    public RoutePlannerUseCase() {
-        this.airports = routePlannerUseCaseSessionBeanRemote.getAllAirport();
-    }
 
     public RoutePlannerUseCase(RoutePlannerUseCaseSessionBeanRemote routePlannerUseCaseSessionBeanRemote, Employee employee) {
         this.routePlannerUseCaseSessionBeanRemote = routePlannerUseCaseSessionBeanRemote;
         this.employee = employee;
+        this.airports  = routePlannerUseCaseSessionBeanRemote.getAllAirport();
         this.scanner = new Scanner(System.in);
     }
-        
+    // done
     public void createFlightRoute() {
         // print out the list of airports for the user to choose m
         if (airports.size() > 0) {
@@ -54,9 +53,22 @@ public class RoutePlannerUseCase {
     }
     
     public void viewAllFlightRoutes() {
-        List<FlightRoute> flightRoutes = routePlannerUseCaseSessionBeanRemote.viewAllFlightRoute();
+        List<Pair<FlightRoute>> flightRoutes = routePlannerUseCaseSessionBeanRemote.viewAllFlightRoute();
+         //Comparator<Pair<FlightRoute>> sortPairs = (x, y) -> x.getFirst().getOrigin().getAirportName().compareTo(y.getFirst().getOrigin().getAirportName());
+  
         if (flightRoutes.size() > 0){
-            flightRoutes.stream().forEach(flightRoute -> printSingleFlightRoute(flightRoute));
+            flightRoutes.stream().forEach(flightRoutePair -> {
+                
+                printSingleFlightRoute(flightRoutePair.getFirst());
+                printSingleFlightRoute(flightRoutePair.getSecond());
+//                if (flightRoutePair.getFirst().getOrigin().getAirportName().compareTo(flightRoutePair.getSecond().getOrigin().getAirportName()) <= 0) {
+//                    printSingleFlightRoute(flightRoutePair.getFirst());
+//                    printSingleFlightRoute(flightRoutePair.getSecond());
+//                } else {
+//                    printSingleFlightRoute(flightRoutePair.getSecond());
+//                    printSingleFlightRoute(flightRoutePair.getFirst());
+//                }
+            });
         } else {
             System.out.println("There are currently no available flight routes in the system");
         }
@@ -81,8 +93,12 @@ public class RoutePlannerUseCase {
     public void printSingleFlightRoute(FlightRoute flightRoute) {
         System.out.println("");
         System.out.println("Flight Route Information");
-        System.out.println("Flight Route Origin: " + flightRoute.getOrigin());
-        System.out.println("Flight Route Destination: " + flightRoute.getDestination());
+        System.out.println("Flight Route Origin: " + flightRoute.getOrigin().getAirportName());
+        System.out.println("Flight Route Origin: " + flightRoute.getOrigin().getIataAirportCode());
+        System.out.println("Flight Route Origin: " + flightRoute.getOrigin().getId());
+        System.out.println("Flight Route Destination: " + flightRoute.getDestination().getAirportName());
+        System.out.println("Flight Route Destination: " + flightRoute.getDestination().getId());
+        System.out.println("Flight Route Destination: " + flightRoute.getDestination().getIataAirportCode());
     }
     
 

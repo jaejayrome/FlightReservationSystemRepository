@@ -9,6 +9,7 @@ import entity.FlightRoute;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import util.util.Pair;
 
 /**
  *
@@ -36,7 +37,7 @@ public class RoutePlannerUseCaseSessionBean implements RoutePlannerUseCaseSessio
     }
     
     @Override
-    public List<FlightRoute> viewAllFlightRoute() {
+    public List<Pair<FlightRoute>> viewAllFlightRoute() {
         return flightRouteEntitySessionBean.getAllFlightRoutes();
     }
     

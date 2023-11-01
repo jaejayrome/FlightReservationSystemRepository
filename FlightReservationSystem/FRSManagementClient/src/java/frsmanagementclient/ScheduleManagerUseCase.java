@@ -31,6 +31,7 @@ import java.util.Scanner;
 import javax.ejb.EJB;
 import util.enumerations.CabinClassType;
 import util.enumerations.ScheduleType;
+import util.exception.InitialFlightNotInstantiatedException;
 
 /**
  *
@@ -38,23 +39,23 @@ import util.enumerations.ScheduleType;
  */
 public class ScheduleManagerUseCase {
     
-    @EJB
-    private ScheduleManagerUseCaseSessionBeanRemote scheduleManagerUseCaseSessionBeanRemote;
     
     private EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote;
     
     private Scanner scanner;
     
     private HashMap<Integer, ScheduleType> hashMap;
+   
+    private ScheduleManagerUseCaseSessionBeanRemote scheduleManagerUseCaseSessionBeanRemote;
     
     public ScheduleManagerUseCase() {
-     
     }
     
-    public ScheduleManagerUseCase(EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote) {
+    public ScheduleManagerUseCase(EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote, ScheduleManagerUseCaseSessionBeanRemote scheduleManagerUseCaseSessionBeanRemote) {
       this.scanner = new Scanner(System.in);
       this.employeeUseCaseSessionBeanRemote = employeeUseCaseSessionBeanRemote;
       this.hashMap = new HashMap<Integer, ScheduleType>();
+      this.scheduleManagerUseCaseSessionBeanRemote = scheduleManagerUseCaseSessionBeanRemote;
       this.initialiseMap();
     }
     
@@ -83,17 +84,26 @@ public class ScheduleManagerUseCase {
         System.out.print("> ");
         String destinationCity = scanner.next();
         
-        boolean haveReturnFlightRoute = scheduleManagerUseCaseSessionBeanRemote.createNewFlight(flightNumber, configurationName, originCity, destinationCity);
-        if (haveReturnFlightRoute) {
-            System.out.println("A Return Flight Route has been detected!");
-            System.out.println("Press '1' if you would like to create this return flight route");
-            System.out.print("> ");
-            boolean createFlight = scanner.nextInt() == 1 ? true : false;
-            if (createFlight) createFlight(configurationName, destinationCity, originCity);
-        } else {
-            System.out.println("Flight has been successfully created!");
-        }
+        System.out.println("origin IATA is " + originCity);
+        System.out.println("destination IATA is " + destinationCity);
         
+        // catch exception if there's for initial flight 
+        try {
+            boolean haveReturnFlight = scheduleManagerUseCaseSessionBeanRemote.createNewFlight(flightNumber, configurationName, originCity, destinationCity);
+            System.out.println("Flight has been successfully created!");
+            
+            if (haveReturnFlight) {
+                System.out.println("A Return Flight Route has been detected!");
+                System.out.println("Press '1' if you would like to create this return flight route");
+                System.out.print("> ");
+                boolean createFlight = scanner.nextInt() == 1 ? true : false;
+                // checks whether user would want to create this
+                if (createFlight) createFlight(configurationName, destinationCity, originCity);
+            }
+                
+        } catch (InitialFlightNotInstantiatedException e) {
+            System.out.println(e.getMessage());
+        } 
     }
     
     // used to create return flight with the same aircraft configuration
@@ -101,9 +111,13 @@ public class ScheduleManagerUseCase {
         System.out.println("Enter the Flight Number For the Return Flight");
         System.out.print("> ");
         String flightNumber = scanner.next();
-   
-        scheduleManagerUseCaseSessionBeanRemote.createNewFlight(flightNumber, configurationName, originCity, destinationCity);
-        System.out.println("Flight has been successfully created!");
+        
+        try {
+            scheduleManagerUseCaseSessionBeanRemote.createNewFlight(flightNumber, configurationName, originCity, destinationCity);
+            System.out.println("Flight has been successfully created!");
+        } catch (InitialFlightNotInstantiatedException e) {
+            System.out.println(e.getMessage());
+        } 
     }
     
     // used to view all flights
@@ -200,7 +214,7 @@ public class ScheduleManagerUseCase {
         // prompted to enter at least one fare for each 
         HashMap<CabinClassType, List<Fare>> faresForCabinClassList = new HashMap<CabinClassType, List<Fare>>();
         AircraftConfiguration airCraftConfiguration = scheduleManagerUseCaseSessionBeanRemote.viewSpecificFlightDetails(flightNumber).getAircraftConfiguration();
-        // circumvent lazy fetching
+        // circumvent lazy fetching (lazy fetching would still fail outside of the persistence context) (done)
         int init = airCraftConfiguration.getCabinClassList().size();
         List<CabinClass> cabinClassList = airCraftConfiguration.getCabinClassList();
         int cabinClassNumber = cabinClassList.size();
@@ -233,7 +247,7 @@ public class ScheduleManagerUseCase {
         // print the flight details first 
         printSpecificSingleFlight(flight);
         
-        // ask for the flight schedule that user wants
+        // ask for the flight schedule that user wants (issue might happen) here
         FlightSchedulePlan flightSchedulePlan = askForWhichFlightSchedule(flight);
         
         // print specific flight schedule plan
@@ -285,8 +299,14 @@ public class ScheduleManagerUseCase {
     
     public void printSpecificSingleFlight(Flight flight) {
         printSingleFlight(flight);
-        System.out.println("Number of Cabin Classes Available " + flight.getAircraftConfiguration().getCabinClassList().size());
+        // issue is here 
+        int init = flight.getAircraftConfiguration().getCabinClassList().size();
+        System.out.println("Number of Cabin Classes Available " + init);
         flight.getAircraftConfiguration().getCabinClassList().forEach(x -> printSingleCabinClass(x));
+        
+        
+        // need to go to it's fsp 
+        // then print multiple 
     }
     
     public void printMoreSpecific(FlightSchedulePlan flightSchedulePlan) {

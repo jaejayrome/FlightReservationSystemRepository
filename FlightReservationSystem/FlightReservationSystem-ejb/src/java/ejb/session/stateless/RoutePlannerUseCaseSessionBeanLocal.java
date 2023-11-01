@@ -9,6 +9,7 @@ import entity.Flight;
 import entity.FlightRoute;
 import java.util.List;
 import javax.ejb.Local;
+import util.util.Pair;
 
 /**
  *
@@ -17,6 +18,6 @@ import javax.ejb.Local;
 @Local
 public interface RoutePlannerUseCaseSessionBeanLocal {
     public long createNewFlightRoute(Airport originAirport, Airport destinationAirport, FlightRoute flightRoute);
-    public List<FlightRoute> viewAllFlightRoute();
+    public List<Pair<FlightRoute>> viewAllFlightRoute();
     public List<Airport> getAllAirport();
 }

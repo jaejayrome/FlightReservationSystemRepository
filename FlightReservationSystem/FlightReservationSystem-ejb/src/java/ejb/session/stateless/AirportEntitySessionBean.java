@@ -31,6 +31,12 @@ public class AirportEntitySessionBean implements AirportEntitySessionBeanLocal {
     public List<Airport> getAllAirports() {
         return em.createQuery("SELECT a FROM Airport a").getResultList();
     }
+    
+    @Override
+    public long findAirport(String iataCode) {
+        Airport airport = (Airport)(em.createQuery("SELECT a FROM Airport a WHERE a.iataAirportCode = :airportCode").setParameter("airportCode", iataCode).getSingleResult());
+        return airport.getId();
+    }
 
     
 }

@@ -11,6 +11,7 @@ import java.util.Scanner;
 import util.enumerations.JobTitle;
 import util.exception.InvalidLoginCredentialsException;
 import ejb.session.stateless.RoutePlannerUseCaseSessionBeanRemote;
+import ejb.session.stateless.ScheduleManagerUseCaseSessionBeanRemote;
 
 /**
  *
@@ -22,15 +23,17 @@ public class RunApp {
     private EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote;
     private RoutePlannerUseCaseSessionBeanRemote routePlannerUseCaseSessionBeanRemote;
     private FleetManagerUseCaseSessionBeanRemote fleetManagerUseCaseSessionBean;
+    private ScheduleManagerUseCaseSessionBeanRemote scheduleManagerUseCaseSessionBeanRemote;
     private Employee currentEmployee;
     
     public RunApp() {
     }
     
-    public RunApp(EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote, RoutePlannerUseCaseSessionBeanRemote routePlannerUseCaseSessionBeanRemote, FleetManagerUseCaseSessionBeanRemote fleetManagerUseCaseSessionBeanRemote) {
+    public RunApp(EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote, RoutePlannerUseCaseSessionBeanRemote routePlannerUseCaseSessionBeanRemote, FleetManagerUseCaseSessionBeanRemote fleetManagerUseCaseSessionBeanRemote, ScheduleManagerUseCaseSessionBeanRemote scheduleManagerUseCaseSessionBeanRemote) {
         this.employeeUseCaseSessionBeanRemote = employeeUseCaseSessionBeanRemote;
         this.routePlannerUseCaseSessionBeanRemote = routePlannerUseCaseSessionBeanRemote;
         this.fleetManagerUseCaseSessionBean = fleetManagerUseCaseSessionBeanRemote;
+        this.scheduleManagerUseCaseSessionBeanRemote = scheduleManagerUseCaseSessionBeanRemote;
         this.currentEmployee = null;
     }
     
@@ -172,11 +175,15 @@ public class RunApp {
                         break;
                     case 1: 
                          routerPlannerUseCase.createFlightRoute();
+                         showUseCaseOptions(scanner, jobtitle);
+                         break;
                     case 2: 
                         routerPlannerUseCase.viewAllFlightRoutes();
+                        showUseCaseOptions(scanner, jobtitle);
                         break;
                     case 3: 
                         routerPlannerUseCase.deleteFlighRoute();
+                        showUseCaseOptions(scanner, jobtitle);
                         break;
                     default:
                         invalidOption();
@@ -197,9 +204,11 @@ public class RunApp {
                         break;
                     case 1: 
                         salesManagerUseCase.viewSeatsinventory();
+                        showUseCaseOptions(scanner, jobtitle);
                         break;
                     case 2: 
                         salesManagerUseCase.viewFlightReservations();
+                        showUseCaseOptions(scanner, jobtitle);
                         break;
                     default:
                         invalidOption();
@@ -218,28 +227,34 @@ public class RunApp {
                 System.out.print("> ");
                 System.out.println("");
                 System.out.println("-------------------------------");
-                ScheduleManagerUseCase scheduleManagerUseCase = new ScheduleManagerUseCase();
+                ScheduleManagerUseCase scheduleManagerUseCase = new ScheduleManagerUseCase(employeeUseCaseSessionBeanRemote, scheduleManagerUseCaseSessionBeanRemote);
                 switch (scanner.nextInt()) {
                     case 0: 
                         doLogout(scanner);
                         break;
                     case 1: 
                         scheduleManagerUseCase.createFlight();
+                        showUseCaseOptions(scanner, jobtitle);
                         break;
                     case 2: 
                         scheduleManagerUseCase.viewAllFlights();
+                        showUseCaseOptions(scanner, jobtitle);
                         break;
                     case 3: 
                         scheduleManagerUseCase.viewSpecificFlightDetails();
+                        showUseCaseOptions(scanner, jobtitle);
                         break;
                     case 4: 
                         scheduleManagerUseCase.createFlightSchedulePlan();
+                        showUseCaseOptions(scanner, jobtitle);
                         break;
                     case 5: 
                         scheduleManagerUseCase.viewAllFlightSchedulePlan();
+                        showUseCaseOptions(scanner, jobtitle);
                         break;
                     case 6: 
                         scheduleManagerUseCase.viewFlightSchedulePlanDetails();
+                        showUseCaseOptions(scanner, jobtitle);
                         break;
                     default:
                         invalidOption();

@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import javax.ejb.Local;
 import util.enumerations.CabinClassType;
+import util.exception.InitialFlightNotInstantiatedException;
 
 /**
  *
@@ -20,7 +21,7 @@ import util.enumerations.CabinClassType;
  */
 @Local
 public interface ScheduleManagerUseCaseSessionBeanLocal {
-     public boolean createNewFlight(String flightNumber, String configurationName, String originCity, String destinationCity);
+     public boolean createNewFlight(String flightNumber, String configurationName, String originCity, String destinationCity) throws InitialFlightNotInstantiatedException;
      public List<Flight> viewAllFlights();
      public Flight viewSpecificFlightDetails(String flightNumber);
      public boolean createNewFlightSchedulePlan(String flightNumber, List<Date> departureDateList, Duration duration, Date endDate, int frequency, HashMap<CabinClassType, List<Fare>> faresForCabinClassList);

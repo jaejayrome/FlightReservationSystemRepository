@@ -8,12 +8,16 @@ import ejb.session.stateless.EmployeeUseCaseSessionBeanRemote;
 import ejb.session.stateless.FleetManagerUseCaseSessionBeanRemote;
 import javax.ejb.EJB;
 import ejb.session.stateless.RoutePlannerUseCaseSessionBeanRemote;
+import ejb.session.stateless.ScheduleManagerUseCaseSessionBeanRemote;
 
 /**
  *
  * @author jeromegoh
  */
 public class Main {
+
+    @EJB
+    private static ScheduleManagerUseCaseSessionBeanRemote scheduleManagerUseCaseSessionBean;
 
     @EJB
     private static FleetManagerUseCaseSessionBeanRemote fleetManagerUseCaseSessionBean;
@@ -24,13 +28,9 @@ public class Main {
     @EJB
     private static EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote;
     
-   
+    
     public static void main(String[] args) {
-//        System.out.println("am i null " + (fleetManagerUseCaseSessionBean == null));
-////        System.out.println("fleetmanager is null" + (fleetManagerUseCaseSessionBean == null));
-//        System.out.println("route planner is null" + (routePlannerUseCaseSessionBeanRemote == null));
-//        System.out.println("employee is null is null" + (employeeUseCaseSessionBeanRemote == null));
-        RunApp runApp = new RunApp(employeeUseCaseSessionBeanRemote, routePlannerUseCaseSessionBeanRemote, fleetManagerUseCaseSessionBean);
+        RunApp runApp = new RunApp(employeeUseCaseSessionBeanRemote, routePlannerUseCaseSessionBeanRemote, fleetManagerUseCaseSessionBean, scheduleManagerUseCaseSessionBean);
         runApp.showLoginScreen();
     }
     
