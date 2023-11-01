@@ -82,7 +82,7 @@ public class FlightSchedule implements Serializable {
 //    public Date getEndDate() {    
 //        return endDate;
 //    }
-//
+    
 //    public void setEndDate(Date endDate) {
 //        this.endDate = endDate;
 //    }
