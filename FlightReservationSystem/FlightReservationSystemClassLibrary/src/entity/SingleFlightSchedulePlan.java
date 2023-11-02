@@ -27,8 +27,8 @@ public class SingleFlightSchedulePlan extends FlightSchedulePlan implements Seri
         super();
     }
 
-    public SingleFlightSchedulePlan(FlightSchedulePlanStatus status) {
-        super(status);
+    public SingleFlightSchedulePlan(FlightSchedulePlanStatus status, Flight flight) {
+        super(status, flight);
     }
 
     public Long getId() {

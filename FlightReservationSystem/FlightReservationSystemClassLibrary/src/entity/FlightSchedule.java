@@ -47,8 +47,8 @@ public class FlightSchedule implements Serializable {
     @JoinColumn(nullable = false)
     private FlightSchedulePlan flightSchedulePlan;
     
-    @OneToMany (mappedBy = "flightSchedule")
-    private List<CabinClass> cabinClassList;
+//    @OneToMany (mappedBy = "flightSchedule")
+//    private List<CabinClass> cabinClassList;
     // constructors
     
 
@@ -59,17 +59,17 @@ public class FlightSchedule implements Serializable {
         this.departureTime = departureTime;
         this.flightDuration = flightDuration;
         this.arrivalTime = arrivalTime;
-        this.cabinClassList = new ArrayList<CabinClass>();
+        //this.cabinClassList = new ArrayList<CabinClass>();
     }
     
     // getters and setters
-    public List<CabinClass> getCabinClassList() {
-        return cabinClassList;
-    }
-
-    public void setCabinClassList(List<CabinClass> cabinClassList) {
-        this.cabinClassList = cabinClassList;
-    }
+//    public List<CabinClass> getCabinClassList() {
+//        return cabinClassList;
+//    }
+//
+//    public void setCabinClassList(List<CabinClass> cabinClassList) {
+//        this.cabinClassList = cabinClassList;
+//    }
 
     public FlightSchedulePlan getFlightSchedulePlan() {
         return flightSchedulePlan;

@@ -36,15 +36,14 @@ public abstract class FlightSchedulePlan implements Serializable {
     @Column(nullable = false)
     private FlightSchedulePlanStatus status;
     
-    @Column(nullable = false)
-    private String flightNumber;
-    
     // relationships
     // relationship is optional as a FSP don't need a F
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Flight flight;
 
+    @OneToMany (mappedBy = "flightSchedulePlan")
+    private List<CabinClass> cabinClassList;
     
     @OneToMany(mappedBy= "flightSchedulePlan")
     private List<FlightSchedule> flightScheduleList;
@@ -53,13 +52,22 @@ public abstract class FlightSchedulePlan implements Serializable {
     public FlightSchedulePlan() {
     }
 
-    public FlightSchedulePlan(FlightSchedulePlanStatus status) {
+    public FlightSchedulePlan(FlightSchedulePlanStatus status, Flight flight) {
         this.flight = flight; 
         this.status = status;
         this.flightScheduleList = new ArrayList<FlightSchedule>();
+        this.cabinClassList = new ArrayList<CabinClass>();
     }
     
     // getters and setters
+
+    public List<CabinClass> getCabinClassList() {
+        return cabinClassList;
+    }
+
+    public void setCabinClassList(List<CabinClass> cabinClassList) {
+        this.cabinClassList = cabinClassList;
+    }
 
     public FlightSchedulePlanStatus getStatus() {
         return status;

@@ -11,6 +11,7 @@ import java.util.Scanner;
 import util.enumerations.JobTitle;
 import util.exception.InvalidLoginCredentialsException;
 import ejb.session.stateless.RoutePlannerUseCaseSessionBeanRemote;
+import ejb.session.stateless.SalesManagerUseCaseSessionBeanRemote;
 import ejb.session.stateless.ScheduleManagerUseCaseSessionBeanRemote;
 
 /**
@@ -24,16 +25,18 @@ public class RunApp {
     private RoutePlannerUseCaseSessionBeanRemote routePlannerUseCaseSessionBeanRemote;
     private FleetManagerUseCaseSessionBeanRemote fleetManagerUseCaseSessionBean;
     private ScheduleManagerUseCaseSessionBeanRemote scheduleManagerUseCaseSessionBeanRemote;
+    private SalesManagerUseCaseSessionBeanRemote salesManagerUseCaseSessionBeanRemote;
     private Employee currentEmployee;
     
     public RunApp() {
     }
     
-    public RunApp(EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote, RoutePlannerUseCaseSessionBeanRemote routePlannerUseCaseSessionBeanRemote, FleetManagerUseCaseSessionBeanRemote fleetManagerUseCaseSessionBeanRemote, ScheduleManagerUseCaseSessionBeanRemote scheduleManagerUseCaseSessionBeanRemote) {
+    public RunApp(EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote, RoutePlannerUseCaseSessionBeanRemote routePlannerUseCaseSessionBeanRemote, FleetManagerUseCaseSessionBeanRemote fleetManagerUseCaseSessionBeanRemote, ScheduleManagerUseCaseSessionBeanRemote scheduleManagerUseCaseSessionBeanRemote, SalesManagerUseCaseSessionBeanRemote salesManagerUseCaseSessionBeanRemote) {
         this.employeeUseCaseSessionBeanRemote = employeeUseCaseSessionBeanRemote;
         this.routePlannerUseCaseSessionBeanRemote = routePlannerUseCaseSessionBeanRemote;
         this.fleetManagerUseCaseSessionBean = fleetManagerUseCaseSessionBeanRemote;
         this.scheduleManagerUseCaseSessionBeanRemote = scheduleManagerUseCaseSessionBeanRemote;
+        this.salesManagerUseCaseSessionBeanRemote = salesManagerUseCaseSessionBeanRemote;
         this.currentEmployee = null;
     }
     
@@ -137,7 +140,6 @@ public class RunApp {
                 System.out.print("> ");
                 System.out.println(" ");
                 System.out.println("-------------------------------");
-                System.out.println("am i null " + (fleetManagerUseCaseSessionBean == null));
                 FleetManagerUseCase fleetManagerUseCase = new FleetManagerUseCase(this.fleetManagerUseCaseSessionBean, this.currentEmployee);
                 switch (scanner.nextInt()) {
                     case 0: 
@@ -197,7 +199,7 @@ public class RunApp {
                 System.out.print("> ");
                 System.out.println("");
                 System.out.println("-------------------------------");
-                SalesManagerUseCase salesManagerUseCase = new SalesManagerUseCase();
+                SalesManagerUseCase salesManagerUseCase = new SalesManagerUseCase(this.currentEmployee, salesManagerUseCaseSessionBeanRemote);
                 switch (scanner.nextInt()) {
                     case 0: 
                         doLogout(scanner);

@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import util.enumerations.CabinClassType;
+import util.enumerations.FlightRouteStatus;
 import util.enumerations.FlightSchedulePlanStatus;
 import util.enumerations.FlightStatus;
 import util.exception.InitialFlightNotInstantiatedException;
@@ -82,6 +83,7 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
             // associate flightRoute -> flight
             int init = flightRoute.getFlightList().size();
             flightRoute.getFlightList().add(flight);
+            flightRoute.setFlightRouteStatus(FlightRouteStatus.ACTIVE);
 
             // associate aircraftConfig -> flight
             int init2 = aircraftConfiguration.getFlightList().size();
@@ -113,12 +115,53 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
     @Override
     public Flight viewSpecificFlightDetails(String flightNumber) {
         long FlightID = flightEntitySessionBean.getIdByFlightNumber(flightNumber);
-        
         Flight flight = flightEntitySessionBean.getFlightById(FlightID);
         flight.getAircraftConfiguration().getCabinClassList().size();
         flight.getFlightSchedulePlanList().size();
+        
+        flight.getFlightSchedulePlanList().stream().forEach(x -> {
+            x.getFlightScheduleList().size();
+            x.getCabinClassList().size();
+            x.getCabinClassList().forEach(y ->  y.getFareList().size());
+            
+        });
+        
         return flight;
     }
+    
+    @Override
+    public void updateFlightNumber(String flightNumber, String newFlightNumber) {
+        long id = flightEntitySessionBean.getIdByFlightNumber(flightNumber);
+        Flight flight = flightEntitySessionBean.getFlightById(id);
+        flight.setFlightNumber(newFlightNumber);
+    }
+    
+    @Override
+    public void updateFlightStatus(String flightNumber, FlightStatus newStatus) {
+        long id = flightEntitySessionBean.getIdByFlightNumber(flightNumber);
+        Flight flight = flightEntitySessionBean.getFlightById(id);
+        flight.setStatus(newStatus);
+    } 
+    
+    @Override
+    public boolean deleteFlight(String flightNumber) {
+        // check whether is there any flight schedule plan that's associated with this flight 
+        long id = flightEntitySessionBean.getIdByFlightNumber(flightNumber);
+        Flight flight = flightEntitySessionBean.getFlightById(id);
+        
+        // check here 
+        int init = flight.getFlightSchedulePlanList().size();
+        if (init > 0) {
+            return flightEntitySessionBean.disableFlight(flight);
+            // means that flight associated with 1 or more FSP
+        } else {
+            // flight is not being used can be deleted
+            return flightEntitySessionBean.deleteFlight(flight);
+            
+        }
+    }
+    
+ 
     
     @Override
     public boolean createNewFlightSchedulePlan(String flightNumber, List<Date> departureDateList, Duration duration, Date endDate, int frequency, HashMap<CabinClassType, List<Fare>> faresForCabinClassList) {
@@ -128,15 +171,19 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
         long flightId = flightEntitySessionBean.getIdByFlightNumber(flightNumber);
         Flight flight = flightEntitySessionBean.getFlightById(flightId);
         
+        // update the flight status is active
+        flight.setStatus(FlightStatus.ACTIVE);
+        
         if (departureDateList.size() == 1 && frequency == 0 ) {
             // create a single flight schedule
             
             // persist FSP
-            SingleFlightSchedulePlan flightSchedulePlan = new SingleFlightSchedulePlan(FlightSchedulePlanStatus.ACTIVE);
+            SingleFlightSchedulePlan flightSchedulePlan = new SingleFlightSchedulePlan(FlightSchedulePlanStatus.ACTIVE, flight);
             flightSchedulePlanEntitySessionBean.createFlightSchedulePlan(flightSchedulePlan);
             
             // persist FS
             FlightSchedule flightSchedule = new FlightSchedule(departureDateList.get(0), duration, computeArrivalTime(departureDateList.get(0), duration));
+            flightSchedule.setFlightSchedulePlan(flightSchedulePlan);
             flightScheduleEntitySessionBean.createFlightSchedule(flightSchedule);
             
             // associate the fsp with the fs (one to many lazy initialisation)
@@ -144,7 +191,7 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
             flightSchedulePlan.getFlightScheduleList().add(flightSchedule);
             
             // associate fs with fsp
-            flightSchedule.setFlightSchedulePlan(flightSchedulePlan);
+            // flightSchedule.setFlightSchedulePlan(flightSchedulePlan);
             
             // associate fsp with flight 
             flightSchedulePlan.setFlight(flight);
@@ -153,16 +200,18 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
             int initFlight = flight.getFlightSchedulePlanList().size();
             flight.getFlightSchedulePlanList().add(flightSchedulePlan);
             
-            // associate each fs with the new fare
+            
+            // associate each fs to cabin class
+            // associate eaach cabin class to fares
             List<FlightSchedule> flightScheduleList = new ArrayList<FlightSchedule>();
             flightScheduleList.add(flightSchedule);
-            updateAndPersistFare(flightScheduleList, faresForCabinClassList);
+            updateAndPersistFare(faresForCabinClassList, flightSchedulePlan);
             
         } else if (departureDateList.size() > 1 && frequency == 0) {
             // create a multiple flight schedule
             
             // persist FSP
-            MultipleFlightSchedulePlan flightSchedulePlan = new MultipleFlightSchedulePlan( FlightSchedulePlanStatus.ACTIVE);
+            MultipleFlightSchedulePlan flightSchedulePlan = new MultipleFlightSchedulePlan( FlightSchedulePlanStatus.ACTIVE, flight);
             flightSchedulePlanEntitySessionBean.createFlightSchedulePlan(flightSchedulePlan);
             
             // persist FS
@@ -170,9 +219,10 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
             for (int i = 0; i < departureDateList.size(); i++) {
                 FlightSchedule flightschedule = new FlightSchedule(departureDateList.get(i), duration, computeArrivalTime(departureDateList.get(i), duration));
                 // persist FS
+                flightschedule.setFlightSchedulePlan(flightSchedulePlan);
                 flightScheduleEntitySessionBean.createFlightSchedule(flightschedule);
                 // associate FS to FSP
-                flightschedule.setFlightSchedulePlan(flightSchedulePlan);
+                // flightschedule.setFlightSchedulePlan(flightSchedulePlan);
                 flightScheduleList.add(flightschedule);
             }
             
@@ -181,13 +231,13 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
             flightSchedulePlan.getFlightScheduleList().addAll(flightScheduleList);
             
             // associate each fs with the new Fare
-            updateAndPersistFare(flightScheduleList, faresForCabinClassList);
+            updateAndPersistFare(faresForCabinClassList, flightSchedulePlan);
             
         } else if (departureDateList.size() == 1 && endDate!=null && frequency > 0 && frequency != 7) {
             // create a recurrent flight schedule
             
             // persist FSP
-            RecurrentFlightSchedulePlan flightSchedulePlan= new RecurrentFlightSchedulePlan(FlightSchedulePlanStatus.ACTIVE, endDate, new BigDecimal(frequency));
+            RecurrentFlightSchedulePlan flightSchedulePlan= new RecurrentFlightSchedulePlan(FlightSchedulePlanStatus.ACTIVE, endDate, new BigDecimal(frequency), flight);
             flightSchedulePlanEntitySessionBean.createFlightSchedulePlan(flightSchedulePlan);
             
             // generate the flight schedules for this flight schedule plan
@@ -198,13 +248,13 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
             flightSchedulePlan.getFlightScheduleList().addAll(collatedFlightSchedules);
             
             // associate each FS with the new Fare through Cabin Class
-            updateAndPersistFare(collatedFlightSchedules, faresForCabinClassList);
+            updateAndPersistFare(faresForCabinClassList, flightSchedulePlan);
             
         } else {
             // create a recurrent weekly flight schedule
             
             // persist FSP
-            RecurrentWeeklyFlightSchedulePlan flightSchedulePlan= new RecurrentWeeklyFlightSchedulePlan(FlightSchedulePlanStatus.ACTIVE, endDate);
+            RecurrentWeeklyFlightSchedulePlan flightSchedulePlan= new RecurrentWeeklyFlightSchedulePlan(FlightSchedulePlanStatus.ACTIVE, endDate, flight);
             flightSchedulePlanEntitySessionBean.createFlightSchedulePlan(flightSchedulePlan);
             
             // generate the flight schedules for this flight schedule plan
@@ -215,11 +265,14 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
             flightSchedulePlan.getFlightScheduleList().addAll(collatedFlightSchedules);
             
             // associate each FS with the new Fare through Cabin Class
-           updateAndPersistFare(collatedFlightSchedules, faresForCabinClassList);
+           updateAndPersistFare(faresForCabinClassList, flightSchedulePlan);
         }
         
-        // so if there is return flight and the time between the arrival of the outbound flight and the departure of the inbound flight is less than a day?
-        // now need to check whether have return flight schedule plan 
+        
+        // to implement this logic 
+        // we would have to check whether is there a return flight 
+        // then if have ask the user to input whats the layover duration then 
+        // create another flight schedule plan
         Flight returnFlight = flightEntitySessionBean.checkReturnFlight(flight.getFlightRoute().getOrigin().getIataAirportCode(), flight.getFlightRoute().getDestination().getIataAirportCode());
         // return true if there is a return flight 
         return returnFlight != null;
@@ -245,6 +298,17 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
             }
         };
         return collatedList.stream().sorted(compare).collect(Collectors.toList());
+    }
+    
+    @Override
+    public FlightSchedulePlan updateFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) {
+     // should prompt the user to enter the flight number 
+     // prompt the user which flight schedule plan is to be updated
+     // using the id, send it to the backend 
+     // then check business rules 
+     
+     return null;
+     
     }
     
     
@@ -274,9 +338,9 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
         while (currentDate.before(endDate)) {
             // persist FS
             FlightSchedule flightSchedule = new FlightSchedule(currentDate, duration, computeArrivalTime(currentDate, duration));
+            flightSchedule.setFlightSchedulePlan(recurrentFlightSchedulePlan);
             flightScheduleEntitySessionBean.createFlightSchedule(flightSchedule);
             // associate each FS to FSP
-            flightSchedule.setFlightSchedulePlan(recurrentFlightSchedulePlan);
             flightSchedules.add(flightSchedule);
             currentDate = addDaysToDate(currentDate, frequency);
         }
@@ -285,33 +349,37 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
     
     // for all the flight schedules i would have to update 
     //  each cabin class to the respective one
-    public List<FlightSchedule> updateAndPersistFare(List<FlightSchedule> flightSchedules, HashMap<CabinClassType, List<Fare>> fareForEveryCabinClass) {
+    
+    // there are some issues 
+    // cabin class no association to flight schedule
+    // flight schedule have no association to cabin class
+    // fare have no association to cabin class
+    public FlightSchedulePlan updateAndPersistFare( HashMap<CabinClassType, List<Fare>> fareForEveryCabinClass, FlightSchedulePlan flightSchedulePlan) {
+        
+        flightSchedulePlan.getFlight().getAircraftConfiguration().getCabinClassList().size();
+        List<CabinClass> cabinClassList = flightSchedulePlan.getFlight().getAircraftConfiguration().getCabinClassList();
         
         // if it's single, then only have one flight schedule so would only be run once
-        for (FlightSchedule flightSchedule : flightSchedules) {
-            int init = flightSchedule.getCabinClassList().size();
-            List<CabinClass> cabinClassList = new ArrayList<CabinClass>();
-            for (CabinClass cabinClass : flightSchedule.getCabinClassList()) {
+//        for (FlightSchedule flightSchedule : flightSchedules) {
+            // second for loop running 
+            for (CabinClass cabinClass : cabinClassList) {
                 CabinClassType cabinClassName = cabinClass.getCabinClassName();
-                
                 List<Fare> fareListForThisCabinClass = fareForEveryCabinClass.get(cabinClassName);
+                // lazy loading 
+                int initFare = cabinClass.getFareList().size();
+                List<Fare> cabinClassFares = cabinClass.getFareList();
                 fareListForThisCabinClass.stream().forEach(x -> {
                     // persist fare
+                    // association between fare -> cabinClass done 
                     fareEntitySessionBean.createFare(x);
-                    // associate each fare to the cabin class
-                    x.setCabinClass(cabinClass);
+                    // association between cabinClass -> fare
+                    cabinClassFares.add(x);
                 });
-                
-                int initFare = cabinClass.getFareList().size();
-                // update the cabinClass for thiese fares
-                cabinClass.getFareList().addAll(fareListForThisCabinClass);
-                // update the new collection
-                cabinClassList.add(cabinClass);
+                cabinClass.setFlightSchedulePlan(flightSchedulePlan);
+                flightSchedulePlan.getCabinClassList().add(cabinClass);
             }
-            // update the list of cabin class for each flight schedule
-            flightSchedule.setCabinClassList(cabinClassList);
-        }
-        
-        return flightSchedules;
+            return flightSchedulePlan;
+//        }
+//        return flightSchedules;
     }
 }

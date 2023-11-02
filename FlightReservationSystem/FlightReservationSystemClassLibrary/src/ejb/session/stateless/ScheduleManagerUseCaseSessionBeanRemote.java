@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import javax.ejb.Remote;
 import util.enumerations.CabinClassType;
+import util.enumerations.FlightStatus;
 import util.exception.InitialFlightNotInstantiatedException;
 
 /**
@@ -26,4 +27,8 @@ public interface ScheduleManagerUseCaseSessionBeanRemote {
     public Flight viewSpecificFlightDetails(String flightNumber);
     public boolean createNewFlightSchedulePlan(String flightNumber, List<Date> departureDateList, Duration duration, Date endDate, int frequency, HashMap<CabinClassType, List<Fare>> faresForCabinClassList);
     public List<FlightSchedulePlan> viewAllFlightSchedulePlan();
+    public void updateFlightNumber(String flightNumber, String newFlightNumber);
+    public void updateFlightStatus(String flightNumber, FlightStatus newStatus);
+    public boolean deleteFlight(String flightNumber);
+    public FlightSchedulePlan updateFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan);
 }

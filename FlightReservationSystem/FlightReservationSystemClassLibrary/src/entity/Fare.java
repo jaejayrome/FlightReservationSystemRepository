@@ -42,9 +42,10 @@ public class Fare implements Serializable {
     public Fare() {
     }
 
-    public Fare(String fareBasicCode, BigDecimal fareAmount) {
+    public Fare(String fareBasicCode, BigDecimal fareAmount, CabinClass cabinClass) {
         this.fareBasicCode = fareBasicCode;
         this.fareAmount = fareAmount;
+        this.cabinClass = cabinClass;
     }
     
     // getters and setters

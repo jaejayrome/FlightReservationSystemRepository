@@ -30,6 +30,7 @@ import java.util.Random;
 import java.util.Scanner;
 import javax.ejb.EJB;
 import util.enumerations.CabinClassType;
+import util.enumerations.FlightStatus;
 import util.enumerations.ScheduleType;
 import util.exception.InitialFlightNotInstantiatedException;
 
@@ -151,16 +152,56 @@ public class ScheduleManagerUseCase {
         String flightNumber = scanner.next();
         Flight flight = scheduleManagerUseCaseSessionBeanRemote.viewSpecificFlightDetails(flightNumber);
         printSpecificSingleFlight(flight);
+        
     }
     
     // give them a few metrics to choose from 
     public void updateFlight() {
-        // get the id
+        System.out.println("");
+        System.out.println("Enter the Flight Number of the Flight that you want to update");
+        System.out.print("> ");
+        String flightNumber = scanner.next();
+        System.out.println("What would you like to update?");
+        System.out.println("Press 1 to update Flight Number");
+        System.out.println("Press 2 to update Flight Status");
+        System.out.print("> ");
+        int choice = scanner.nextInt();
+        switch (choice) {
+            case 1: 
+                System.out.println("Enter the new flight number: ");
+                System.out.print("> ");
+                String newFlightNumber = scanner.next();
+                scheduleManagerUseCaseSessionBeanRemote.updateFlightNumber(flightNumber, newFlightNumber);
+                break;
+            case 2: 
+                System.out.println("Choose Your New Flight Status");
+                System.out.println("Press 1 for active flight status");
+                System.out.println("Press 2 for disabled flight Status");
+                System.out.print("> ");
+                int choose = scanner.nextInt();
+                FlightStatus flightStatus = FlightStatus.ACTIVE;
+                if (choose == 2) {
+                    flightStatus = FlightStatus.DISABLED;
+                }
+                scheduleManagerUseCaseSessionBeanRemote.updateFlightStatus(flightNumber, flightStatus);
+                break;
+        }
     }
     
     // do later
     public void deleteFlight() {
-        
+        System.out.println("");
+        System.out.println("DO NOTE: Flight would only be deleted if it doesn't have a flight schedule plan");
+        System.out.println("Else, it would be marked as DISABLED instead");
+        System.out.println("Enter the Flight Number of the Flight that you want to delete/disable");
+        System.out.print("> ");
+        String flightNumber = scanner.next();
+        boolean disabledOrDelete = scheduleManagerUseCaseSessionBeanRemote.deleteFlight(flightNumber);
+        if (disabledOrDelete) {
+            System.out.println("You have successfully disabled/delete the flight");
+        } else {
+            System.out.println("Processing failed as you have entered an invalid flight number");
+        }
     }
     
     // 
@@ -235,7 +276,10 @@ public class ScheduleManagerUseCase {
     
     public void viewAllFlightSchedulePlan() {
         List<FlightSchedulePlan> flightSchedulePlanList = scheduleManagerUseCaseSessionBeanRemote.viewAllFlightSchedulePlan();
-        flightSchedulePlanList.forEach(x -> printSpecificFlightSchedulePlan(x, false));
+        flightSchedulePlanList.forEach(x -> {
+            System.out.println("");
+            printSpecificFlightSchedulePlan(x, false);
+        });
     }
     
     public void viewFlightSchedulePlanDetails() {
@@ -247,7 +291,7 @@ public class ScheduleManagerUseCase {
         // print the flight details first 
         printSpecificSingleFlight(flight);
         
-        // ask for the flight schedule that user wants (issue might happen) here
+        // ask for the flight schedule that user wants (issue might happen) heret
         FlightSchedulePlan flightSchedulePlan = askForWhichFlightSchedule(flight);
         
         // print specific flight schedule plan
@@ -255,12 +299,67 @@ public class ScheduleManagerUseCase {
     }
     
     
-    // non-recurrent schedules only need date and duration
+    
+    // need customer side to be done before able to complete
+    // need to check whether something has been reserved
+    public void updateFlightSchedulePlan() {
+        System.out.println("Enter the flight number");
+        System.out.print("> ");
+        String flightNumber = scanner.next();
+        
+        // retreieve all flight schedule plan for this flight and ask which one wanna eddit
+        Flight flight = scheduleManagerUseCaseSessionBeanRemote.viewSpecificFlightDetails(flightNumber);
+        FlightSchedulePlan flightSchedulePlan = askForWhichFlightSchedule(flight);
+        // update the flight schedule plan 
+        
+        
+        // for all types of flight schedule plan 
+        // give options to change start date
+        
+        // if single 
+        if (flightSchedulePlan instanceof SingleFlightSchedulePlan) {
+            System.out.println("Choose the following options that you want to update");
+            System.out.println("Press 1 to Update the Start Date");
+            System.out.println("Press 2 to Update the Duration");
+            System.out.println("Press 3 to Delete the Flight Schedule");
+            System.out.println("Press 4 to Update the Fares of the Cabin Classes of the Flight Schedule");
+        }
+        
+        // if multiple 
+        if (flightSchedulePlan instanceof MultipleFlightSchedulePlan) {
+            System.out.println("Choose the following options that you want to update");
+            System.out.println("Press 1 to Update the Start Date");
+            System.out.println("Press 2 to Update the Duration");
+            
+            // give multiple flight schedules then choose one to delete
+            System.out.println("Press 3 to Delete the Flight Schedule");
+        }
+        
+        // if it's recurrent then need to give options for changing end date and frequency
+        
+        if (flightSchedulePlan instanceof RecurrentFlightSchedulePlan) {
+            
+        }
+        
+        if (flightSchedulePlan instanceof RecurrentWeeklyFlightSchedulePlan) {
+            
+        }
+    }
+    
+    public void deleteFlightSchedulePlan() {
+        
+    }
+    
+    
+    // non-schedules only need date and duration
     public void inputForScheduleType(int n, String flightNumber, List<Date> departureDateList) {
       for (int i = 1; i <= n; i++) {   
           System.out.println("Flight Schedule #" + i + " for " + flightNumber); 
           Date date = dateInitialisation();
-         if (date != null) departureDateList.add(date);
+         if (date != null) {
+             departureDateList.add(date);
+             System.out.println(date.toString());
+         }
       }
     }
     
@@ -271,13 +370,15 @@ public class ScheduleManagerUseCase {
         System.out.println("");
         for (FlightSchedulePlan fp : flight.getFlightSchedulePlanList()) {
             System.out.println("Press " + counter + " for to view this flight schedule plan in detail");
+            System.out.println("");
+            printSpecificFlightSchedulePlan(fp, false);
             counter += 1;
         }
         
         System.out.println("");
         System.out.print("> ");
         int choice = scanner.nextInt();
-        return flight.getFlightSchedulePlanList().get(counter - 1);
+        return flight.getFlightSchedulePlanList().get(choice - 1);
     }
     
     // this can be made nicer
@@ -289,53 +390,52 @@ public class ScheduleManagerUseCase {
     }
     
     public void printSingleFlight(Flight flight) {
-        System.out.println("Flight Number " + flight.getFlightNumber());
-        System.out.println("Flight Aircraft Configuration Name" + flight.getAircraftConfiguration().getConfigurationName());
-        System.out.println("Flight Origin City" + flight.getFlightRoute().getOrigin().getCity());
-        System.out.println("Flight Destination City" + flight.getFlightRoute().getDestination().getCity());
-        System.out.println("Flight Status " + flight.getStatus().name());
+        System.out.println("");
+        System.out.println("Flight Number: " + flight.getFlightNumber());
+        System.out.println("Flight Aircraft Configuration Name: " + flight.getAircraftConfiguration().getConfigurationName());
+        System.out.println("Flight Origin City: " + flight.getFlightRoute().getOrigin().getCity());
+        System.out.println("Flight Destination City: " + flight.getFlightRoute().getDestination().getCity());
+        System.out.println("Flight Status: " + flight.getStatus().name());
         System.out.println("--------------------------------------------");
     }
     
     public void printSpecificSingleFlight(Flight flight) {
         printSingleFlight(flight);
-        // issue is here 
         int init = flight.getAircraftConfiguration().getCabinClassList().size();
         System.out.println("Number of Cabin Classes Available " + init);
         flight.getAircraftConfiguration().getCabinClassList().forEach(x -> printSingleCabinClass(x));
-        
-        
-        // need to go to it's fsp 
-        // then print multiple 
     }
     
     public void printMoreSpecific(FlightSchedulePlan flightSchedulePlan) {
-        System.out.println("Origin Airport " + flightSchedulePlan.getFlight().getFlightRoute().getOrigin().getAirportName());
-        System.out.println("Origin City " + flightSchedulePlan.getFlight().getFlightRoute().getOrigin().getCity());
-        System.out.println("Origin Country " + flightSchedulePlan.getFlight().getFlightRoute().getOrigin().getCountry());
+        System.out.println("Origin Airport: " + flightSchedulePlan.getFlight().getFlightRoute().getOrigin().getAirportName());
+        System.out.println("Origin City: " + flightSchedulePlan.getFlight().getFlightRoute().getOrigin().getCity());
+        System.out.println("Origin Country: " + flightSchedulePlan.getFlight().getFlightRoute().getOrigin().getCountry());
         int init = flightSchedulePlan.getFlightScheduleList().size();
-        flightSchedulePlan.getFlightScheduleList().forEach(x -> printSpecificFlightSchedule(x));
-    }
-    
-    public void printSpecificFlightSchedule(FlightSchedule flightSchedule) {
-        System.out.println("Flight Schedule Departure Time: " + flightSchedule.getDepartureTime().toString());
-        System.out.println("Flight Schedule Arrival Time: " + flightSchedule.getArrivalTime().toString());
-        System.out.println("Number of Cabin Class: " + flightSchedule.getCabinClassList().size());
-        System.out.println("Cabin Class Fares");
-        flightSchedule.getCabinClassList().forEach(x -> {
-            System.out.println("");
-            System.out.println("Cabin Class Type: " + x.getCabinClassName().name());
-            System.out.println("");
+        System.out.println("");
+        System.out.println("Fare Information");
+        flightSchedulePlan.getCabinClassList().forEach(x -> {
+            System.out.println("Number of Cabin Class: " + init);
             x.getFareList().forEach(y -> {
                 System.out.println("Fare Basis Code: " + y.getFareBasicCode());
                 System.out.println("Fare Amount: " + y.getFareAmount());
                 System.out.println("");
             });
         });
+        flightSchedulePlan.getFlightScheduleList().forEach(x -> printSpecificFlightSchedule(x));
     }
     
+    public void printSpecificFlightSchedule(FlightSchedule flightSchedule) {
+        System.out.println("");
+        System.out.println("Flight Schedule Departure Time: " + flightSchedule.getDepartureTime().toString());
+        System.out.println("Flight Schedule Arrival Time: " + flightSchedule.getArrivalTime().toString());
+        
+    }
+    
+    
     public void printSpecificFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan, boolean printMoreSpecific) {
-        System.out.println("Flight Number " + flightSchedulePlan.getFlight().getFlightNumber());
+        System.out.println("Flight Schedule Plan Information");
+        System.out.println("");
+        System.out.println("Flight Number: " + flightSchedulePlan.getFlight().getFlightNumber());
         if (flightSchedulePlan instanceof SingleFlightSchedulePlan) {
             SingleFlightSchedulePlan singlePlan = (SingleFlightSchedulePlan) flightSchedulePlan;
             System.out.println("Schedule Plan Type: " + "Single");
@@ -363,6 +463,8 @@ public class ScheduleManagerUseCase {
         }
         
         if (printMoreSpecific) {
+                System.out.println("Flight Schedules Information");
+                System.out.println("");
                 printMoreSpecific(flightSchedulePlan);
         }
     }
@@ -375,7 +477,7 @@ public class ScheduleManagerUseCase {
            System.out.println("Enter the Fare Amount for Fare #" + (i+1) + " for " + cabinClass.getCabinClassName().name() + " class " + flightNumber); 
            System.out.print("> ");
            int fareAmt = scanner.nextInt();
-           Fare fare = new Fare(generateRandomFareBasisCode(), new BigDecimal(fareAmt));
+           Fare fare = new Fare(generateRandomFareBasisCode(), new BigDecimal(fareAmt), cabinClass);
            fareList.add(fare);
         }
         return fareList;
@@ -401,14 +503,14 @@ public class ScheduleManagerUseCase {
     }
     
     public void printSingleCabinClass(CabinClass cabinClass) {
-        System.out.println("Cabin Class Name " + cabinClass.getCabinClassName().name());
+        System.out.println("Cabin Class Type: " + cabinClass.getCabinClassName().name());
         System.out.println("Number of Aisles: " + cabinClass.getNumAisles());
         System.out.println("Number of Rows: " + cabinClass.getNumRows());
-        System.out.println("Number of Seats Abreast " + cabinClass.getNumSeatsAbreast());
-        System.out.println("Seating Configuration " + cabinClass.getSeatingConfiguration());
-        System.out.println("Number of Available Seats " + cabinClass.getNumAvailableSeats());
-        System.out.println("Number of Reserved Seats " + cabinClass.getNumReservedSeats());
-        System.out.println("Number of Balanced Seats " + cabinClass.getNumBalanceSeats());
+        System.out.println("Number of Seats Abreast: " + cabinClass.getNumSeatsAbreast());
+        System.out.println("Seating Configuration: " + cabinClass.getSeatingConfiguration());
+        System.out.println("Number of Available Seats: " + cabinClass.getNumAvailableSeats());
+        System.out.println("Number of Reserved Seats: " + cabinClass.getNumReservedSeats());
+        System.out.println("Number of Balanced Seats: " + cabinClass.getNumBalanceSeats());
         System.out.println("");
     }
     
@@ -417,27 +519,32 @@ public class ScheduleManagerUseCase {
         System.out.println("Departure Time is the time that the flight is scheduled to leave");
         System.out.println("Flight Duration is the time taken to reach the destination from the origin");
         System.out.println("");
-        System.out.println("Enter the commencment date (yyyy-MM-dd):");
+        System.out.println("Enter the commencement date (yyyy-MM-dd):");
         System.out.print("> ");
-        String startDateInput = scanner.nextLine();
+        String startDateInput = scanner.next();
+        scanner.nextLine();
+        System.out.println("");
         System.out.println("Enter the commencement time (HH:mm:ss):");
         System.out.print("> ");
-        String timeInput = scanner.nextLine();
+        String timeInput = scanner.next();
         String dateTimeInput = startDateInput + " " + timeInput;
         Date date = formatDate(dateTimeInput);
-        return date;        
+        return date;
+
+
     }
     
     public Duration checkDuration() {
+        System.out.println("");
         System.out.println("Duration is the time taken to reach the destination from the origin");
         System.out.println("");
         System.out.println("Enter the hours"); 
         System.out.print("> ");
-        int hours = Integer.parseInt(scanner.nextLine());
-
+        int hours = Integer.parseInt(scanner.next());
+        scanner.nextLine();
         System.out.println("Enter the minutes");
         System.out.print("> ");
-        int minutes = Integer.parseInt(scanner.nextLine());
+        int minutes = Integer.parseInt(scanner.next());
         
         int totalMinutes = (hours * 60) + minutes;
         long seconds = totalMinutes * 60;
@@ -466,13 +573,15 @@ public class ScheduleManagerUseCase {
         System.out.println("");
         System.out.println("Enter the end date (yyyy-MM-dd):");
         System.out.print("> ");
-        String startDateInput = scanner.nextLine();
+        String startDateInput = scanner.next();
+        scanner.nextLine();
+        System.out.println("");
         System.out.println("Enter the end time (HH:mm:ss):");
         System.out.print("> ");
-        String timeInput = scanner.nextLine();
+        String timeInput = scanner.next();
         String dateTimeInput = startDateInput + " " + timeInput;
         Date date = formatDate(dateTimeInput);
-        return date;        
+        return date;
     }
     
      public Date formatDate(String dateTimeInput) {

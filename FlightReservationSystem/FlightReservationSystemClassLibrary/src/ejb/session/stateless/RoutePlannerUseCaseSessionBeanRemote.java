@@ -8,7 +8,6 @@ import entity.Airport;
 import entity.FlightRoute;
 import java.util.List;
 import javax.ejb.Remote;
-import util.util.Pair;
 
 /**
  *
@@ -16,7 +15,8 @@ import util.util.Pair;
  */
 @Remote
 public interface RoutePlannerUseCaseSessionBeanRemote {
-    public long createNewFlightRoute(Airport originAirport, Airport destinationAirport, FlightRoute flightRoute);
-    public List<Pair<FlightRoute>> viewAllFlightRoute();
+    public long createNewFlightRoute(Airport originAirport, Airport destinationAirport, FlightRoute flightRoute, boolean makeReturnFlightRoute);
+    public List<FlightRoute> viewAllFlightRoute();
     public List<Airport> getAllAirport();
+    public boolean deleteFlightRoute(String originAirport, String destinationAirport);
 }

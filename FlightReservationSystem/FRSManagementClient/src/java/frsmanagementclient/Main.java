@@ -8,6 +8,7 @@ import ejb.session.stateless.EmployeeUseCaseSessionBeanRemote;
 import ejb.session.stateless.FleetManagerUseCaseSessionBeanRemote;
 import javax.ejb.EJB;
 import ejb.session.stateless.RoutePlannerUseCaseSessionBeanRemote;
+import ejb.session.stateless.SalesManagerUseCaseSessionBeanRemote;
 import ejb.session.stateless.ScheduleManagerUseCaseSessionBeanRemote;
 
 /**
@@ -15,6 +16,9 @@ import ejb.session.stateless.ScheduleManagerUseCaseSessionBeanRemote;
  * @author jeromegoh
  */
 public class Main {
+
+    @EJB
+    private static SalesManagerUseCaseSessionBeanRemote salesManagerUseCaseSessionBean;
 
     @EJB
     private static ScheduleManagerUseCaseSessionBeanRemote scheduleManagerUseCaseSessionBean;
@@ -29,8 +33,12 @@ public class Main {
     private static EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote;
     
     
+    
+    
+    
+    
     public static void main(String[] args) {
-        RunApp runApp = new RunApp(employeeUseCaseSessionBeanRemote, routePlannerUseCaseSessionBeanRemote, fleetManagerUseCaseSessionBean, scheduleManagerUseCaseSessionBean);
+        RunApp runApp = new RunApp(employeeUseCaseSessionBeanRemote, routePlannerUseCaseSessionBeanRemote, fleetManagerUseCaseSessionBean, scheduleManagerUseCaseSessionBean, salesManagerUseCaseSessionBean);
         runApp.showLoginScreen();
     }
     

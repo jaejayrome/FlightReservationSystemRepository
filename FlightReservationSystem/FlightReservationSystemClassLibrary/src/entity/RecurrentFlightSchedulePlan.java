@@ -35,8 +35,8 @@ public class RecurrentFlightSchedulePlan extends FlightSchedulePlan implements S
         super();
     }
 
-    public RecurrentFlightSchedulePlan(FlightSchedulePlanStatus status, Date endDate, BigDecimal frequency) {
-        super(status);
+    public RecurrentFlightSchedulePlan(FlightSchedulePlanStatus status, Date endDate, BigDecimal frequency, Flight flight) {
+        super(status, flight);
         this.endDate = endDate;
         this.frequency = frequency;
     }

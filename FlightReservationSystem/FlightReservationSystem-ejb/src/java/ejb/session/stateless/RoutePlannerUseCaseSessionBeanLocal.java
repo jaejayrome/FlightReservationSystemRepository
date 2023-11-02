@@ -17,7 +17,8 @@ import util.util.Pair;
  */
 @Local
 public interface RoutePlannerUseCaseSessionBeanLocal {
-    public long createNewFlightRoute(Airport originAirport, Airport destinationAirport, FlightRoute flightRoute);
-    public List<Pair<FlightRoute>> viewAllFlightRoute();
+    public long createNewFlightRoute(Airport originAirport, Airport destinationAirport, FlightRoute flightRoute, boolean makeReturnFlightRoute);
+    public List<FlightRoute> viewAllFlightRoute();
     public List<Airport> getAllAirport();
+    public boolean deleteFlightRoute(String originAirport, String destinationAirport);
 }
