@@ -54,11 +54,10 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanLocal
     }
     
 //    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    
     public Employee retrieveEmployeeById(long id) throws EmployeeNotFoundException{
         Employee employee = em.find(Employee.class, id, this.props);
         if (employee == null) {
-            ejbContext.setRollbackOnly();
+            // ejbContext.setRollbackOnly();
             throw new EmployeeNotFoundException("Employee has not been found yet!");
 //            return null;
         } else {
@@ -68,6 +67,7 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanLocal
     
 //    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Employee authenticateEmployeeDetails(String username, String password) throws InvalidLoginCredentialsException{
+        
         String query = "SELECT employee FROM Employee employee WHERE employee.loginUsername = :username";
         Employee employee = (Employee)em.createQuery(query)
                 .setParameter("username", username)

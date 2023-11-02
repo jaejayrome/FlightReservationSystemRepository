@@ -29,6 +29,7 @@ public class Main {
         
         RunApp runApp = new RunApp(employeeUseCaseSessionBeanRemote, 
                     routePlannerUseCaseSessionBeanRemote, fleetManagerUseCaseSessionBean);
+
         runApp.showLoginScreen();
     }    
 }

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
+import util.enumerations.AircraftTypeName;
 import util.enumerations.CabinClassType;
 import util.enumerations.JobTitle;
 
@@ -28,6 +29,7 @@ public class FleetManagerUseCase {
     private List<AircraftType> aircraftTypeList;
     private Scanner scanner;
     private HashMap<Integer, CabinClassType> hashMap;
+    private HashMap<Integer, AircraftTypeName> typeMap;
     
     public FleetManagerUseCase() {
     }
@@ -38,6 +40,7 @@ public class FleetManagerUseCase {
         this.aircraftTypeList = this.fleetManagerUseCaseSessionBeanRemote.getAllAircraftTypes();
         this.scanner = new Scanner(System.in);
         this.hashMap = new HashMap<Integer, CabinClassType>();
+        this.typeMap = new HashMap<Integer, AircraftTypeName>();
     }
     
     /*
@@ -47,11 +50,12 @@ public class FleetManagerUseCase {
     */
     public void createAircraftConfiguration() {
            if (aircraftTypeList.size() > 0) {
+               iniitalise();
                printAircraftType();
-               System.out.print("Enter the Name of the Aircraft Type: ");
-               String name = this.scanner.nextLine();
-               
-               if(!name.isEmpty()) {
+               printAircraftTypeChoices();
+               AircraftTypeName aircraftTypeName = typeMap.get(this.scanner.nextInt());
+               scanner.nextLine();
+               if(aircraftTypeName != null) {
                 System.out.print("Enter the name of the configuration: ");
                 String configurationName = this.scanner.nextLine();
                 
@@ -64,7 +68,7 @@ public class FleetManagerUseCase {
                 List<String> seatingConfigurationList = new ArrayList<String>();
                 promptUserForCabinClass(cabinClassNameList, numAislesList, numRowsList, numSeatsAbreastList, seatingConfigurationList);
                 
-                fleetManagerUseCaseSessionBeanRemote.createAircraftConfigurationForFleetManager(JobTitle.FLEET_MANAGER, name, configurationName
+                fleetManagerUseCaseSessionBeanRemote.createAircraftConfigurationForFleetManager(JobTitle.FLEET_MANAGER, aircraftTypeName, configurationName
                     , cabinClassNameList, numAislesList, numRowsList, numSeatsAbreastList, seatingConfigurationList);
                }
            }
@@ -79,9 +83,13 @@ public class FleetManagerUseCase {
           // ensures that list is sorted in accordance to the configuration name and the type
           List <AircraftConfiguration> sortedList = aircraftConfigurations.stream().sorted(comparator).collect(Collectors.toList());
           
-          for (AircraftConfiguration aircraftConfiguration : sortedList) {
-                    printSingleAircraftConfiguration(aircraftConfiguration, counter);
-                    counter+=1;                
+          if (sortedList.size() > 0) {
+            for (AircraftConfiguration aircraftConfiguration : sortedList) {
+                      printSingleAircraftConfiguration(aircraftConfiguration, counter);
+                      counter+=1;                
+            }
+          } else {
+              System.out.println("There are currently no aircraft configurations made!");
           }
     }
     
@@ -153,6 +161,16 @@ public class FleetManagerUseCase {
         hashMap.put(2, CabinClassType.BUSINESS);
         hashMap.put(3, CabinClassType.PREMIUM_ECONOMY);
         hashMap.put(4, CabinClassType.ECONOMY);
+    }
+    
+    public void printAircraftTypeChoices() {
+        System.out.println("Press 1 for BOEING 737");
+        System.out.println("Press 2 for BOEING 747");
+    }
+    
+    public void iniitalise() {
+        typeMap.put(1, AircraftTypeName.BOEING_737);
+        typeMap.put(2, AircraftTypeName.BOEING_747);
     }
     
 }
