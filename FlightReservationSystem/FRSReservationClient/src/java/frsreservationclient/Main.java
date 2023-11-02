@@ -4,17 +4,35 @@
  */
 package frsreservationclient;
 
+import ejb.session.stateless.CustomerSessionBeanRemote;
+import entity.Customer;
+import java.util.List;
+import java.util.Scanner;
+import javax.ejb.EJB;
+
 /**
  *
  * @author jeromegoh
  */
 public class Main {
 
+    @EJB
+    private static CustomerSessionBeanRemote customerSessionBeanRemote;
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        Scanner sc = new Scanner(System.in); 
+        
     }
+    
+    public static void homepage(Scanner sc) {
+        RunApp runApp = new RunApp();
+        System.out.println("This exists");
+    }
+    
+    
+    
     
 }

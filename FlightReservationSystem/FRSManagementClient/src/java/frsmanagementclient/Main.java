@@ -26,16 +26,10 @@ public class Main {
     
    
     public static void main(String[] args) {
-//        System.out.println("am i null " + (fleetManagerUseCaseSessionBean == null));
-////        System.out.println("fleetmanager is null" + (fleetManagerUseCaseSessionBean == null));
-//        System.out.println("route planner is null" + (routePlannerUseCaseSessionBeanRemote == null));
-//        System.out.println("employee is null is null" + (employeeUseCaseSessionBeanRemote == null));
-        RunApp runApp = new RunApp(employeeUseCaseSessionBeanRemote, routePlannerUseCaseSessionBeanRemote, fleetManagerUseCaseSessionBean);
+        
+        RunApp runApp = new RunApp(employeeUseCaseSessionBeanRemote, 
+                    routePlannerUseCaseSessionBeanRemote, fleetManagerUseCaseSessionBean);
+
         runApp.showLoginScreen();
-    }
-    
-
-    
-
-    
+    }    
 }

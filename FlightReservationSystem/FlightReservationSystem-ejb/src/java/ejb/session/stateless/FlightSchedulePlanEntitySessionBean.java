@@ -42,5 +42,4 @@ public class FlightSchedulePlanEntitySessionBean implements FlightSchedulePlanEn
         list.addAll(em.createQuery("SELECT flightSchedulePlan FROM RecurrentWeeklyFlightSchedulePlan").getResultList());
         return list;
     }
-
 }
