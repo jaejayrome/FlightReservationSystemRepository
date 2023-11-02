@@ -27,12 +27,8 @@ public class Main {
    
     public static void main(String[] args) {
         
-        RunApp runApp = new RunApp(employeeUseCaseSessionBeanRemote, routePlannerUseCaseSessionBeanRemote, fleetManagerUseCaseSessionBean);
+        RunApp runApp = new RunApp(employeeUseCaseSessionBeanRemote, 
+                    routePlannerUseCaseSessionBeanRemote, fleetManagerUseCaseSessionBean);
         runApp.showLoginScreen();
-    }
-    
-
-    
-
-    
+    }    
 }
