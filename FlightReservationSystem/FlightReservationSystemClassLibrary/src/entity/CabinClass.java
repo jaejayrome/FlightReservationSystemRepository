@@ -42,12 +42,7 @@ public class CabinClass implements Serializable {
     private BigDecimal numSeatsAbreast;
     @Column(nullable = false)
     private String seatingConfiguration;
-    @Column(nullable = false)
-    private BigDecimal numAvailableSeats;
-    @Column(nullable = false)
-    private BigDecimal numReservedSeats;
-    @Column(nullable = false)
-    private BigDecimal numBalanceSeats;
+
     
     // relationships
     @ManyToMany(mappedBy= "cabinClassList")
@@ -56,8 +51,6 @@ public class CabinClass implements Serializable {
     @OneToMany(mappedBy= "cabinClass")
     private List<Fare> fareList;
     
-    @OneToMany(mappedBy = "cabinClass")
-    private List<Seat> seatList;
     
     // careful! this must be optional because we can create one w/o having a flight assigned to it 
 //    @ManyToOne (optional = true)
@@ -72,18 +65,15 @@ public class CabinClass implements Serializable {
     public CabinClass() {
     }
     
-    public CabinClass(CabinClassType cabinClassName, BigDecimal numAisles, BigDecimal numRows, BigDecimal numSeatsAbreast, String seatingConfiguration, BigDecimal numAvailableSeats, BigDecimal numReservedSeats, BigDecimal numBalanceSeats) {
+    public CabinClass(CabinClassType cabinClassName, BigDecimal numAisles, BigDecimal numRows, BigDecimal numSeatsAbreast, String seatingConfiguration) {
         this.cabinClassName = cabinClassName;
         this.numAisles = numAisles;
         this.numRows = numRows;
         this.numSeatsAbreast = numSeatsAbreast;
         this.seatingConfiguration = seatingConfiguration;
-        this.numAvailableSeats = numAvailableSeats;
-        this.numReservedSeats = numReservedSeats;
-        this.numBalanceSeats = numBalanceSeats;
         this.aircraftConfigurationList = new ArrayList<AircraftConfiguration>();
         this.fareList = new ArrayList<Fare>();
-        this.seatList = new ArrayList<Seat>();
+        
     }
     
      // getters and settters
@@ -102,14 +92,6 @@ public class CabinClass implements Serializable {
 
     public void setFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) {
         this.flightSchedulePlan = flightSchedulePlan;
-    }
-
-    public List<Seat> getSeatList() {
-        return seatList;
-    }
-
-    public void setSeatList(List<Seat> seatList) {
-        this.seatList = seatList;
     }
    
     public List<Fare> getFareList() {
@@ -168,29 +150,7 @@ public class CabinClass implements Serializable {
         this.seatingConfiguration = seatingConfiguration;
     }
 
-    public BigDecimal getNumAvailableSeats() {
-        return numAvailableSeats;
-    }
-
-    public void setNumAvailableSeats(BigDecimal numAvailableSeats) {
-        this.numAvailableSeats = numAvailableSeats;
-    }
-
-    public BigDecimal getNumReservedSeats() {
-        return numReservedSeats;
-    }
-
-    public void setNumReservedSeats(BigDecimal numReservedSeats) {
-        this.numReservedSeats = numReservedSeats;
-    }
-
-    public BigDecimal getNumBalanceSeats() {
-        return numBalanceSeats;
-    }
-
-    public void setNumBalanceSeats(BigDecimal numBalanceSeats) {
-        this.numBalanceSeats = numBalanceSeats;
-    }
+   
     
     public Long getId() {
         return id;

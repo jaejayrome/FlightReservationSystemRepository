@@ -36,12 +36,6 @@ public class FlightSchedulePlanEntitySessionBean implements FlightSchedulePlanEn
     @Override
     public List<FlightSchedulePlan> viewAllFlightSchedulePlan() {
         return em.createQuery("SELECT fsp FROM FlightSchedulePlan fsp").getResultList();
-//        List<FlightSchedulePlan> list = new ArrayList<FlightSchedulePlan>();
-//        list.addAll(em.createQuery("SELECT flightSchedulePlan FROM SingleFlightSchedulePlan").getResultList());
-//        list.addAll(em.createQuery("SELECT flightSchedulePlan FROM MultipleFlightSchedulePlan").getResultList());
-//        list.addAll(em.createQuery("SELECT flightSchedulePlan FROM RecurrentFlightSchedulePlan").getResultList());
-//        list.addAll(em.createQuery("SELECT flightSchedulePlan FROM RecurrentWeeklyFlightSchedulePlan").getResultList());
-//        return list;
     }
 
 }

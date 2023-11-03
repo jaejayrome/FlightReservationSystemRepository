@@ -120,8 +120,8 @@ public class RunApp {
         String password = scanner.next();
  
         try {
+//            System.out.println(employeeUseCaseSessionBeanRemote == null);
             this.currentEmployee = employeeUseCaseSessionBeanRemote.doLogin(username, password);
-            // this shouild continue to happen 
             showUseCaseOptions(scanner, this.currentEmployee.getJobTitle());
         } catch (InvalidLoginCredentialsException exception) {
             System.out.println(exception.getMessage());

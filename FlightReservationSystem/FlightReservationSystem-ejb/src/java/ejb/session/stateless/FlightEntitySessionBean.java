@@ -33,7 +33,10 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanLocal {
     
     @Override
     public List<Flight> viewAllFlights() {
-        return em.createQuery("SELECT flight FROM Flight flight").getResultList();
+        return em.createQuery("SELECT f " +
+               "FROM Flight f " +
+               "ORDER BY f.flightGroup, f.flightNumber").getResultList();
+        
     }
     
     // remember to throw any exception if needed

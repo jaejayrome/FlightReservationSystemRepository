@@ -58,8 +58,6 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
     
     @Override
     public FlightRoute getFlightRouteByCityName(String originAirport, String destinationAirport) throws NoFlightRouteFoundException{
-        
-        // functional programming way (fails)
         long originId = airportEntitySessionBean.findAirport(originAirport);
         long destinationId = airportEntitySessionBean.findAirport(destinationAirport);
         try {

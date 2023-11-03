@@ -36,6 +36,9 @@ public abstract class FlightSchedulePlan implements Serializable {
     @Column(nullable = false)
     private FlightSchedulePlanStatus status;
     
+    @Column(nullable = true)
+    private long flightSchedulePlanGroup;
+    
     // relationships
     // relationship is optional as a FSP don't need a F
     @ManyToOne(optional = false)
@@ -60,6 +63,14 @@ public abstract class FlightSchedulePlan implements Serializable {
     }
     
     // getters and setters
+
+    public long getFlightSchedulePlanGroup() {
+        return flightSchedulePlanGroup;
+    }
+
+    public void setFlightSchedulePlanGroup(long flightSchedulePlanGroup) {
+        this.flightSchedulePlanGroup = flightSchedulePlanGroup;
+    }
 
     public List<CabinClass> getCabinClassList() {
         return cabinClassList;

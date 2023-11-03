@@ -90,16 +90,16 @@ public class ScheduleManagerUseCase {
         
         // catch exception if there's for initial flight 
         try {
-            boolean haveReturnFlight = scheduleManagerUseCaseSessionBeanRemote.createNewFlight(flightNumber, configurationName, originCity, destinationCity);
+            long haveReturnFlight = scheduleManagerUseCaseSessionBeanRemote.createNewFlight(flightNumber, configurationName, originCity, destinationCity, false, -1);
             System.out.println("Flight has been successfully created!");
             
-            if (haveReturnFlight) {
+            if (haveReturnFlight != -1) {
                 System.out.println("A Return Flight Route has been detected!");
                 System.out.println("Press '1' if you would like to create this return flight route");
                 System.out.print("> ");
                 boolean createFlight = scanner.nextInt() == 1 ? true : false;
                 // checks whether user would want to create this
-                if (createFlight) createFlight(configurationName, destinationCity, originCity);
+                if (createFlight) createFlight(configurationName, destinationCity, originCity, haveReturnFlight);
             }
                 
         } catch (InitialFlightNotInstantiatedException e) {
@@ -108,13 +108,13 @@ public class ScheduleManagerUseCase {
     }
     
     // used to create return flight with the same aircraft configuration
-    public void createFlight(String configurationName, String originCity, String destinationCity) {
+    public void createFlight(String configurationName, String originCity, String destinationCity, long id) {
         System.out.println("Enter the Flight Number For the Return Flight");
         System.out.print("> ");
         String flightNumber = scanner.next();
         
         try {
-            scheduleManagerUseCaseSessionBeanRemote.createNewFlight(flightNumber, configurationName, originCity, destinationCity);
+            scheduleManagerUseCaseSessionBeanRemote.createNewFlight(flightNumber, configurationName, originCity, destinationCity, true, id);
             System.out.println("Flight has been successfully created!");
         } catch (InitialFlightNotInstantiatedException e) {
             System.out.println(e.getMessage());
@@ -270,8 +270,20 @@ public class ScheduleManagerUseCase {
         }
         
         // still haven't implement the use of checking whether should we create another flight schedule plan
-       boolean promptReturnFlightSchedule = scheduleManagerUseCaseSessionBeanRemote.createNewFlightSchedulePlan(flightNumber, departureDateList, duration, endDate, frequency, faresForCabinClassList);
-       System.out.println("FlightSchedulePlan has been successfully created!");
+       long promptReturnFlightSchedule = scheduleManagerUseCaseSessionBeanRemote.createNewFlightSchedulePlan(flightNumber, departureDateList, duration, endDate, frequency, faresForCabinClassList, false, -1, null);
+       if (promptReturnFlightSchedule != -1) {
+            System.out.println("An existing complementary flight schedule plan has been detected!");
+            System.out.println("Press '1' if you would like to create this return flight schedule plan");
+            System.out.print("> ");
+            boolean createFlight = scanner.nextInt() == 1 ? true : false;
+            // checks whether user would want to create this
+            if (createFlight) {
+                System.out.println("To proceed, please enter your layover duration");
+                Duration layover = checkDuration();
+                scheduleManagerUseCaseSessionBeanRemote.createNewFlightSchedulePlan(flightNumber, departureDateList, duration, endDate, frequency, faresForCabinClassList, true, promptReturnFlightSchedule, layover);
+            }
+       }
+       
     }
     
     public void viewAllFlightSchedulePlan() {
@@ -371,6 +383,7 @@ public class ScheduleManagerUseCase {
         for (FlightSchedulePlan fp : flight.getFlightSchedulePlanList()) {
             System.out.println("Press " + counter + " for to view this flight schedule plan in detail");
             System.out.println("");
+            System.out.println();
             printSpecificFlightSchedulePlan(fp, false);
             counter += 1;
         }
@@ -508,9 +521,6 @@ public class ScheduleManagerUseCase {
         System.out.println("Number of Rows: " + cabinClass.getNumRows());
         System.out.println("Number of Seats Abreast: " + cabinClass.getNumSeatsAbreast());
         System.out.println("Seating Configuration: " + cabinClass.getSeatingConfiguration());
-        System.out.println("Number of Available Seats: " + cabinClass.getNumAvailableSeats());
-        System.out.println("Number of Reserved Seats: " + cabinClass.getNumReservedSeats());
-        System.out.println("Number of Balanced Seats: " + cabinClass.getNumBalanceSeats());
         System.out.println("");
     }
     

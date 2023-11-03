@@ -63,10 +63,10 @@ public class FleetManagerUseCaseSessionBean implements FleetManagerUseCaseSessio
                     BigDecimal numSeatsAbreast = new BigDecimal(numSeatsAbreastList.get(i));
                     String seatingConfiguration = seatingConfigurationList.get(i);
                     BigDecimal numAvailableSeats = new BigDecimal(numRows.intValue() * numSeatsAbreast.intValue());
-                    CabinClass cabinClass = new CabinClass(cabinClassName, numAisles, numRows, numSeatsAbreast, seatingConfiguration, numAvailableSeats, new BigDecimal(0), numAvailableSeats);
+                    CabinClass cabinClass = new CabinClass(cabinClassName, numAisles, numRows, numSeatsAbreast, seatingConfiguration);
                     cabinClassEntitySessionBean.createCabinClass(cabinClass);
-                    // associate cabin class with the seats 
-                    cabinClass.setSeatList(createSeatsForCabinClass(numRows.intValue(),numAisles.intValue(), numSeatsAbreast.intValue(), seatingConfiguration, cabinClass));
+//                    // associate cabin class with the seats 
+//                    cabinClass.setSeatList(createSeatsForCabinClass(numRows.intValue(),numAisles.intValue(), numSeatsAbreast.intValue(), seatingConfiguration, cabinClass));
                     cabinClassList.add(cabinClass);
                     totalSeats += (numRows.intValue() * numSeatsAbreast.intValue());
                 }
@@ -107,38 +107,5 @@ public class FleetManagerUseCaseSessionBean implements FleetManagerUseCaseSessio
         return aircraftConfigurationEntitySessionBean.getAircraftConfigurationPerConfigurationName(configurationName);
     }
     
-    public List<Seat> createSeatsForCabinClass(int numRows, int numAisles, int numSeatAbreast, String seatConfiguration, CabinClass cabinClass) {
-        int numCols = numAisles + 1;
-        List<String> alphabets = generateLetters(numSeatAbreast);
-        List<Seat> seatingList = new ArrayList<Seat>();
-        String[] seatsEachRowEachColumn = seatConfiguration.split("-");
-        for (int i = 1; i <= numRows; i++) {
-            int counter = 0;
-            for (String s : seatsEachRowEachColumn) {
-                // 
-                String alphabet = alphabets.get(counter);
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(i + alphabet);
-                counter +=1;
-                // creating the seat, associate seat with cabin class
-                Seat seat = new Seat(stringBuilder.toString(), SeatStatus.AVAILABLE);
-                seatEntitySessionBean.createSeat(seat);
-                // association seat -> cabinClass
-                seat.setCabinClass(cabinClass);
-                seatingList.add(seat);
-            }
-        }
-        return seatingList;
-    }
     
-    public List<String> generateLetters(int numAbreast) {
-        List<String> letters = new ArrayList<>();
-
-        char letter = 'A';
-        for (int i = 0; i < numAbreast; i++) {
-            letters.add(String.valueOf(letter));
-            letter++;
-        }
-        return letters;
-    }
 }

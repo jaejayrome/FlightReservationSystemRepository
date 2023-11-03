@@ -35,6 +35,9 @@ public class Flight implements Serializable {
     @Column(nullable = false)
     private FlightStatus status;
     
+    @Column(nullable = true)
+    private long flightGroup;
+    
     // relationships
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -59,6 +62,14 @@ public class Flight implements Serializable {
     }
     
     // getters and setters
+
+    public long getFlightGroup() {
+        return flightGroup;
+    }
+
+    public void setFlightGroup(long flightGroup) {
+        this.flightGroup = flightGroup;
+    }
 
     public List<FlightSchedulePlan> getFlightSchedulePlanList() {
         return flightSchedulePlanList;
