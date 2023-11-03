@@ -36,7 +36,7 @@ public class Seat implements Serializable {
     // relationships
     @ManyToOne(optional = true)
     @JoinColumn(nullable = true)
-    private CabinClass cabinClass;
+    private FlightCabinClass flightCabinClass;
     
     // constructors
 
@@ -67,15 +67,13 @@ public class Seat implements Serializable {
         this.seatStatus = seatStatus;
     }
 
-    public CabinClass getCabinClass() {
-        return cabinClass;
+    public FlightCabinClass getFlightCabinClass() {
+        return flightCabinClass;
     }
 
-    public void setCabinClass(CabinClass cabinClass) {
-        this.cabinClass = cabinClass;
+    public void setFlightCabinClass(FlightCabinClass flightCabinClass) {
+        this.flightCabinClass = flightCabinClass;
     }
-    
-    
 
     public Long getId() {
         return id;

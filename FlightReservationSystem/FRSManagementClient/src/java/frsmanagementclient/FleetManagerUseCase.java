@@ -80,7 +80,6 @@ public class FleetManagerUseCase {
           Comparator<AircraftConfiguration> comparator = (x, y) -> x.getAircraftType().getAircraftTypeName().name().compareTo(y.getAircraftType().getAircraftTypeName().name()) == 0 ? 
                                                                 x.getConfigurationName().compareTo(y.getConfigurationName()) 
                                                                 : x.getAircraftType().getAircraftTypeName().name().compareTo(y.getAircraftType().getAircraftTypeName().name());
-          // ensures that list is sorted in accordance to the configuration name and the type
           List <AircraftConfiguration> sortedList = aircraftConfigurations.stream().sorted(comparator).collect(Collectors.toList());
           
           if (sortedList.size() > 0) {
@@ -136,7 +135,6 @@ public class FleetManagerUseCase {
         System.out.println("Aircraft Configuration #" + counter);
         System.out.println("Configuration Name: " + aircraftConfiguration.getConfigurationName());
         System.out.println("Configuration Aircraft Type Name: " + aircraftConfiguration.getAircraftType().getAircraftTypeName());
-        // System.out.println("Configuration Aircraft Type Manufacturer: " + aircraftConfiguration.getAircraftType().getManufacturer());
         System.out.println("-----------------------------------------------");
     }
     

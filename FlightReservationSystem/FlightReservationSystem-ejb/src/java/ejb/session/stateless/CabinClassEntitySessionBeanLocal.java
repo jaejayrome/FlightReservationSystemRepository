@@ -4,7 +4,9 @@
  */
 package ejb.session.stateless;
 
+import entity.AircraftConfiguration;
 import entity.CabinClass;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -14,4 +16,5 @@ import javax.ejb.Local;
 @Local
 public interface CabinClassEntitySessionBeanLocal {
     public long createCabinClass(CabinClass cabinClass);
+    public List<CabinClass> recreateCabinClass(List<CabinClass> list, AircraftConfiguration aircraftConfiguration);
 }

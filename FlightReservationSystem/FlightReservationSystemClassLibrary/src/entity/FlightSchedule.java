@@ -37,19 +37,14 @@ public class FlightSchedule implements Serializable {
     private Duration flightDuration;
     @Column(nullable = false)
     private Date arrivalTime;
-//    @Column(nullable = false)
-//    private Date endDate;
-//    @Column(nullable = false)
-//    private BigDecimal frequency;
-//    
+
     // relationships
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private FlightSchedulePlan flightSchedulePlan;
     
-    @OneToMany (mappedBy = "flightSchedule")
-    private List<CabinClass> cabinClassList;
-    // constructors
+    @OneToMany(mappedBy = "flightSchedule")
+    private List<FlightCabinClass> fccList;
     
 
     public FlightSchedule() {
@@ -59,16 +54,15 @@ public class FlightSchedule implements Serializable {
         this.departureTime = departureTime;
         this.flightDuration = flightDuration;
         this.arrivalTime = arrivalTime;
-        this.cabinClassList = new ArrayList<CabinClass>();
-    }
-    
-    // getters and setters
-    public List<CabinClass> getCabinClassList() {
-        return cabinClassList;
+        this.fccList = new ArrayList<FlightCabinClass>();
     }
 
-    public void setCabinClassList(List<CabinClass> cabinClassList) {
-        this.cabinClassList = cabinClassList;
+    public List<FlightCabinClass> getFccList() {
+        return fccList;
+    }
+
+    public void setFccList(List<FlightCabinClass> fccList) {
+        this.fccList = fccList;
     }
 
     public FlightSchedulePlan getFlightSchedulePlan() {
@@ -79,21 +73,6 @@ public class FlightSchedule implements Serializable {
         this.flightSchedulePlan = flightSchedulePlan;
     }
 
-//    public Date getEndDate() {    
-//        return endDate;
-//    }
-    
-//    public void setEndDate(Date endDate) {
-//        this.endDate = endDate;
-//    }
-//
-//    public BigDecimal getFrequency() {
-//        return frequency;
-//    }
-//    
-//    public void setFrequency(BigDecimal frequency) {
-//        this.frequency = frequency;
-//    }
 
     public Date getDepartureTime() {
         return departureTime;
@@ -118,8 +97,6 @@ public class FlightSchedule implements Serializable {
     public void setArrivalTime(Date arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
-    
-    
     
     public Long getId() {
         return id;

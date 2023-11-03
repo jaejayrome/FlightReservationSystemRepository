@@ -9,6 +9,7 @@ import entity.AircraftType;
 import entity.CabinClass;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import static java.util.Collections.list;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -23,8 +24,13 @@ import util.enumerations.AircraftTypeName;
 @Stateless
 public class AircraftConfigurationEntitySessionBean implements AircraftConfigurationEntitySessionBeanLocal {
 
+//    @EJB
+//    private CabinClassEntitySessionBeanLocal cabinClassEntitySessionBean;
+
     @EJB
     private AircraftTypeEntitySessionBeanLocal aircraftTypeEntitySessionBean;
+    
+    
 
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager em;
@@ -67,7 +73,7 @@ public class AircraftConfigurationEntitySessionBean implements AircraftConfigura
 
         return aircraftConfiguration.getId();
     }
-    
+      
     @Override
     public List<AircraftConfiguration> getAllAircraftConfigurationPerAircraftType(AircraftTypeName aircraftTypeName) {
         AircraftType aircraftType = aircraftTypeEntitySessionBean.getAircraftTypeFromName(aircraftTypeName);

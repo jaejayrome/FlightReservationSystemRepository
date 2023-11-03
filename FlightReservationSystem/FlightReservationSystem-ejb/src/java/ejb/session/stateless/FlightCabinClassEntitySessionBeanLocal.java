@@ -4,7 +4,8 @@
  */
 package ejb.session.stateless;
 
-import entity.FlightSchedule;
+import entity.FlightCabinClass;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -13,7 +14,7 @@ import javax.ejb.Local;
  * @author jeromegoh
  */
 @Local
-public interface FlightScheduleEntitySessionBeanLocal {
-    public FlightSchedule createFlightSchedule(FlightSchedule flightSchedule);
-    public List<FlightSchedule> viewFlightSchedulesByFlightNumber(String flightNumber);
+public interface FlightCabinClassEntitySessionBeanLocal {
+    public FlightCabinClass createFlightCabinClass(FlightCabinClass fcc);
+    public List<FlightCabinClass> findFccForParticularFS(String flightNumber, Date uniqueDate);
 }

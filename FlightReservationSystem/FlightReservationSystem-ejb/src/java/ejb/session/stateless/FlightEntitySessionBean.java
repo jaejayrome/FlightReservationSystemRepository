@@ -4,11 +4,15 @@
  */
 package ejb.session.stateless;
 
+import entity.AircraftConfiguration;
 import entity.Flight;
+import entity.FlightRoute;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import util.enumerations.FlightStatus;
 
 /**
  *
@@ -29,7 +33,10 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanLocal {
     
     @Override
     public List<Flight> viewAllFlights() {
-        return em.createQuery("SELECT flight FROM Flight flight").getResultList();
+        return em.createQuery("SELECT f " +
+               "FROM Flight f " +
+               "ORDER BY f.flightGroup, f.flightNumber").getResultList();
+        
     }
     
     // remember to throw any exception if needed
@@ -54,10 +61,40 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanLocal {
     
     @Override
     public Flight checkReturnFlight(String originAirport, String destinationAirport) {
-        return (Flight) em.createQuery("Select flight FROM Flight flight WHERE flight.flightRoute.origin.iataAirportCode = :destinationAirport AND flight.flightRoute.destination.iataAirportCode = :originAirport")
+        try { 
+        Flight flight = (Flight) em.createQuery("Select flight FROM Flight flight WHERE flight.flightRoute.origin.iataAirportCode = :destinationAirport AND flight.flightRoute.destination.iataAirportCode = :originAirport")
                              .setParameter("originAirport", originAirport)
                              .setParameter("destinationAirport", destinationAirport)
                              .getSingleResult();
+        return flight;
+        } catch (NoResultException exception) {
+            return null;
+            // throw new NoReturnFlightFoundException("No Complementary Return Flight has been found!");
+        }
+       
+    }
+    
+    @Override
+    public boolean deleteFlight(Flight flight) {
+        if (flight == null) return false;
+        // set it to an empty instance
+        AircraftConfiguration aircraftConfiguration = new AircraftConfiguration();
+        flight.setAircraftConfiguration(aircraftConfiguration);
+        
+        // set it to an empty flight route
+        FlightRoute flightRoute = new FlightRoute();
+        flight.setFlightRoute(flightRoute);
+        
+        em.remove(flight);
+        return true;
+        
+    }
+    
+    @Override
+    public boolean disableFlight(Flight flight) {
+        if (flight == null) return false;
+        flight.setStatus(FlightStatus.DISABLED);
+        return true;
     }
 
 }

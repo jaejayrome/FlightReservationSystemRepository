@@ -4,7 +4,8 @@
  */
 package ejb.session.stateless;
 
-import entity.FlightSchedule;
+import entity.FlightCabinClass;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -15,26 +16,26 @@ import javax.persistence.PersistenceContext;
  * @author jeromegoh
  */
 @Stateless
-public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySessionBeanLocal {
+public class FlightCabinClassEntitySessionBean implements FlightCabinClassEntitySessionBeanLocal {
 
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager em;
     
+    
     @Override
-    public FlightSchedule createFlightSchedule(FlightSchedule flightSchedule) {
-        em.persist(flightSchedule);
+    public FlightCabinClass createFlightCabinClass(FlightCabinClass fcc) {
+        em.persist(fcc);
         em.flush();
-        
-        return flightSchedule;
+        return fcc;
     }
     
     @Override
-    public List<FlightSchedule> viewFlightSchedulesByFlightNumber(String flightNumber) {
-        return em.createQuery("SELECT fs FROM FlightSchedule fs WHERE fs.flightSchedulePlan.flight.flightNumber = :flightNumber")
+    public List<FlightCabinClass> findFccForParticularFS(String flightNumber, Date uniqueDate) {
+        return em.createQuery("SELECT fcc FROM FlightCabinClass fcc WHERE fcc.flightSchedule.departureTime = :date AND fcc.flightSchedule.flightSchedulePlan.flight.flightNumber = :flightNumber")
+                .setParameter("date", uniqueDate)
                 .setParameter("flightNumber", flightNumber)
                 .getResultList();
     }
 
-    
-
+ 
 }

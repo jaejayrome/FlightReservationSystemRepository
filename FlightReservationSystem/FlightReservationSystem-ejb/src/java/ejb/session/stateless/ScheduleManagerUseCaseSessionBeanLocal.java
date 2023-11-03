@@ -13,6 +13,8 @@ import java.time.Duration;
 import java.util.HashMap;
 import javax.ejb.Local;
 import util.enumerations.CabinClassType;
+import util.enumerations.FlightStatus;
+import util.exception.InitialFlightNotInstantiatedException;
 
 /**
  *
@@ -20,9 +22,13 @@ import util.enumerations.CabinClassType;
  */
 @Local
 public interface ScheduleManagerUseCaseSessionBeanLocal {
-     public boolean createNewFlight(String flightNumber, String configurationName, String originCity, String destinationCity);
-     public List<Flight> viewAllFlights();
-     public Flight viewSpecificFlightDetails(String flightNumber);
-     public boolean createNewFlightSchedulePlan(String flightNumber, List<Date> departureDateList, Duration duration, Date endDate, int frequency, HashMap<CabinClassType, List<Fare>> faresForCabinClassList);
-     public List<FlightSchedulePlan> viewAllFlightSchedulePlan();
+    public long createNewFlight(String flightNumber, String configurationName, String originAirport, String destinationAirport, boolean createReturn, long initialId) throws InitialFlightNotInstantiatedException;
+    public List<Flight> viewAllFlights();
+    public Flight viewSpecificFlightDetails(String flightNumber);
+    public long createNewFlightSchedulePlan(String flightNumber, List<Date> departureDateList, Duration duration, Date endDate, int frequency, HashMap<CabinClassType, List<Fare>> faresForCabinClassList, boolean makeReturn, long id, Duration layover);
+    public List<FlightSchedulePlan> viewAllFlightSchedulePlan();
+    public void updateFlightNumber(String flightNumber, String newFlightNumber);
+    public void updateFlightStatus(String flightNumber, FlightStatus newStatus);
+    public boolean deleteFlight(String flightNumber);
+    public FlightSchedulePlan updateFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan);
 }

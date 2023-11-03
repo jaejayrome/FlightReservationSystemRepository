@@ -32,6 +32,8 @@ public class FlightRoute implements Serializable {
     @Column(nullable = false)
     private FlightRouteStatus flightRouteStatus;
     
+    @Column(name = "flightGroup", nullable = true)
+    private long flightGroup;
     
     // relationships
     // force every single flight route to have an origin and destination
@@ -43,6 +45,7 @@ public class FlightRoute implements Serializable {
     
     @OneToMany(mappedBy = "flightRoute")
     private List<Flight> flightList;
+   
     
     // constructors
     public FlightRoute() {
@@ -54,6 +57,14 @@ public class FlightRoute implements Serializable {
     }
     
     // getters and setters
+
+    public long getFlightGroup() {
+        return flightGroup;
+    }
+
+    public void setFlightGroup(long flightGroup) {
+        this.flightGroup = flightGroup;
+    }
 
     public FlightRouteStatus getFlightRouteStatus() {
         return flightRouteStatus;

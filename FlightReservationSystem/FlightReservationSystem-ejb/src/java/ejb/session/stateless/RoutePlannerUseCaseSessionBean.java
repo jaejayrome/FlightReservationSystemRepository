@@ -5,10 +5,12 @@
 package ejb.session.stateless;
 
 import entity.Airport;
+import entity.Flight;
 import entity.FlightRoute;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import util.enumerations.FlightRouteStatus;
 
 /**
  *
@@ -18,20 +20,35 @@ import javax.ejb.Stateless;
 public class RoutePlannerUseCaseSessionBean implements RoutePlannerUseCaseSessionBeanRemote, RoutePlannerUseCaseSessionBeanLocal {
 
     @EJB
+    private FlightEntitySessionBeanLocal flightEntitySessionBean;
+
+    @EJB
     private AirportEntitySessionBeanLocal airportEntitySessionBean;
 
     @EJB
     private FlightRouteEntitySessionBeanLocal flightRouteEntitySessionBean;
     
     
+    
+    
     public RoutePlannerUseCaseSessionBean() {
     }
     
     @Override
-    public long createNewFlightRoute(Airport originAirport, Airport destinationAirport, FlightRoute flightRoute) {
+    public long createNewFlightRoute(Airport originAirport, Airport destinationAirport, FlightRoute flightRoute, boolean makeReturnFlightRoute) {
+        
         FlightRoute persistedFlightRoute = flightRouteEntitySessionBean.createFlightRoute(flightRoute);
         flightRoute.setOrigin(originAirport);
         flightRoute.setDestination(destinationAirport);
+        flightRoute.setFlightGroup(flightRoute.getId());
+        
+        if (makeReturnFlightRoute) {
+            FlightRoute returnFlightRoute = new FlightRoute(FlightRouteStatus.DISABLED);
+            FlightRoute returnPersistedFlightRoute = flightRouteEntitySessionBean.createFlightRoute(returnFlightRoute);
+            returnPersistedFlightRoute.setOrigin(destinationAirport);
+            returnPersistedFlightRoute.setDestination(originAirport);
+            returnPersistedFlightRoute.setFlightGroup(flightRoute.getId());
+        }
         return persistedFlightRoute.getId();
     }
     
@@ -45,8 +62,17 @@ public class RoutePlannerUseCaseSessionBean implements RoutePlannerUseCaseSessio
         return airportEntitySessionBean.getAllAirports();
     }
     
-//    @Override
-//    public 
-//    
+    @Override
+    public boolean deleteFlightRoute(String originAirport, String destinationAirport) {
+        // checks whether is this flight route in use 
+        Flight flight = flightEntitySessionBean.checkReturnFlight(destinationAirport, originAirport);
+        // if in use ,disable it 
+        if (flight == null) {
+            return flightRouteEntitySessionBean.deleteFlightRoute(originAirport, destinationAirport);
+        } else {
+            return flightRouteEntitySessionBean.disableFlightRoute(originAirport, destinationAirport);
+        }
+        
+    }
     
 }

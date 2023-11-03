@@ -15,7 +15,8 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface RoutePlannerUseCaseSessionBeanRemote {
-    public long createNewFlightRoute(Airport originAirport, Airport destinationAirport, FlightRoute flightRoute);
+    public long createNewFlightRoute(Airport originAirport, Airport destinationAirport, FlightRoute flightRoute, boolean makeReturnFlightRoute);
     public List<FlightRoute> viewAllFlightRoute();
     public List<Airport> getAllAirport();
+    public boolean deleteFlightRoute(String originAirport, String destinationAirport);
 }
