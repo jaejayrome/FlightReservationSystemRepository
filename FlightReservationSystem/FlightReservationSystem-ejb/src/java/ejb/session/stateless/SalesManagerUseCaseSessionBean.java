@@ -4,6 +4,11 @@
  */
 package ejb.session.stateless;
 
+import entity.FlightCabinClass;
+import entity.FlightSchedule;
+import java.util.Date;
+import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 /**
@@ -13,6 +18,25 @@ import javax.ejb.Stateless;
 @Stateless
 public class SalesManagerUseCaseSessionBean implements SalesManagerUseCaseSessionBeanRemote, SalesManagerUseCaseSessionBeanLocal {
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
+    @EJB
+    private FlightCabinClassEntitySessionBeanLocal flightCabinClassEntitySessionBean;
+
+    @EJB
+    private FlightScheduleEntitySessionBeanLocal flightScheduleEntitySessionBean;
+
+    @EJB
+    private ScheduleManagerUseCaseSessionBeanLocal scheduleManagerUseCaseSessionBean;
+    
+   @Override
+   public List<FlightCabinClass> viewSeatInventory(String flightNumber, Date uniqueDepartureDate) {
+       // find the particular flight schedulde
+       List<FlightCabinClass> fccList = flightCabinClassEntitySessionBean.findFccForParticularFS(flightNumber, uniqueDepartureDate);
+       return fccList;
+   }
+   
+   @Override
+   public List<FlightSchedule> viewFlightSchedules(String flightNumber) {
+       List<FlightSchedule> flightScheduleList =  flightScheduleEntitySessionBean.viewFlightSchedulesByFlightNumber(flightNumber);
+       return flightScheduleList;
+   }
 }

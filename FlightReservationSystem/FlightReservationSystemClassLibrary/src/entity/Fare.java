@@ -38,6 +38,10 @@ public class Fare implements Serializable {
    @JoinColumn(nullable = false)
    private CabinClass cabinClass;
    
+    @ManyToOne (optional = true)
+    @JoinColumn (nullable = true)
+    FlightSchedulePlan flightSchedulePlan;
+   
    // constructors
     public Fare() {
     }
@@ -49,6 +53,14 @@ public class Fare implements Serializable {
     }
     
     // getters and setters
+
+    public FlightSchedulePlan getFlightSchedulePlan() {
+        return flightSchedulePlan;
+    }
+
+    public void setFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) {
+        this.flightSchedulePlan = flightSchedulePlan;
+    }
     
     public CabinClass getCabinClass() {    
         return cabinClass;

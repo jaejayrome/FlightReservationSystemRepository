@@ -57,10 +57,7 @@ public class CabinClass implements Serializable {
 //    @JoinColumn (nullable = true)
 //    private FlightSchedule flightSchedule;
     
-    @ManyToOne (optional = true)
-    @JoinColumn (nullable = true)
-    FlightSchedulePlan flightSchedulePlan;
-    
+
     // constructors
     public CabinClass() {
     }
@@ -77,23 +74,14 @@ public class CabinClass implements Serializable {
     }
     
      // getters and settters
-
-//    public FlightSchedule getFlightSchedule() {
-//        return flightSchedule;
+//    public FlightSchedulePlan getFlightSchedulePlan() {
+//        return flightSchedulePlan;
 //    }
 //
-//    public void setFlightSchedule(FlightSchedule flightSchedule) {
-//        this.flightSchedule = flightSchedule;
+//    public void setFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) {
+//        this.flightSchedulePlan = flightSchedulePlan;
 //    }
-
-    public FlightSchedulePlan getFlightSchedulePlan() {
-        return flightSchedulePlan;
-    }
-
-    public void setFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) {
-        this.flightSchedulePlan = flightSchedulePlan;
-    }
-   
+//   
     public List<Fare> getFareList() {
         return fareList;
     }

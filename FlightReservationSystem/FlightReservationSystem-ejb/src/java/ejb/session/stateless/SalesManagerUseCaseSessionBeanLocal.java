@@ -4,6 +4,10 @@
  */
 package ejb.session.stateless;
 
+import entity.FlightCabinClass;
+import entity.FlightSchedule;
+import java.util.Date;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -12,5 +16,6 @@ import javax.ejb.Local;
  */
 @Local
 public interface SalesManagerUseCaseSessionBeanLocal {
-    
+    public List<FlightCabinClass> viewSeatInventory(String flightNumber, Date uniqueDepartureDate);
+    public List<FlightSchedule> viewFlightSchedules(String flightNumber);
 }

@@ -5,6 +5,8 @@
 package ejb.session.stateless;
 
 import entity.FlightCabinClass;
+import java.util.Date;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -14,4 +16,5 @@ import javax.ejb.Local;
 @Local
 public interface FlightCabinClassEntitySessionBeanLocal {
     public FlightCabinClass createFlightCabinClass(FlightCabinClass fcc);
+    public List<FlightCabinClass> findFccForParticularFS(String flightNumber, Date uniqueDate);
 }

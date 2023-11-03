@@ -5,6 +5,7 @@
 package ejb.session.stateless;
 
 import entity.FlightSchedule;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -27,6 +28,12 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
         return flightSchedule;
     }
     
+    @Override
+    public List<FlightSchedule> viewFlightSchedulesByFlightNumber(String flightNumber) {
+        return em.createQuery("SELECT fs FROM FlightSchedule fs WHERE fs.flightSchedulePlan.flight.flightNumber = :flightNumber")
+                .setParameter("flightNumber", flightNumber)
+                .getResultList();
+    }
 
     
 

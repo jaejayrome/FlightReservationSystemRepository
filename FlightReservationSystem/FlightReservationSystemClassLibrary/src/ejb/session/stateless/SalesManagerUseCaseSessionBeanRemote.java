@@ -4,6 +4,10 @@
  */
 package ejb.session.stateless;
 
+import entity.FlightCabinClass;
+import entity.FlightSchedule;
+import java.util.Date;
+import java.util.List;
 import javax.ejb.Remote;
 
 /**
@@ -12,5 +16,6 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface SalesManagerUseCaseSessionBeanRemote {
-    
+    public List<FlightSchedule> viewFlightSchedules(String flightNumber);
+    public List<FlightCabinClass> viewSeatInventory(String flightNumber, Date uniqueDepartureDate);
 }

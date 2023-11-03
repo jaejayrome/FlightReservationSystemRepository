@@ -376,7 +376,7 @@ public class ScheduleManagerUseCase {
     }
     
     public FlightSchedulePlan askForWhichFlightSchedule(Flight flight) {
-        System.out.println("Flight Schedule List for Flight " + flight.getFlightNumber());
+        System.out.println("Flight Schedule Plans for Flight " + flight.getFlightNumber());
         int init = flight.getFlightSchedulePlanList().size();
         int counter = 1;
         System.out.println("");
@@ -426,14 +426,19 @@ public class ScheduleManagerUseCase {
         int init = flightSchedulePlan.getFlightScheduleList().size();
         System.out.println("");
         System.out.println("Fare Information");
-        flightSchedulePlan.getCabinClassList().forEach(x -> {
-            System.out.println("Number of Cabin Class: " + init);
-            x.getFareList().forEach(y -> {
-                System.out.println("Fare Basis Code: " + y.getFareBasicCode());
-                System.out.println("Fare Amount: " + y.getFareAmount());
-                System.out.println("");
-            });
+        flightSchedulePlan.getFares().forEach(y -> {
+            System.out.println("Fare Basis Code: " + y.getFareBasicCode());
+            System.out.println("Fare Amount: " + y.getFareAmount());
+            System.out.println("");
         });
+//        flightSchedulePlan.getCabinClassList().forEach(x -> {
+//            System.out.println("Number of Cabin Class: " + init);
+//            x.getFareList().forEach(y -> {
+//                System.out.println("Fare Basis Code: " + y.getFareBasicCode());
+//                System.out.println("Fare Amount: " + y.getFareAmount());
+//                System.out.println("");
+//            });
+//        });
         flightSchedulePlan.getFlightScheduleList().forEach(x -> printSpecificFlightSchedule(x));
     }
     

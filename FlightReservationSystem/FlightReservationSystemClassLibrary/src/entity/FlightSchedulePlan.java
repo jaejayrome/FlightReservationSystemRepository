@@ -46,7 +46,7 @@ public abstract class FlightSchedulePlan implements Serializable {
     private Flight flight;
 
     @OneToMany (mappedBy = "flightSchedulePlan")
-    private List<CabinClass> cabinClassList;
+    private List<Fare> fares;
     
     @OneToMany(mappedBy= "flightSchedulePlan")
     private List<FlightSchedule> flightScheduleList;
@@ -59,7 +59,8 @@ public abstract class FlightSchedulePlan implements Serializable {
         this.flight = flight; 
         this.status = status;
         this.flightScheduleList = new ArrayList<FlightSchedule>();
-        this.cabinClassList = new ArrayList<CabinClass>();
+        // this.cabinClassList = new ArrayList<CabinClass>();
+        this.fares = new ArrayList<Fare>();
     }
     
     // getters and setters
@@ -72,13 +73,21 @@ public abstract class FlightSchedulePlan implements Serializable {
         this.flightSchedulePlanGroup = flightSchedulePlanGroup;
     }
 
-    public List<CabinClass> getCabinClassList() {
-        return cabinClassList;
+    public List<Fare> getFares() {
+        return fares;
     }
 
-    public void setCabinClassList(List<CabinClass> cabinClassList) {
-        this.cabinClassList = cabinClassList;
+    public void setFares(List<Fare> fares) {
+        this.fares = fares;
     }
+
+//    public List<CabinClass> getCabinClassList() {
+//        return cabinClassList;
+//    }
+//
+//    public void setCabinClassList(List<CabinClass> cabinClassList) {
+//        this.cabinClassList = cabinClassList;
+//    }
 
     public FlightSchedulePlanStatus getStatus() {
         return status;

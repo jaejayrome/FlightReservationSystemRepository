@@ -5,6 +5,8 @@
 package ejb.session.stateless;
 
 import entity.FlightCabinClass;
+import java.util.Date;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -25,6 +27,14 @@ public class FlightCabinClassEntitySessionBean implements FlightCabinClassEntity
         em.persist(fcc);
         em.flush();
         return fcc;
+    }
+    
+    @Override
+    public List<FlightCabinClass> findFccForParticularFS(String flightNumber, Date uniqueDate) {
+        return em.createQuery("SELECT fcc FROM FlightCabinClass fcc WHERE fcc.flightSchedule.departureTime = :date AND fcc.flightSchedule.flightSchedulePlan.flight.flightNumber = :flightNumber")
+                .setParameter("date", uniqueDate)
+                .setParameter("flightNumber", flightNumber)
+                .getResultList();
     }
 
  
