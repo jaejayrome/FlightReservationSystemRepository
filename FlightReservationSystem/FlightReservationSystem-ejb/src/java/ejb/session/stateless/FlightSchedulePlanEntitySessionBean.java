@@ -37,5 +37,4 @@ public class FlightSchedulePlanEntitySessionBean implements FlightSchedulePlanEn
     public List<FlightSchedulePlan> viewAllFlightSchedulePlan() {
         return em.createQuery("SELECT fsp FROM FlightSchedulePlan fsp").getResultList();
     }
-
 }

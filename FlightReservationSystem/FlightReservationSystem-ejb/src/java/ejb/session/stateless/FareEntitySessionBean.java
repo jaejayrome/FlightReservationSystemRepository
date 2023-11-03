@@ -25,6 +25,4 @@ public class FareEntitySessionBean implements FareEntitySessionBeanLocal {
         em.flush();
         return fare.getId();
     }
-
-    
 }
