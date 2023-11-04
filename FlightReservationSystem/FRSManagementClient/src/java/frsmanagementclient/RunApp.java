@@ -222,9 +222,13 @@ public class RunApp {
                 System.out.println("Press '1' to Create Flight");
                 System.out.println("Press '2' to View All Flights");
                 System.out.println("Press '3' to View Specific Flight Details");
-                System.out.println("Press '4' to Create Flight Schedule Plan");
-                System.out.println("Press '5' to View All Flight Schedule Plans");
-                System.out.println("Press '6' to View Flight Schedule Plan Details");
+                System.out.println("Press '4' to Update Flight");
+                System.out.println("Press '5' to Delete Flight");
+                System.out.println("Press '6' to Create Flight Schedule Plan");
+                System.out.println("Press '7' to View All Flight Schedule Plans");
+                System.out.println("Press '8' to View Flight Schedule Plan Details");
+                System.out.println("Press '9' to Update Flight Schedule Plan Details");
+                System.out.println("Press '10' to Delete Flight Schedule Plan Details");
                 System.out.println("Press '0' to Logout from this session");
                 System.out.print("> ");
                 System.out.println("");
@@ -247,15 +251,31 @@ public class RunApp {
                         showUseCaseOptions(scanner, jobtitle);
                         break;
                     case 4: 
-                        scheduleManagerUseCase.createFlightSchedulePlan();
+                        scheduleManagerUseCase.updateFlight();
                         showUseCaseOptions(scanner, jobtitle);
                         break;
                     case 5: 
-                        scheduleManagerUseCase.viewAllFlightSchedulePlan();
+                        scheduleManagerUseCase.deleteFlight();
                         showUseCaseOptions(scanner, jobtitle);
                         break;
                     case 6: 
+                        scheduleManagerUseCase.createFlightSchedulePlan();
+                        showUseCaseOptions(scanner, jobtitle);
+                        break;
+                    case 7: 
+                        scheduleManagerUseCase.viewAllFlightSchedulePlan();
+                        showUseCaseOptions(scanner, jobtitle);
+                        break;
+                    case 8: 
                         scheduleManagerUseCase.viewFlightSchedulePlanDetails();
+                        showUseCaseOptions(scanner, jobtitle);
+                        break;
+                    case 9: 
+                        scheduleManagerUseCase.updateFlightSchedulePlan();
+                        showUseCaseOptions(scanner, jobtitle);
+                        break;
+                    case 10: 
+                        scheduleManagerUseCase.deleteFlightSchedulePlan();
                         showUseCaseOptions(scanner, jobtitle);
                         break;
                     default:

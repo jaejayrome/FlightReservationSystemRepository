@@ -7,11 +7,14 @@ package ejb.session.stateless;
 import entity.AircraftConfiguration;
 import entity.Flight;
 import entity.FlightRoute;
+import java.math.BigDecimal;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import util.enumerations.AircraftTypeName;
 import util.enumerations.FlightStatus;
 
 /**
@@ -21,6 +24,14 @@ import util.enumerations.FlightStatus;
 @Stateless
 public class FlightEntitySessionBean implements FlightEntitySessionBeanLocal {
 
+    @EJB
+    private FlightRouteEntitySessionBeanLocal flightRouteEntitySessionBean;
+
+    @EJB
+    private AircraftConfigurationEntitySessionBeanLocal aircraftConfigurationEntitySessionBean;
+
+    
+    
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager em;
     
@@ -78,12 +89,10 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanLocal {
     public boolean deleteFlight(Flight flight) {
         if (flight == null) return false;
         // set it to an empty instance
-        AircraftConfiguration aircraftConfiguration = new AircraftConfiguration();
-        flight.setAircraftConfiguration(aircraftConfiguration);
+        flight.setAircraftConfiguration(null);
         
         // set it to an empty flight route
-        FlightRoute flightRoute = new FlightRoute();
-        flight.setFlightRoute(flightRoute);
+        flight.setFlightRoute(null);
         
         em.remove(flight);
         return true;

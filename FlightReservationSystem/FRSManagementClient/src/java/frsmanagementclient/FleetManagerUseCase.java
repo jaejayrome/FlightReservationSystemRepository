@@ -135,15 +135,12 @@ public class FleetManagerUseCase {
         System.out.println("Aircraft Configuration #" + counter);
         System.out.println("Configuration Name: " + aircraftConfiguration.getConfigurationName());
         System.out.println("Configuration Aircraft Type Name: " + aircraftConfiguration.getAircraftType().getAircraftTypeName());
-        System.out.println("-----------------------------------------------");
     }
     
     public void printAircraftType() {
         for (AircraftType aircraftType: aircraftTypeList) {
             System.out.println("Name: " + aircraftType.getAircraftTypeName());
-//            System.out.println("Manufacturer: " + aircraftType.getManufacturer());
             System.out.println("Passenger Seat Capacity : " + aircraftType.getPassengerSeatCapacity());
-            System.out.println("-----------------------------------------------");
         }
     }
     

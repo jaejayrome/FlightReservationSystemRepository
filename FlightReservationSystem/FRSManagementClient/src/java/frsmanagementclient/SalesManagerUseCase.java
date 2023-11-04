@@ -33,8 +33,10 @@ public class SalesManagerUseCase {
     
     public void viewSeatsinventory() {
         System.out.println("Enter flight number: ");
+        System.out.print("> ");
         String flightNumber = scanner.next();
         List<FlightSchedule> flightScheduleList = salesManagerUseCaseSessionBeanRemote.viewFlightSchedules(flightNumber);
+        if (flightScheduleList.size() > 0) {
         int counter = 1;
         for (FlightSchedule x : flightScheduleList) {
             System.out.println("");
@@ -42,7 +44,10 @@ public class SalesManagerUseCase {
             System.out.println("Departure Time: " + x.getDepartureTime());
             System.out.println("Arrival Time: " + x.getArrivalTime());
             System.out.println("Press " + counter + " to select this flight schedule");
+            counter += 1;
         }
+        
+        
         
         System.out.println("Enter Your Choice Here");
         System.out.print("> ");
@@ -67,6 +72,9 @@ public class SalesManagerUseCase {
         System.out.println("Total Available Seats " + totalAvail);
         System.out.println("Total Reserved Seats " + totalReserved);
         System.out.println("Total Balanced Seats " + totalBalanced);
+        } else {
+            System.out.println("This flight has no active flight schedules!");
+        }
     }
     
     public void viewFlightReservations() {
