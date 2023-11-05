@@ -7,6 +7,7 @@ package ejb.session.stateless;
 import entity.FlightReservation;
 import java.util.List;
 import javax.ejb.Local;
+import util.enumerations.RoleType;
 
 
 /**
@@ -15,7 +16,11 @@ import javax.ejb.Local;
  */
 @Local
 public interface CustomerSessionBeanLocal {
-    Long createNewCustomer(String firstName, String lastName, String email, String phoneNumber, String address, String password);
+    Long createNewCustomer(String firstName, String lastName, String email, 
+            String phoneNumber, String address, String password, RoleType roleType);
+    
+    Long createNewCustomer(String firstName, String lastName, String email, 
+            String phoneNumber, String address, String password);
 
     List<FlightReservation> addFlightReservation();
 }
