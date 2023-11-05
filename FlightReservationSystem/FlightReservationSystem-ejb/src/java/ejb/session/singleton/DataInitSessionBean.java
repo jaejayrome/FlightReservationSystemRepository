@@ -137,7 +137,7 @@ public class DataInitSessionBean  {
         aircraftTypeEntitySessionBeanLocal.createNewAircraftType(AircraftTypeName.BOEING_737, new BigDecimal(215));
         aircraftTypeEntitySessionBeanLocal.createNewAircraftType(AircraftTypeName.BOEING_747, new BigDecimal(416));
     
-        customerSessionBeanLocal.createNewCustomerRecord("FirstName", "LastName", "email@test", "phoneNumber", "Address", "Password", RoleType.CUSTOMER);
+        customerSessionBeanLocal.createNewCustomer("FirstName", "LastName", "email@test", "phoneNumber", "Address", "Password", RoleType.CUSTOMER);
 
     }
 }

@@ -69,7 +69,9 @@ public class Customer implements Serializable {
     }
 
 
-    public Customer(String firstName, String lastName, String email, String phoneNumber, String address, String password, RoleType roleType) {
+    public Customer(String firstName, 
+            String lastName, String email, String phoneNumber, String address, 
+            String password, RoleType roleType) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -78,6 +80,19 @@ public class Customer implements Serializable {
         this.password = password;
         this.flightReservationList = new ArrayList<FlightReservation>();
         this.roleType = roleType;
+    }
+    
+    public Customer(String firstName, 
+            String lastName, String email, String phoneNumber, String address, 
+            String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.password = password;
+        this.flightReservationList = new ArrayList<FlightReservation>();
+        this.roleType = roleType.VISITOR;
     }
     
     // getters and setters 

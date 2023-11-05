@@ -34,6 +34,18 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
     }
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
+    
+    @Override
+    public Long createNewCustomer(String firstName, String lastName, String email, 
+            String phoneNumber, String address, String password, RoleType rollType) {
+        Customer customer = new Customer(firstName, lastName, email, phoneNumber, 
+                address, password, RoleType.CUSTOMER);
+        
+        System.out.println("New Customer created: ");
+        em.persist(customer);
+        em.flush();
+        return customer.getId();
+    }
 
     public void persist(Object object) {
         em.persist(object);
