@@ -31,7 +31,11 @@ public class RunApp {
     public RunApp() {
     }
     
-    public RunApp(EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote, RoutePlannerUseCaseSessionBeanRemote routePlannerUseCaseSessionBeanRemote, FleetManagerUseCaseSessionBeanRemote fleetManagerUseCaseSessionBeanRemote, ScheduleManagerUseCaseSessionBeanRemote scheduleManagerUseCaseSessionBeanRemote, SalesManagerUseCaseSessionBeanRemote salesManagerUseCaseSessionBeanRemote) {
+    public RunApp(EmployeeUseCaseSessionBeanRemote employeeUseCaseSessionBeanRemote, 
+            RoutePlannerUseCaseSessionBeanRemote routePlannerUseCaseSessionBeanRemote, 
+            FleetManagerUseCaseSessionBeanRemote fleetManagerUseCaseSessionBeanRemote, 
+            ScheduleManagerUseCaseSessionBeanRemote scheduleManagerUseCaseSessionBeanRemote, 
+            SalesManagerUseCaseSessionBeanRemote salesManagerUseCaseSessionBeanRemote) {
         this.employeeUseCaseSessionBeanRemote = employeeUseCaseSessionBeanRemote;
         this.routePlannerUseCaseSessionBeanRemote = routePlannerUseCaseSessionBeanRemote;
         this.fleetManagerUseCaseSessionBean = fleetManagerUseCaseSessionBeanRemote;
