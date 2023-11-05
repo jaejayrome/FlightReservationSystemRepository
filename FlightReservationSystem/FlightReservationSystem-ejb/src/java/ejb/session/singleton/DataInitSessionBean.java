@@ -7,6 +7,7 @@ package ejb.session.singleton;
 import ejb.session.stateless.AircraftTypeEntitySessionBeanLocal;
 import javax.annotation.PostConstruct;
 import ejb.session.stateless.AirportEntitySessionBeanLocal;
+import ejb.session.stateless.CustomerSessionBeanLocal;
 import ejb.session.stateless.EmployeeEntitySessionBeanLocal;
 import ejb.session.stateless.PartnerEntitySessionBeanLocal;
 import entity.Employee;
@@ -19,6 +20,7 @@ import util.enumerations.AircraftTypeName;
 import util.enumerations.EmploymentType;
 import util.enumerations.GenderType;
 import util.enumerations.JobTitle;
+import util.enumerations.RoleType;
 import util.exception.EmployeeNotFoundException;
 import util.exception.InitialDatabaseException;
 
@@ -30,6 +32,9 @@ import util.exception.InitialDatabaseException;
 @LocalBean
 @Startup
 public class DataInitSessionBean  {
+
+    @EJB(name = "CustomerSessionBeanLocal")
+    private CustomerSessionBeanLocal customerSessionBeanLocal;
     
     @EJB
     private AirportEntitySessionBeanLocal airportEntitySessionBeanLocal;
@@ -131,5 +136,8 @@ public class DataInitSessionBean  {
         // initialise 2 aircraft type // BOEIGN 747 and BOEING 737
         aircraftTypeEntitySessionBeanLocal.createNewAircraftType(AircraftTypeName.BOEING_737, new BigDecimal(215));
         aircraftTypeEntitySessionBeanLocal.createNewAircraftType(AircraftTypeName.BOEING_747, new BigDecimal(416));
+    
+        customerSessionBeanLocal.createNewCustomerRecord("FirstName", "LastName", "email@test", "phoneNumber", "Address", "Password", RoleType.CUSTOMER);
+
     }
 }

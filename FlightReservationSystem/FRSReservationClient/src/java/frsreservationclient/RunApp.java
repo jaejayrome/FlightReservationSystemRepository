@@ -77,6 +77,5 @@ public class RunApp {
     
      public void invalidOption() {
         System.out.println("You have selected an invalid option!");
-    }
-     
+     }
 }

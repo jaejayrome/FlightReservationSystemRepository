@@ -38,17 +38,11 @@ public class Main {
     
     
     public static void main(String[] args) {
-        System.out.println(employeeUseCaseSessionBeanRemote == null);
-        System.out.println(fleetManagerUseCaseSessionBean == null);
-        System.out.println(routePlannerUseCaseSessionBeanRemote == null);
-        System.out.println(scheduleManagerUseCaseSessionBean == null);
-        System.out.println(salesManagerUseCaseSessionBean == null);
-        RunApp runApp = new RunApp(employeeUseCaseSessionBeanRemote, routePlannerUseCaseSessionBeanRemote, fleetManagerUseCaseSessionBean, scheduleManagerUseCaseSessionBean, salesManagerUseCaseSessionBean);
+
+        
+        RunApp runApp = new RunApp(employeeUseCaseSessionBeanRemote, 
+                    routePlannerUseCaseSessionBeanRemote, fleetManagerUseCaseSessionBean);
+
         runApp.showLoginScreen();
-    }
-    
-
-    
-
-    
+    }    
 }

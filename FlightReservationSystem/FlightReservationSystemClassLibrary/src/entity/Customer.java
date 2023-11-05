@@ -68,6 +68,7 @@ public class Customer implements Serializable {
         this.flightReservationList = customer.flightReservationList;
     }
 
+
     public Customer(String firstName, String lastName, String email, String phoneNumber, String address, String password, RoleType roleType) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -80,6 +81,14 @@ public class Customer implements Serializable {
     }
     
     // getters and setters 
+
+    public RoleType getRoleType() {
+        return roleType;
+    }
+
+    public void setRoleType(RoleType roleType) {
+        this.roleType = roleType;
+    }
 
     public String getFirstName() {
         return firstName;

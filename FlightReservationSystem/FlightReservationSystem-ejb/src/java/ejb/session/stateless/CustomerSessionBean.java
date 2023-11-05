@@ -32,9 +32,6 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
         em.flush();
         return customer.getId();
     }
-    
-    
-
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
 
@@ -46,5 +43,4 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
     public List<FlightReservation> addFlightReservation() {
         return null;
     }
-    
 }
