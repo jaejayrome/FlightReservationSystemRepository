@@ -3,102 +3,79 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package frsreservationclient;
+
 import ejb.session.stateless.CustomerSessionBeanRemote;
-import entity.Customer;
-import java.util.List;
 import java.util.Scanner;
 
 /**
  *
  * @author geraldtan
  */
-public class RunApp {    
-    private CustomerSessionBeanRemote customerSessionBeanRemote;
-            
+public class RunApp {
+    
+    private CustomerSessionBeanRemote customerSessionBean;
+
     public RunApp() {}
     
-
-    
-    public RunApp(CustomerSessionBeanRemote customerSessionBeanRemote) {
-        this.customerSessionBeanRemote = customerSessionBeanRemote;
+    public RunApp(CustomerSessionBeanRemote customerSessionBean) {
+        //expose runApp to remote SessionBean methods
+        this.customerSessionBean = customerSessionBean; 
     }
-
-    public void showLoginScreen() {
-        Scanner scanner = new Scanner(System.in);
-        printPlane();
-        printLogo();
-        printEstablish();
-//        doLogin(scanner);
+    
+    public void showVisitorHomeScreen() {
+        Scanner sc = new Scanner(System.in);
         
-        scanner.close();
+        userAuthPrompt(sc);
+        
+        sc.close();
     }
     
-    public void getAllCustomers() {
-        List<Customer> allCustomers = customerSessionBeanRemote.retrieveAllCustomer();
-        for (int i = 0; i < allCustomers.size(); i ++ ) {
-            System.out.println(allCustomers.get(i).getFirstName());
+    public void userAuthPrompt(Scanner sc) {
+        System.out.println("Press '0' to continue as guest");
+        System.out.println("Press '1' to Login to an existing account");
+        System.out.println("Press '2' to Register an account");
+        
+        int option = Integer.valueOf(sc.nextLine());
+        
+        switch(option) {
+            case 0:
+                System.out.println("Continue as guest");
+                userAuthPrompt(sc);
+                break;
+            case 1:
+                System.out.println("Login selected");
+                userAuthPrompt(sc);
+                break;
+            case 2:
+                System.out.println("Registering your account");
+                
+                System.out.println("Input First Name: ");
+                String firstName = sc.nextLine();
+                System.out.println("Input Last Name: ");
+                String lastName = sc.nextLine();
+                System.out.println("Input Email: ");
+                String email = sc.nextLine();
+                System.out.println("Input Phone Number: ");
+                String phoneNumber = sc.nextLine();
+                System.out.println("Input your Address: ");
+                String address = sc.nextLine();
+                System.out.println("Input your Password: ");
+                String password = sc.nextLine();
+                
+                customerSessionBean.createNewCustomer(firstName, lastName, 
+                        email, phoneNumber, address, password);
+                
+//                System.out.println("firstname: " + firstName + " lastName: " + lastName + " email : " + email + " phone: " + phoneNumber
+//                    + " add: " + address + " pw: " + password);
+                
+                userAuthPrompt(sc);
+                break;
+            default: 
+                invalidOption();
         }
     }
-
-    public void printPlane() {
-        System.out.println("");
-        System.out.println("                                      \\ \\");
-        System.out.println("                                       \\ `\\");
-        System.out.println("                    ___                 \\  \\");
-        System.out.println("                   |    \\                \\  `\\");
-        System.out.println("                   |_____\\                \\    \\");
-        System.out.println("                   |______\\                \\    `\\");
-        System.out.println("                   |       \\                \\     \\");
-        System.out.println("                   |      __\\__---------------------------------._.");
-        System.out.println("                 __|---~~~__o_o_o_o_o_o_o_o_o_o_o_o_o_o_o_o_o_o_[]\\[__");
-        System.out.println("                |___                         /~      )                \\__");
-        System.out.println("                    ~~~---..._______________/      ,/_________________/");
-        System.out.println("                                           /      /");
-        System.out.println("                                          /     ,/");
-        System.out.println("                                         /     /");
-        System.out.println("                                        /    ,/");
-        System.out.println("                                       /    /");
-        System.out.println("                                      //  ,/");
-        System.out.println("                                     //  /");
-        System.out.println("                                    // ,/");
-        System.out.println("                                   //_/");
-        System.out.println("");
-    }
-
     
-    public void printLogo() {
-        String asciiArt =
-            "███╗   ███╗███████╗██████╗ ██╗     ██╗ ██████╗ ███╗   ██╗     █████╗ ██╗██████╗ ██╗     ██╗███╗   ██╗███████╗███████╗\n" +
-            "████╗ ████║██╔════╝██╔══██╗██║     ██║██╔═══██╗████╗  ██║    ██╔══██╗██║██╔══██╗██║     ██║████╗  ██║██╔════╝██╔════╝\n" +
-            "██╔████╔██║█████╗  ██████╔╝██║     ██║██║   ██║██╔██╗ ██║    ███████║██║██████╔╝██║     ██║██╔██╗ ██║█████╗  ███████╗\n" +
-            "██║╚██╔╝██║██╔══╝  ██╔══██╗██║     ██║██║   ██║██║╚██╗██║    ██╔══██║██║██╔══██╗██║     ██║██║╚██╗██║██╔══╝  ╚════██║\n" +
-            "██║ ╚═╝ ██║███████╗██║  ██║███████╗██║╚██████╔╝██║ ╚████║    ██║  ██║██║██║  ██║███████╗██║██║ ╚████║███████╗███████║";
-        System.out.println("\n");
-        System.out.println(asciiArt);
-        System.out.println("\n");
-    }
-    
-    public void printEstablish() {
-        System.out.println(" _____ ____ _____   ____   ___ ____  _____ ");
-        System.out.println(" | ____/ ___|_   _| |___ \\ / _ |___ \\___ / ");
-        System.out.println(" |  _| \\___ \\ | |     __) | | | |__) | |_ \\ ");
-        System.out.println(" | |___ ___) || |_   / __/| |_| / __/ ___) |");
-        System.out.println(" |_____|____/ |_(_) |_____|\\___|_____|____/ ");
-    }
-    
-    public  void subHeader() {
-        System.out.println(" ____    ____                                                          _     _______               _        __   ");
-        System.out.println("|_   \\  /   _|                                                        / |_  |_   __ \\             / |_     [  |  ");
-        System.out.println("  |   \\/   |  ,--.  _ .--.  ,--.  .--./).---. _ .--..--. .---. _ .--.`| |-'   | |__) |.--.  _ .--`| |-,--.  | |  ");
-        System.out.println("  | |\\  /| | `'_\\ :[ `.-. |`'_\\ :/ /'`\\/ /__[`.-. .-. / /__\\[ `.-. || |     |  ___/ .'`\\ [ `/'`\\| |`'_\\ : | |  ");
-        System.out.println(" _| |_\\/_| |_// | |,| | | |// | |\\ \\._/| \\__.,| | | | | | \\__.,| | | || |,   _| |_  | \\__. || |   | |// | |,| |  ");
-        System.out.println("|_____||_____\'-;__[___||__\'-;__.',__` '.__.[___||__||__'.__.[___||__\\__/  |_____|  '.__.'[___]  \\__\'-;__[___] ");
-        System.out.println("                                ( ( __))                                                                       ");
-    }
-    
-    public void showUseCaseOptions(Scanner scanner) {
-    
-    
-    }
-    
+     public void invalidOption() {
+        System.out.println("You have selected an invalid option!");
+     }
 }

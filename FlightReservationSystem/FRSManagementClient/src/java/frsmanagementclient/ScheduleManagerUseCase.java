@@ -95,9 +95,11 @@ public class ScheduleManagerUseCase {
             
             if (haveReturnFlight != -1) {
                 System.out.println("A Return Flight Route has been detected!");
-                System.out.println("Press '1' if you would like to create this return flight route");
+                System.out.println("Press '1' if you would like to create this return flight");
+                System.out.println("Press '0' if you do not wish to do sot");
                 System.out.print("> ");
                 boolean createFlight = scanner.nextInt() == 1 ? true : false;
+                if (scanner.nextInt() == 0) return;
                 // checks whether user would want to create this
                 if (createFlight) createFlight(configurationName, destinationCity, originCity, haveReturnFlight);
             }
@@ -269,7 +271,7 @@ public class ScheduleManagerUseCase {
             faresForCabinClassList.put(cabinClass.getCabinClassName(), fareList);
         }
         
-        // still haven't implement the use of checking whether should we create another flight schedule plan
+       
        long promptReturnFlightSchedule = scheduleManagerUseCaseSessionBeanRemote.createNewFlightSchedulePlan(flightNumber, departureDateList, duration, endDate, frequency, faresForCabinClassList, false, -1, null);
        if (promptReturnFlightSchedule != -1) {
             System.out.println("An existing complementary flight schedule plan has been detected!");
@@ -359,7 +361,7 @@ public class ScheduleManagerUseCase {
     }
     
     public void deleteFlightSchedulePlan() {
-        
+        // need customer side to be done before can complete 
     }
     
     
@@ -381,10 +383,10 @@ public class ScheduleManagerUseCase {
         int counter = 1;
         System.out.println("");
         for (FlightSchedulePlan fp : flight.getFlightSchedulePlanList()) {
-            System.out.println("Press " + counter + " for to view this flight schedule plan in detail");
             System.out.println("");
             System.out.println();
             printSpecificFlightSchedulePlan(fp, false);
+            System.out.println("Press " + counter + " for to view this flight schedule plan in detail");
             counter += 1;
         }
         

@@ -38,10 +38,12 @@ public class RoutePlannerUseCase {
         if (airports.size() > 0) {
             airports.stream().forEach(airport -> printSingleAirport(airport));
             System.out.println("");
-            System.out.print("Please Enter the IATA Code of the Origin Airport: ");
+            System.out.println("Please Enter the IATA Code of the Origin Airport: ");
+            System.out.print("> ");
             String origin = scanner.next();
             System.out.println("");
             System.out.println("Please Enter the IATA Code of the Destination Airport"); 
+            System.out.print("> ");
             String destination = scanner.next();
             // filter out the airports of chocie
             Airport originAirport = airports.stream().filter(x -> x.getIataAirportCode().equals(origin)).findFirst().get();
@@ -79,6 +81,7 @@ public class RoutePlannerUseCase {
         System.out.println("Enter the Flight Route Origin Airport IATA Code: ");
         System.out.print("> ");
         String originAirport = scanner.next();
+        
         
         System.out.println("");
         System.out.println("Enter the Flight Route Destination Airport IATA Code: ");

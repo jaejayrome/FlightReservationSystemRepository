@@ -5,12 +5,11 @@
 package ejb.session.stateless;
 
 import entity.Customer;
-import java.util.ArrayList;
+import entity.FlightReservation;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import util.enumerations.RoleType;
 
 /**
@@ -18,34 +17,30 @@ import util.enumerations.RoleType;
  * @author geraldtan
  */
 @Stateless
-public class CustomerSessionBean implements CustomerSessionBeanLocal {
-
+public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerSessionBeanLocal {
+    
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager em;
     
-//    @Override
-//    public Long createNewCustomerRecord(Customer customer){
-//        em.persist(customer);
-//        em.flush();
-//        
-//        return customer.getId();
-//    }
     
-    public List<Customer> retrieveAllCustomer() {
-        List<Customer> allCustomerList = new ArrayList<Customer>();
-        Query query = em.createQuery("SELECT customer FROM Customer c");
-        allCustomerList.addAll(query.getResultList());
-        
-        return allCustomerList;
-    }
-
     @Override
-    public Long createNewCustomerRecord(String firstName, String lastName, 
-                String email, String phoneNumber, String address, String password, RoleType roletype) {
+    public Long createNewCustomer(String firstName, String lastName, String email, String phoneNumber, String address, String password) {
+        Customer customer = new Customer(firstName, lastName, email, phoneNumber, address, password, RoleType.CUSTOMER);
         
-        Customer customer = new Customer (firstName, lastName, email, phoneNumber, address, password, roletype);
+        System.out.println("New Customer created: ");
         em.persist(customer);
         em.flush();
         return customer.getId();
+    }
+    // Add business logic below. (Right-click in editor and choose
+    // "Insert Code > Add Business Method")
+
+    public void persist(Object object) {
+        em.persist(object);
+    }
+
+    @Override
+    public List<FlightReservation> addFlightReservation() {
+        return null;
     }
 }
