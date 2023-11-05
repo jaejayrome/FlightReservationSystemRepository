@@ -137,6 +137,11 @@ public class Customer implements Serializable {
         this.flightReservationList = flightReservationList;
     }
     
+    public List<FlightReservation> addFlightReservationList(FlightReservation fr) {
+        this.flightReservationList.add(fr);
+        return this.flightReservationList;
+    }
+    
     
     public Long getId() {
         return id;

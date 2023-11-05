@@ -5,6 +5,8 @@
 package ejb.session.stateless;
 
 import entity.Customer;
+import entity.FlightReservation;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -30,12 +32,19 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
         em.flush();
         return customer.getId();
     }
+    
+    
 
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
 
     public void persist(Object object) {
         em.persist(object);
+    }
+
+    @Override
+    public List<FlightReservation> addFlightReservation() {
+        return null;
     }
     
 }
