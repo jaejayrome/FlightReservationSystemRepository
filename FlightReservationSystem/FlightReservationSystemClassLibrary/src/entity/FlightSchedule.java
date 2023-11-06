@@ -73,6 +73,7 @@ public class FlightSchedule implements Serializable {
         this.flightSchedulePlan = flightSchedulePlan;
     }
 
+
     public Date getDepartureTime() {
         return departureTime;
     }

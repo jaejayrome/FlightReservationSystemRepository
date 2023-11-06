@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import util.enumerations.RoleType;
 
 /**
  *
@@ -49,12 +50,28 @@ public class Customer implements Serializable {
     @OneToMany (mappedBy = "customer")
     private List<FlightReservation> flightReservationList;
     
+    @Column (nullable = false)
+    private RoleType roleType;
+    
     // constructors
 
     public Customer() {
     }
+    
+    public Customer(Customer customer) {
+        this.firstName = customer.firstName;
+        this.lastName = customer.lastName;
+        this.email = customer.email;
+        this.phoneNumber = customer.phoneNumber;
+        this.address = customer.address;
+        this.password = customer.password;
+        this.flightReservationList = customer.flightReservationList;
+    }
 
-    public Customer(String firstName, String lastName, String email, String phoneNumber, String address, String password) {
+
+    public Customer(String firstName, 
+            String lastName, String email, String phoneNumber, String address, 
+            String password, RoleType roleType) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -62,9 +79,31 @@ public class Customer implements Serializable {
         this.address = address;
         this.password = password;
         this.flightReservationList = new ArrayList<FlightReservation>();
+        this.roleType = roleType;
+    }
+    
+    public Customer(String firstName, 
+            String lastName, String email, String phoneNumber, String address, 
+            String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.password = password;
+        this.flightReservationList = new ArrayList<FlightReservation>();
+        this.roleType = roleType.VISITOR;
     }
     
     // getters and setters 
+
+    public RoleType getRoleType() {
+        return roleType;
+    }
+
+    public void setRoleType(RoleType roleType) {
+        this.roleType = roleType;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -120,6 +159,11 @@ public class Customer implements Serializable {
 
     public void setFlightReservationList(List<FlightReservation> flightReservationList) {
         this.flightReservationList = flightReservationList;
+    }
+    
+    public List<FlightReservation> addFlightReservationList(FlightReservation fr) {
+        this.flightReservationList.add(fr);
+        return this.flightReservationList;
     }
     
     
