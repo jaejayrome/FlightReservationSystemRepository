@@ -7,7 +7,9 @@ package ejb.session.stateless;
 import entity.Partner;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import util.exception.InvalidLoginCredentialsException;
 
 /**
  *
@@ -24,5 +26,24 @@ public class PartnerEntitySessionBean implements PartnerEntitySessionBeanLocal {
         em.persist(partner);
         em.flush();
         return partner.getId();
+    }
+    
+    @Override
+    public Partner authenticatePartner(String username, String password) throws InvalidLoginCredentialsException {
+        try {
+            Partner partner = (Partner)em.createQuery("SELECT p FROM Partner p WHERE p.loginUsername = :username AND p.loginPassword = :password")
+                    .setParameter("username", username)
+                    .setParameter("password", password)
+                    .getSingleResult();
+            return partner;
+        } catch (NoResultException exception) {
+            throw new InvalidLoginCredentialsException("You have either entered an invalid Username or Password");
+        }
+    }
+    
+    @Override
+    public void updateLogInStatus(boolean newStatus, long id) {
+        Partner p = em.find(Partner.class, id);
+        p.setIsLoggedIn(newStatus);
     }
 }

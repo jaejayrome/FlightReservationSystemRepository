@@ -29,6 +29,9 @@ public class Partner implements Serializable {
     private String loginUsername;
     @Column(nullable = false)
     private String loginPassword;
+    
+    @Column(nullable = false)
+    private boolean isLoggedIn;
 
     public Partner() {
     }
@@ -38,9 +41,19 @@ public class Partner implements Serializable {
         this.companyName = companyName;
         this.loginUsername = loginUsername;
         this.loginPassword = loginPassword;
+        this.isLoggedIn = false;
     }
     
     // getters and setters
+
+    public boolean isIsLoggedIn() {
+        return isLoggedIn;
+    }
+
+    public void setIsLoggedIn(boolean isLoggedIn) {
+        this.isLoggedIn = isLoggedIn;
+    }
+    
     public String getCompanyName() {
         return companyName;
     }
