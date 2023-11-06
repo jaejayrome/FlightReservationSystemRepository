@@ -66,9 +66,11 @@ public class Customer implements Serializable {
         this.address = customer.address;
         this.password = customer.password;
         this.flightReservationList = customer.flightReservationList;
+        this.roleType = customer.roleType;
     }
 
 
+    //this is called when we want to init a visitor 
     public Customer(String firstName, 
             String lastName, String email, String phoneNumber, String address, 
             String password, RoleType roleType) {
@@ -92,7 +94,7 @@ public class Customer implements Serializable {
         this.address = address;
         this.password = password;
         this.flightReservationList = new ArrayList<FlightReservation>();
-        this.roleType = roleType.VISITOR;
+        this.roleType = roleType.CUSTOMER;
     }
     
     // getters and setters 
