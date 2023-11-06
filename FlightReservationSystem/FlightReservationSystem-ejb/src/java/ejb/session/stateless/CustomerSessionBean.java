@@ -47,10 +47,6 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
         return customer.getId();
     }
 
-    public void persist(Object object) {
-        em.persist(object);
-    }
-
     @Override
     public List<FlightReservation> addFlightReservation() {
         return null;
