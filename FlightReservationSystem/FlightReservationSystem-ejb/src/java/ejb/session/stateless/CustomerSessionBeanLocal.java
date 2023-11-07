@@ -16,11 +16,10 @@ import util.enumerations.RoleType;
  */
 @Local
 public interface CustomerSessionBeanLocal {
-    Long createNewCustomer(String firstName, String lastName, String email, 
-            String phoneNumber, String address, String password, RoleType roleType);
-    
+//    Long createNewCustomer(String firstName, String lastName, String email, 
+//            String phoneNumber, String address, String password, RoleType roleType);
+//    
     Long createNewCustomer(String firstName, String lastName, String email, 
             String phoneNumber, String address, String password);
 
-    List<FlightReservation> addFlightReservation();
 }
