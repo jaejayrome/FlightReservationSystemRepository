@@ -6,6 +6,9 @@ package frsreservationclient;
 
 import ejb.session.stateless.CustomerSessionBeanRemote;
 import ejb.session.stateless.CustomerUseCaseSessionBeanRemote;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 /**
@@ -36,6 +39,7 @@ public class RunApp {
         sc.close();
     }
     
+  
     public void userAuthPrompt(Scanner sc) {
         System.out.println("Press '0' to continue as guest");
         System.out.println("Press '1' to Login to an existing account");
@@ -101,11 +105,11 @@ public class RunApp {
         }
     }
     
-     public void invalidOption() {
+    public void invalidOption() {
         System.out.println("You have selected an invalid option!");
      }
      
-     public void createNewCustomerAccount(Scanner sc) {
+    public void createNewCustomerAccount(Scanner sc) {
          System.out.println("Input First Name: ");
             String firstName = sc.nextLine();
             System.out.println("Input Last Name: ");
@@ -122,4 +126,71 @@ public class RunApp {
             customerSessionBean.createNewCustomer(firstName, lastName, 
                     email, phoneNumber, address, password);
      }
+    
+    public void searchForFlightRoutes(Scanner sc) {
+        int roundTrip;
+        boolean rtbl;
+        String departureAirport;
+        Date departureDate = null;
+        String arrivalAirport;
+        Date returnDate = null;
+        int directFlight;
+        boolean dfbl;
+        
+        System.out.println("Please enter your Flight details to check for available flights");
+        System.out.println("Trip Type: Press 1 for Return, 2 for One-Way");
+        roundTrip = Integer.valueOf(sc.nextLine());    
+        
+        System.out.println("Enter Trip Departure Airport: ");
+        departureAirport = sc.nextLine();
+        
+        System.out.println("Enter Departure Date in DD/MM/YYYY format");
+        String tmp = sc.nextLine();
+        DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        try {
+            departureDate = formatter.parse(tmp);
+        } catch (Exception e) {
+            System.out.println("Invalid Date format. Please try again");
+        }
+        
+        System.out.println("Enter arrival Airport: ");
+        arrivalAirport = sc.nextLine();
+        
+        if (roundTrip == 1) {
+            System.out.println("Enter Return Date in DD/MM/YYYY format");
+            String tmp2 = sc.nextLine();
+            try {
+                returnDate = formatter.parse(tmp);
+            } catch (Exception e) {
+                System.out.println("Invalid Date format. Please try again");
+            }
+        }
+        
+        System.out.println("Do you prefer a direct or connecting flight? Press 1 for direct, 2 for Connecting");
+        directFlight = Integer.valueOf(sc.nextLine()); 
+        
+        if(roundTrip == 1) {
+            rtbl = true;
+        } else {
+            rtbl = false;
+        } 
+        
+        if(directFlight == 1) {
+            dfbl = true;
+        } else {
+            dfbl = false;
+        }
+        
+        if (roundTrip == 1) {
+            customerUseCaseSessionBean.searchForFlightRoutes(
+            departureAirport, departureDate, arrivalAirport,
+            returnDate, dfbl);
+        } else if (roundTrip == 2) {
+            customerUseCaseSessionBean.searchForFlightRoutes(
+            departureAirport, departureDate, arrivalAirport, dfbl);
+        }
+        
+        System.out.println(customerUseCaseSessionBean.searchForFlightRoutes(
+            departureAirport, departureDate, arrivalAirport, dfbl).get(0).toString()); 
+    }
 }

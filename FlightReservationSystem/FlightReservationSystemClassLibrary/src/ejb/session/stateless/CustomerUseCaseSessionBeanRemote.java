@@ -4,6 +4,9 @@
  */
 package ejb.session.stateless;
 
+import entity.FlightRoute;
+import java.util.Date;
+import java.util.List;
 import javax.ejb.Remote;
 
 /**
@@ -13,6 +16,26 @@ import javax.ejb.Remote;
 @Remote
 public interface CustomerUseCaseSessionBeanRemote {
 
-    int customerLogin(String email, String password);
+    int customerLogin(String email, String password);   
+    
+    
+    //need to add return Flights
+    List<FlightRoute> searchForFlightRoutes(
+        String departureAirport, 
+        Date departureDate, 
+        String arrivalAirport,
+        Date returnDate, 
+        boolean dfbl
+    );
+    
+    
+    //no need add return flights
+    List<FlightRoute> searchForFlightRoutes(
+        String departureAirport, 
+        Date departureDate, 
+        String arrivalAirport,
+        boolean dfbl
+    );
+    
     
 }

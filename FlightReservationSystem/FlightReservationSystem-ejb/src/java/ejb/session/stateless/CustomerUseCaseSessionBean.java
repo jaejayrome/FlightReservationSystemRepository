@@ -5,7 +5,10 @@
 package ejb.session.stateless;
 
 import entity.Customer;
+import entity.FlightRoute;
+import java.util.Date;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,7 +19,7 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRemote, CustomerUseCaseSessionBeanLocal {
-
+    
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager em;
 
@@ -61,8 +64,38 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
         return -1;
     }
     
+    
+    
 
     public void persist(Object object) {
         em.persist(object);
     }
+
+    
+    @Override
+    public List<FlightRoute> searchForFlightRoutes(
+        String departureAirport, 
+        Date departureDate, 
+        String arrivalAirport,
+        Date returnDate, 
+        boolean dfbl) {
+        
+        
+        return null;
+    }
+    
+    @Override
+    //no need add return flights
+    public List<FlightRoute> searchForFlightRoutes(
+        String departureAirport, 
+        Date departureDate, 
+        String arrivalAirport,
+        boolean dfbl) {
+        
+        return em.createQuery("SELECT fs FROM FlightSchedule "
+                + "WHERE fs.DEPARTURETIME.date := departureDate")
+                .setParameter("deparetureDate", departureDate).getResultList();
+    }
+    
+    
 }

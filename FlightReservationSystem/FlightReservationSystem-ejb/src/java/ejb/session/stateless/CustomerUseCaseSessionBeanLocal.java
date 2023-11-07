@@ -4,6 +4,8 @@
  */
 package ejb.session.stateless;
 
+import entity.FlightRoute;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -14,5 +16,5 @@ import javax.ejb.Local;
 public interface CustomerUseCaseSessionBeanLocal {
 
     int customerLogin(String email, String password);
-    
+
 }
