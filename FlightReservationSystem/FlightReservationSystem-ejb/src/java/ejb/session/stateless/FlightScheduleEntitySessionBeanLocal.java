@@ -16,4 +16,6 @@ import javax.ejb.Local;
 public interface FlightScheduleEntitySessionBeanLocal {
     public FlightSchedule createFlightSchedule(FlightSchedule flightSchedule);
     public List<FlightSchedule> viewFlightSchedulesByFlightNumber(String flightNumber);
+    public List<FlightSchedule> getFlightSchedulesByAirportDestination(String iataCode);
+    public List<FlightSchedule> getFlightSchedulesByAirportOrigin(String iataCode);
 }

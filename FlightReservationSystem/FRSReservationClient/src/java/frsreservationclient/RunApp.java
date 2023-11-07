@@ -129,13 +129,11 @@ public class RunApp {
     
     public void searchForFlightRoutes(Scanner sc) {
         int roundTrip;
-        boolean rtbl;
         String departureAirport;
         Date departureDate = null;
-        String arrivalAirport;
+        String destinationAirport;
         Date returnDate = null;
         int directFlight;
-        boolean dfbl;
         
         System.out.println("Please enter your Flight details to check for available flights");
         System.out.println("Trip Type: Press 1 for Return, 2 for One-Way");
@@ -144,23 +142,29 @@ public class RunApp {
         System.out.println("Enter Trip Departure Airport: ");
         departureAirport = sc.nextLine();
         
-        System.out.println("Enter Departure Date in DD/MM/YYYY format");
-        String tmp = sc.nextLine();
         DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        try {
-            departureDate = formatter.parse(tmp);
-        } catch (Exception e) {
-            System.out.println("Invalid Date format. Please try again");
-        }
+
+        System.out.println("Enter Departure Date in DD/MM/YYYY format");
+            String tmp = sc.nextLine();
+            try {
+                departureDate = formatter.parse(tmp);
+            } catch (Exception e) {
+                System.out.println("Departure Date: " + returnDate.toString());
+
+                System.out.println("Invalid Date format. Please try again");
+            }
         
-        System.out.println("Enter arrival Airport: ");
-        arrivalAirport = sc.nextLine();
+        System.out.println("Enter Destination Airport: ");
+        destinationAirport = sc.nextLine();  
         
-        if (roundTrip == 1) {
+            
+        if (roundTrip == 2) { //only collect return date if is return flight
+            //roundtrip
             System.out.println("Enter Return Date in DD/MM/YYYY format");
-            String tmp2 = sc.nextLine();
+            tmp = sc.nextLine();
             try {
                 returnDate = formatter.parse(tmp);
+                System.out.println("Return Date: " + returnDate.toString());
             } catch (Exception e) {
                 System.out.println("Invalid Date format. Please try again");
             }
@@ -168,29 +172,14 @@ public class RunApp {
         
         System.out.println("Do you prefer a direct or connecting flight? Press 1 for direct, 2 for Connecting");
         directFlight = Integer.valueOf(sc.nextLine()); 
+      
         
-        if(roundTrip == 1) {
-            rtbl = true;
-        } else {
-            rtbl = false;
-        } 
+        customerUseCaseSessionBean.searchForFlightRoutes(
+            departureAirport, departureDate, destinationAirport,
+            returnDate, directFlight);
+       
         
-        if(directFlight == 1) {
-            dfbl = true;
-        } else {
-            dfbl = false;
-        }
-        
-        if (roundTrip == 1) {
-            customerUseCaseSessionBean.searchForFlightRoutes(
-            departureAirport, departureDate, arrivalAirport,
-            returnDate, dfbl);
-        } else if (roundTrip == 2) {
-            customerUseCaseSessionBean.searchForFlightRoutes(
-            departureAirport, departureDate, arrivalAirport, dfbl);
-        }
-        
-        System.out.println(customerUseCaseSessionBean.searchForFlightRoutes(
-            departureAirport, departureDate, arrivalAirport, dfbl).get(0).toString()); 
+//        System.out.println(customerUseCaseSessionBean.searchForFlightRoutes(
+//            departureAirport, departureDate, arrivalAirport, directFlight).get(0).toString()); 
     }
 }
