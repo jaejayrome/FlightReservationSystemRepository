@@ -8,10 +8,10 @@ import entity.Customer;
 import entity.FlightRoute;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -92,10 +92,15 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
         String arrivalAirport,
         boolean dfbl) {
         
+        String jpql = "SELECT fs, fsp FROM FlightSchedule fs JOIN fs.flightscheduleplan_id fsp";
+
+        TypedQuery<Object[]> query = em.createQuery(jpql, Object[].class);
+
+        
+        
         return em.createQuery("SELECT fs FROM FlightSchedule "
                 + "WHERE fs.DEPARTURETIME.date := departureDate")
-                .setParameter("deparetureDate", departureDate).getResultList();
+                .setParameter("deparetureDate", departureDate)
+                .getResultList();
     }
-    
-    
 }
