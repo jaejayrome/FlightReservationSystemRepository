@@ -11,10 +11,19 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import static java.util.Collections.list;
 import java.util.List;
+import java.util.Set;
+import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.enumerations.AircraftTypeName;
 
 /**
@@ -24,18 +33,18 @@ import util.enumerations.AircraftTypeName;
 @Stateless
 public class AircraftConfigurationEntitySessionBean implements AircraftConfigurationEntitySessionBeanLocal {
 
-//    @EJB
-//    private CabinClassEntitySessionBeanLocal cabinClassEntitySessionBean;
-
     @EJB
     private AircraftTypeEntitySessionBeanLocal aircraftTypeEntitySessionBean;
-    
-    
 
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager em;
     
-
+    private static ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+    private static Validator validator = validatorFactory.getValidator();
+    
+    @Resource
+    private EJBContext ejbContext;
+    
     @Override
     public AircraftConfiguration getAircraftConfigurationById(long id) {
         AircraftConfiguration aircraftConfiguration = em.find(AircraftConfiguration.class, id);
@@ -46,6 +55,7 @@ public class AircraftConfigurationEntitySessionBean implements AircraftConfigura
     // chooes the desired aircraft type to make a configuration with
     // enter the configuration name
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public long createNewAircraftConfiguration(AircraftType aircraftType, String configurationName, List<CabinClass> cabinClassList) {
         BigDecimal numCabinClass = new BigDecimal(cabinClassList.size());
         AircraftConfiguration aircraftConfiguration = new AircraftConfiguration(configurationName, numCabinClass);
@@ -53,6 +63,13 @@ public class AircraftConfigurationEntitySessionBean implements AircraftConfigura
          // association: aircraftConfiguration -> aircraftType 
          
         aircraftConfiguration.setAircraftType(aircraftType);
+        Set<ConstraintViolation<AircraftConfiguration>> errors = validator.validate(aircraftConfiguration);
+        if (errors.size() > 0) {
+            for (ConstraintViolation<AircraftConfiguration> error : errors) {
+                System.out.println(error.getPropertyPath() + " " + error.getMessage());
+            }
+            ejbContext.setRollbackOnly();
+        }
         em.persist(aircraftConfiguration);
         em.flush();
         

@@ -141,11 +141,11 @@ public class RunApp {
                 System.out.println("Press '2' to View All Aircraft Configurations");
                 System.out.println("Press '3' to View Specific Aircraft Configuration Details");
                 System.out.println("Press '0' to Logout from this session");
-                System.out.print("> ");
-                System.out.println(" ");
                 System.out.println("-------------------------------");
                 FleetManagerUseCase fleetManagerUseCase = new FleetManagerUseCase(this.fleetManagerUseCaseSessionBean, this.currentEmployee);
-                switch (scanner.nextInt()) {
+                System.out.print("> ");
+                int choice = scanner.nextInt();
+                switch (choice) {
                     case 0: 
                         doLogout(scanner);
                         break;
@@ -171,11 +171,11 @@ public class RunApp {
                 System.out.println("Press '2' to View All Flight Routes");
                 System.out.println("Press '3' to Delete Flight Route");
                 System.out.println("Press '0' to Logout from this session");
-                System.out.print("> ");
-                System.out.println("");
                 System.out.println("-------------------------------");
                 RoutePlannerUseCase routerPlannerUseCase = new RoutePlannerUseCase(routePlannerUseCaseSessionBeanRemote, this.currentEmployee);
-                switch (scanner.nextInt()) {
+                System.out.print("> ");
+                int choice1 = scanner.nextInt();
+                switch (choice1) {
                     case 0: 
                         doLogout(scanner);
                         break;
@@ -201,10 +201,11 @@ public class RunApp {
                 System.out.println("Press '2' to View Flight Reservations");
                 System.out.println("Press '0' to Logout from this session");
                 System.out.print("> ");
-                System.out.println("");
                 System.out.println("-------------------------------");
                 SalesManagerUseCase salesManagerUseCase = new SalesManagerUseCase(this.currentEmployee, salesManagerUseCaseSessionBeanRemote);
-                switch (scanner.nextInt()) {
+                int choice2 = scanner.nextInt();
+                System.out.println("");
+                switch (choice2) {
                     case 0: 
                         doLogout(scanner);
                         break;
@@ -234,11 +235,11 @@ public class RunApp {
                 System.out.println("Press '9' to Update Flight Schedule Plan Details");
                 System.out.println("Press '10' to Delete Flight Schedule Plan Details");
                 System.out.println("Press '0' to Logout from this session");
-                System.out.print("> ");
-                System.out.println("");
                 System.out.println("-------------------------------");
                 ScheduleManagerUseCase scheduleManagerUseCase = new ScheduleManagerUseCase(employeeUseCaseSessionBeanRemote, scheduleManagerUseCaseSessionBeanRemote);
-                switch (scanner.nextInt()) {
+                System.out.print("> ");
+                int choice3 = scanner.nextInt();
+                switch (choice3) {
                     case 0: 
                         doLogout(scanner);
                         break;

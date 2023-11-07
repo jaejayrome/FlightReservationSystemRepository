@@ -14,7 +14,7 @@ import entity.FlightSchedule;
 import entity.FlightSchedulePlan;
 import entity.MultipleFlightSchedulePlan;
 import entity.RecurrentFlightSchedulePlan;
-import entity.RecurrentWeeklyFlightSchedulePlan;
+import entity.WeeklyFlightSchedulePlan;
 import entity.Seat;
 import entity.SingleFlightSchedulePlan;
 import java.math.BigDecimal;
@@ -255,7 +255,7 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
         } else {
             // create a recurrent weekly flight schedule
            if (!makeReturn) {
-                RecurrentWeeklyFlightSchedulePlan flightSchedulePlan = this.makeRecurrentWeeklyFlightSchedulePlan(flight, departureDateList, duration, faresForCabinClassList, endDate);
+                WeeklyFlightSchedulePlan flightSchedulePlan = this.makeRecurrentWeeklyFlightSchedulePlan(flight, departureDateList, duration, faresForCabinClassList, endDate);
                 flightSchedulePlan.setFlightSchedulePlanGroup(flightSchedulePlan.getId());
                 Flight returnFlight = flightEntitySessionBean.checkReturnFlight(flight.getFlightRoute().getOrigin().getIataAirportCode(), flight.getFlightRoute().getDestination().getIataAirportCode());
                 return returnFlight != null ? flightSchedulePlan.getId() : -1;
@@ -263,16 +263,16 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
                // add layover duration to this (return)
                 Flight returnFlight = flightEntitySessionBean.checkReturnFlight(flight.getFlightRoute().getOrigin().getIataAirportCode(), flight.getFlightRoute().getDestination().getIataAirportCode());
                 departureDateList.set(0, this.computeArrivalTime(this.computeArrivalTime(departureDateList.get(0), duration), layover));
-                RecurrentWeeklyFlightSchedulePlan flightSchedulePlan = this.makeRecurrentWeeklyFlightSchedulePlan(returnFlight, departureDateList, duration, faresForCabinClassList, endDate);
+                WeeklyFlightSchedulePlan flightSchedulePlan = this.makeRecurrentWeeklyFlightSchedulePlan(returnFlight, departureDateList, duration, faresForCabinClassList, endDate);
                 flightSchedulePlan.setFlightSchedulePlanGroup(id);
                 return id;
            }
         }
     }
     
-    public RecurrentWeeklyFlightSchedulePlan makeRecurrentWeeklyFlightSchedulePlan(Flight flight, List<Date> departureDateList, Duration duration, HashMap<CabinClassType, List<Fare>> faresForCabinClassList, Date endDate) {
+    public WeeklyFlightSchedulePlan makeRecurrentWeeklyFlightSchedulePlan(Flight flight, List<Date> departureDateList, Duration duration, HashMap<CabinClassType, List<Fare>> faresForCabinClassList, Date endDate) {
         // persist FSP
-        RecurrentWeeklyFlightSchedulePlan flightSchedulePlan = new RecurrentWeeklyFlightSchedulePlan(FlightSchedulePlanStatus.ACTIVE, endDate, flight);
+        WeeklyFlightSchedulePlan flightSchedulePlan = new WeeklyFlightSchedulePlan(FlightSchedulePlanStatus.ACTIVE, endDate, flight);
         flightSchedulePlanEntitySessionBean.createFlightSchedulePlan(flightSchedulePlan);
 
         // generate the flight schedules for this flight schedule plan
@@ -393,12 +393,14 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
     public FlightSchedule createFCCsAndSeats(Flight flight, FlightSchedule flightSchedule) {
         int size = flight.getAircraftConfiguration().getCabinClassList().size();
         int intialise = flightSchedule.getFccList().size();
+        
+        // fcc is a copy of each cabin class
+        // one flight schedule would have 2 fcc if fs follows a flight with ac that's 2 cc
         for (CabinClass cabinClass : flight.getAircraftConfiguration().getCabinClassList()) {
             String seatConfiguration = cabinClass.getSeatingConfiguration();
             int numRows = cabinClass.getNumRows().intValue();
             int numAisles = cabinClass.getNumAisles().intValue();
             int numSeatAbreast = cabinClass.getNumSeatsAbreast().intValue();
-
 
             BigDecimal numAvailableSeats = cabinClass.getNumSeatsAbreast().multiply(cabinClass.getNumRows());
             BigDecimal numReservedSeats = BigDecimal.ZERO;
@@ -496,25 +498,6 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
     }
     
     public FlightSchedulePlan updateAndPersistFare( HashMap<CabinClassType, List<Fare>> fareForEveryCabinClass, FlightSchedulePlan flightSchedulePlan) {
-//        flightSchedulePlan.getFlight().getAircraftConfiguration().getCabinClassList().size();
-//        List<CabinClass> cabinClassList = flightSchedulePlan.getFlight().getAircraftConfiguration().getCabinClassList();
-
-//        for (CabinClass cabinClass : cabinClassList) {
-//            CabinClassType cabinClassName = cabinClass.getCabinClassName();
-//            List<Fare> fareListForThisCabinClass = fareForEveryCabinClass.get(cabinClassName);
-//            // lazy loading 
-//            int initFare = cabinClass.getFareList().size();
-//            List<Fare> cabinClassFares = cabinClass.getFareList();
-//            fareListForThisCabinClass.stream().forEach(x -> {
-//                // persist fare
-//                // association between fare -> cabinClass done 
-//                fareEntitySessionBean.createFare(x);
-//                // association between cabinClass -> fare
-//                cabinClassFares.add(x);
-//            });
-//            cabinClass.setFlightSchedulePlan(flightSchedulePlan);
-//            flightSchedulePlan.getCabinClassList().add(cabinClass);
-//        }
         int numberOfCabinClass = flightSchedulePlan.getFlight().getAircraftConfiguration().getCabinClassList().size();
         List<CabinClass> cabinClassList = flightSchedulePlan.getFlight().getAircraftConfiguration().getCabinClassList();
         for (CabinClass cabinClass : cabinClassList) {
@@ -541,10 +524,10 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
         int numCols = numAisles + 1;
         List<String> alphabets = generateLetters(numSeatAbreast);
         List<Seat> seatingList = new ArrayList<Seat>();
-        String[] seatsEachRowEachColumn = seatConfiguration.split("-");
+//        String[] seatsEachRowEachColumn = seatConfiguration.split("-");
         for (int i = 1; i <= numRows; i++) {
             int counter = 0;
-            for (String s : seatsEachRowEachColumn) {
+            for (int j = 1; j <= numSeatAbreast; j++) {
                 String alphabet = alphabets.get(counter);
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append(i + alphabet);

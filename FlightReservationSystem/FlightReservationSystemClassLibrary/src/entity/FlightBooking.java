@@ -16,6 +16,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -30,9 +34,15 @@ public class FlightBooking implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    
+    @Digits(integer=6, fraction = 2)
+    @DecimalMin("0.01")
     @Column(nullable = false)
     private BigDecimal passengerPrice;
     
+    
+    @NotNull
+    @Size(max = 10)
     @Column(nullable = false)
     private String flightNumber;
     
