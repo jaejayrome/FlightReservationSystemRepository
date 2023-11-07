@@ -8,6 +8,8 @@ import java.io.Serializable;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -32,31 +34,42 @@ public class Employee implements Serializable {
     // bean validation
     // database validation 
     @Column(nullable = false, length = 64)
-    @NotNull
-    @Size(min = 1, max = 64)
+//    @NotNull
+//    @Size(min = 1, max = 64)
     public String firstName; 
     
-    @Column(nullable = false)
+    @Column(nullable = false, length = 64)
+//    @NotNull
+//    @Size(min = 1, max = 64)
     private String lastName;
     
+    //@Enumerated(EnumType.STRING)
     @Column(nullable = false)
+//    @NotNull
     private GenderType gender;
     
-    @Column(nullable = false)
+    // @Column(nullable = false)
+    @Size(min = 1, max = 64)
     private String email; 
     
     @Column(nullable = false)
     private String phoneNumber;
     
+    // @Enumerated(EnumType.STRING)
+    @NotNull
     @Column(nullable = false)
     private JobTitle jobTitle;
     
+    // @Enumerated(EnumType.STRING)
+    @NotNull
     @Column(nullable = false)
     private EmploymentType employmentType;
     
+    @Size(min = 1, max = 64)
     @Column(nullable = false)
     private String loginUsername;
     
+    @Size(min = 1, max = 64)
     @Column(nullable = false)
     private String loginPassword;
     

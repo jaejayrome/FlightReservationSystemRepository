@@ -20,8 +20,8 @@
     <class>entity.SingleFlightSchedulePlan</class>
     <class>entity.MultipleFlightSchedulePlan</class>
     <class>entity.RecurrentFlightSchedulePlan</class>
-    <class>entity.RecurrentWeeklyFlightSchedulePlan</class>
     <class>entity.FlightCabinClass</class>
+    <class>entity.WeeklyFlightSchedulePlan</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

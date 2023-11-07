@@ -18,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Future;
 
 /**
  *
@@ -31,10 +32,13 @@ public class FlightSchedule implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @Future
     @Column(nullable = false)
     private Date departureTime; 
+    
     @Column(nullable = false)
     private Duration flightDuration;
+     
     @Column(nullable = false)
     private Date arrivalTime;
 

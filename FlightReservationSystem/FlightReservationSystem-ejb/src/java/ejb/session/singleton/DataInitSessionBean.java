@@ -60,9 +60,6 @@ public class DataInitSessionBean  {
     }
     // 
     public void checkDatabaseInitialised() throws InitialDatabaseException{
-        // there's an issue i don't know why which is when i delete the entire database
-        // i would have to load the schema once so basically not run the intiialise data portion
-        // then i run it once more with the test data
         try {
             Employee employee = employeeEntitySessionBeanLocal.retrieveEmployeeById(1l);
         } catch (EmployeeNotFoundException exception) {
@@ -137,6 +134,7 @@ public class DataInitSessionBean  {
         aircraftTypeEntitySessionBeanLocal.createNewAircraftType(AircraftTypeName.BOEING_737, new BigDecimal(215));
         aircraftTypeEntitySessionBeanLocal.createNewAircraftType(AircraftTypeName.BOEING_747, new BigDecimal(416));
     
+
         //default customer creation is already init as roleType.customer
         customerSessionBeanLocal.createNewCustomer("FirstName", "LastName", "email@test", "phoneNumber", "Address", "Password");
 

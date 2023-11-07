@@ -14,7 +14,7 @@ import entity.FlightSchedule;
 import entity.FlightSchedulePlan;
 import entity.MultipleFlightSchedulePlan;
 import entity.RecurrentFlightSchedulePlan;
-import entity.RecurrentWeeklyFlightSchedulePlan;
+import entity.WeeklyFlightSchedulePlan;
 import entity.SingleFlightSchedulePlan;
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -96,12 +96,12 @@ public class ScheduleManagerUseCase {
             if (haveReturnFlight != -1) {
                 System.out.println("A Return Flight Route has been detected!");
                 System.out.println("Press '1' if you would like to create this return flight");
-                System.out.println("Press '0' if you do not wish to do sot");
+                System.out.println("Press '0' if you do not wish to do so");
                 System.out.print("> ");
                 boolean createFlight = scanner.nextInt() == 1 ? true : false;
-                if (scanner.nextInt() == 0) return;
                 // checks whether user would want to create this
                 if (createFlight) createFlight(configurationName, destinationCity, originCity, haveReturnFlight);
+                if (!createFlight) return; 
             }
                 
         } catch (InitialFlightNotInstantiatedException e) {
@@ -211,12 +211,14 @@ public class ScheduleManagerUseCase {
         // can create one flight schedule plan it must be associated with a flight 
         // a flight might not have a schedule plan but a flight schedule plan
         System.out.println("Step 1: Choose Your Schedule Type");
+        System.out.println("");
         // enforce that there can be only one schedule type for all schedules within a FSP
         printAllScheduleTypes();
         System.out.print("> ");
         int choice = scanner.nextInt();
         ScheduleType chosen = this.hashMap.get(choice);
         
+        System.out.println("");
         System.out.println("Step 2: Enter Flight Number of Associated Flight");
         System.out.print("> ");
         String flightNumber = scanner.next();
@@ -227,7 +229,9 @@ public class ScheduleManagerUseCase {
         Date endDate = null;
         int frequency = 0;
         
+        System.out.println("");
         System.out.println("Step 3: Date Specification For Chosen Flight Schedule Type");
+        
         switch (chosen) {
             case SINGLE:
                 inputForScheduleType(number, flightNumber, departureDateList);
@@ -253,6 +257,8 @@ public class ScheduleManagerUseCase {
                 frequency = checkFrequency(true);
                 break;
         }
+        
+        System.out.println("");
         System.out.println("Step 4: Fare Input for All Available Cabin Classes");
         // prompted to enter at least one fare for each 
         HashMap<CabinClassType, List<Fare>> faresForCabinClassList = new HashMap<CabinClassType, List<Fare>>();
@@ -355,7 +361,7 @@ public class ScheduleManagerUseCase {
             
         }
         
-        if (flightSchedulePlan instanceof RecurrentWeeklyFlightSchedulePlan) {
+        if (flightSchedulePlan instanceof WeeklyFlightSchedulePlan) {
             
         }
     }
@@ -368,6 +374,7 @@ public class ScheduleManagerUseCase {
     // non-schedules only need date and duration
     public void inputForScheduleType(int n, String flightNumber, List<Date> departureDateList) {
       for (int i = 1; i <= n; i++) {   
+          System.out.println("");
           System.out.println("Flight Schedule #" + i + " for " + flightNumber); 
           Date date = dateInitialisation();
          if (date != null) {
@@ -411,7 +418,7 @@ public class ScheduleManagerUseCase {
         System.out.println("Flight Origin City: " + flight.getFlightRoute().getOrigin().getCity());
         System.out.println("Flight Destination City: " + flight.getFlightRoute().getDestination().getCity());
         System.out.println("Flight Status: " + flight.getStatus().name());
-        System.out.println("--------------------------------------------");
+        System.out.println("");
     }
     
     public void printSpecificSingleFlight(Flight flight) {
@@ -425,6 +432,12 @@ public class ScheduleManagerUseCase {
         System.out.println("Origin Airport: " + flightSchedulePlan.getFlight().getFlightRoute().getOrigin().getAirportName());
         System.out.println("Origin City: " + flightSchedulePlan.getFlight().getFlightRoute().getOrigin().getCity());
         System.out.println("Origin Country: " + flightSchedulePlan.getFlight().getFlightRoute().getOrigin().getCountry());
+        
+        System.out.println("");
+        System.out.println("Destination Airport: " + flightSchedulePlan.getFlight().getFlightRoute().getDestination().getAirportName());
+        System.out.println("Destination City: " + flightSchedulePlan.getFlight().getFlightRoute().getDestination().getCity());
+        System.out.println("Destination Country: " + flightSchedulePlan.getFlight().getFlightRoute().getDestination().getCountry());
+        
         int init = flightSchedulePlan.getFlightScheduleList().size();
         System.out.println("");
         System.out.println("Fare Information");
@@ -474,7 +487,7 @@ public class ScheduleManagerUseCase {
             System.out.println("Recurrent End Date & Time: " + recurrentPlan.getEndDate().toString());
             System.out.println("Recurrent Frequency (in days): " + recurrentPlan.getFrequency().intValue());  
         } else {
-            RecurrentWeeklyFlightSchedulePlan recurrentWeeklyPlan = (RecurrentWeeklyFlightSchedulePlan) flightSchedulePlan;
+            WeeklyFlightSchedulePlan recurrentWeeklyPlan = (WeeklyFlightSchedulePlan) flightSchedulePlan;
             System.out.println("Schedule Plan Type: " + "Recurrent Weekly");
             System.out.println("Schedule Plan Status: " + recurrentWeeklyPlan.getStatus());
             System.out.println("Number of Schedules Under this Plan: " + recurrentWeeklyPlan.getFlightScheduleList().size());
