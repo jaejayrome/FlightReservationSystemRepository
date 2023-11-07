@@ -10,8 +10,13 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.enumerations.EmploymentType;
 import util.enumerations.GenderType;
 import util.enumerations.JobTitle;
@@ -24,8 +29,11 @@ import util.exception.InvalidLoginCredentialsException;
  */
 @Stateless
 public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanLocal {
+    
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager em;
+    private static ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+    private static Validator validator = validatorFactory.getValidator();
     
     Map<String, Object> props = new HashMap<String, Object>();
     
@@ -38,16 +46,11 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanLocal
         
     }
     
-//    @PostConstruct
-//    public void initialise() {
-//        // cache store mode strategy
-//        if (this.em != null) em.setProperty("javax.persistence.cache.storeMode", "USE");
-//    }
     
-    
-//    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public long createNewEmployee(String firstName, String lastName, GenderType gender, String email, String phoneNumber, JobTitle jobTitle, EmploymentType typeOfEmployment, String loginUsername, String loginPassword) {
         Employee employee = new Employee(firstName, lastName, gender, email, phoneNumber, jobTitle, typeOfEmployment, loginUsername, loginPassword);
+        validator.validate(employee);
         em.persist(employee);
         em.flush();
         return employee.getId();
@@ -65,7 +68,7 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanLocal
         }
     }
     
-//    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Employee authenticateEmployeeDetails(String username, String password) throws InvalidLoginCredentialsException{
         
         String query = "SELECT employee FROM Employee employee WHERE employee.loginUsername = :username";

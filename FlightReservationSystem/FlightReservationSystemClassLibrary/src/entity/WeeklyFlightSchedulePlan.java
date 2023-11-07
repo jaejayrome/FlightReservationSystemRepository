@@ -19,7 +19,7 @@ import util.enumerations.FlightSchedulePlanStatus;
  * @author jeromegoh
  */
 @Entity
-public class RecurrentWeeklyFlightSchedulePlan extends FlightSchedulePlan implements Serializable {
+public class WeeklyFlightSchedulePlan extends FlightSchedulePlan implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -32,11 +32,11 @@ public class RecurrentWeeklyFlightSchedulePlan extends FlightSchedulePlan implem
     @Column (nullable = false)
     private Date endDate;
 
-    public RecurrentWeeklyFlightSchedulePlan() {
+    public WeeklyFlightSchedulePlan() {
         super();
     }
 
-    public RecurrentWeeklyFlightSchedulePlan(FlightSchedulePlanStatus status, Date endDate, Flight flight) {
+    public WeeklyFlightSchedulePlan(FlightSchedulePlanStatus status, Date endDate, Flight flight) {
         super(status, flight);
         this.endDate = endDate;
         this.frequency = new BigDecimal(7);
@@ -78,10 +78,10 @@ public class RecurrentWeeklyFlightSchedulePlan extends FlightSchedulePlan implem
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof RecurrentWeeklyFlightSchedulePlan)) {
+        if (!(object instanceof WeeklyFlightSchedulePlan)) {
             return false;
         }
-        RecurrentWeeklyFlightSchedulePlan other = (RecurrentWeeklyFlightSchedulePlan) object;
+        WeeklyFlightSchedulePlan other = (WeeklyFlightSchedulePlan) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
