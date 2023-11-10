@@ -23,6 +23,6 @@ public interface CustomerUseCaseSessionBeanRemote {
     public List<List<FlightSchedule>> searchForFlightRoutes(
             String departureAirport, Date departureDate, String arrivalAirport, Date returnDate, int directFlight);
     
-    public List<FlightSchedule> getFlightSchedulesByAirportOrigin(String iataCode);
+
 
 }
