@@ -774,14 +774,12 @@ exists or setup the property manually. For example like this:
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update">
             <attribute name="Extension-List" value="jar-1 jar-2 "/>
             <attribute name="jar-1-Extension-Name" value="${manifest.reference.FlightReservationSystemClassLibrary.jar}"/>
-            <attribute name="jar-2-Extension-Name" value="${manifest.libs.jakartaee-api-8.0.classpath}"/>
-
+            <attribute name="jar-2-Extension-Name" value="${manifest.libs.Jakarta_EE_8_API_Library.classpath}"/>
         </manifest>
     </target>
     <target depends="compile" if="dist.ear.dir" name="library-inclusion-in-manifest">
         <copyfiles files="${reference.FlightReservationSystemClassLibrary.jar}" manifestproperty="manifest.reference.FlightReservationSystemClassLibrary.jar" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${libs.jakartaee-api-8.0.classpath}" manifestproperty="manifest.libs.jakartaee-api-8.0.classpath" todir="${dist.ear.dir}/lib"/>
-
+        <copyfiles files="${libs.Jakarta_EE_8_API_Library.classpath}" manifestproperty="manifest.libs.Jakarta_EE_8_API_Library.classpath" todir="${dist.ear.dir}/lib"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update">
             <attribute name="Class-Path" value="${manifest.reference.FlightReservationSystemClassLibrary.jar} lib/${manifest.reference.FlightReservationSystemClassLibrary.jar} ${manifest.libs.Jakarta_EE_8_API_Library.classpath} lib/${manifest.libs.Jakarta_EE_8_API_Library.classpath} "/>
         </manifest>
