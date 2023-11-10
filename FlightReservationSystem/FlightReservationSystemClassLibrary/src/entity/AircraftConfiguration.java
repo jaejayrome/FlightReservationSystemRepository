@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -32,6 +33,7 @@ public class AircraftConfiguration implements Serializable {
     private Long id;
     
     @Column(nullable = false)
+    @Size(min = 1, max = 200)
     private String configurationName; 
     
     @Column(nullable = false)

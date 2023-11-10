@@ -5,8 +5,11 @@
 package ejb.session.stateless;
 
 import entity.FlightRoute;
+import entity.FlightSchedule;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.NoFlightFoundException;
 
 /**
  *
@@ -16,5 +19,7 @@ import javax.ejb.Local;
 public interface CustomerUseCaseSessionBeanLocal {
 
     int customerLogin(String email, String password);
+    public List<List<FlightSchedule>> searchForFlightRoutes(
+        String departureAirport, Date departureDate, String destinationAirport, Date returnDate, int directFlight) throws NoFlightFoundException;
 
 }

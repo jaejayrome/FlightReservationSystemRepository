@@ -25,6 +25,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.enumerations.AircraftTypeName;
+import util.exception.InvalidStringLengthException;
 
 /**
  *
@@ -56,7 +57,7 @@ public class AircraftConfigurationEntitySessionBean implements AircraftConfigura
     // enter the configuration name
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public long createNewAircraftConfiguration(AircraftType aircraftType, String configurationName, List<CabinClass> cabinClassList) {
+    public long createNewAircraftConfiguration(AircraftType aircraftType, String configurationName, List<CabinClass> cabinClassList) throws InvalidStringLengthException{
         BigDecimal numCabinClass = new BigDecimal(cabinClassList.size());
         AircraftConfiguration aircraftConfiguration = new AircraftConfiguration(configurationName, numCabinClass);
         // mandatory relationships
@@ -67,6 +68,7 @@ public class AircraftConfigurationEntitySessionBean implements AircraftConfigura
         if (errors.size() > 0) {
             for (ConstraintViolation<AircraftConfiguration> error : errors) {
                 System.out.println(error.getPropertyPath() + " " + error.getMessage());
+                throw new InvalidStringLengthException(error.getMessage());
             }
             ejbContext.setRollbackOnly();
         }

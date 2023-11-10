@@ -48,4 +48,9 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
                 .setParameter("destinationAirport", iataCode)
                 .getResultList();
     }
+    
+    @Override
+    public FlightSchedule getFlightScheduleById(long id) {
+        return em.find(FlightSchedule.class, id);
+    }
 }

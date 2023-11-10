@@ -18,4 +18,5 @@ public interface FlightScheduleEntitySessionBeanLocal {
     public List<FlightSchedule> viewFlightSchedulesByFlightNumber(String flightNumber);
     public List<FlightSchedule> getFlightSchedulesByAirportDestination(String iataCode);
     public List<FlightSchedule> getFlightSchedulesByAirportOrigin(String iataCode);
+    public FlightSchedule getFlightScheduleById(long id);
 }

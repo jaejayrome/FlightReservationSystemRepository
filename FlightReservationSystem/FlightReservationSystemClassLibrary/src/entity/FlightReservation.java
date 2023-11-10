@@ -7,6 +7,7 @@ package entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,9 +28,16 @@ public class FlightReservation implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    // attributes
+    @Column (nullable = false)
+    private String creditCardNumber; 
+    
     // relationships
     @OneToMany (mappedBy= "flightReservation")
     private List<FlightBooking> flightBookingList;
+    
+    @OneToMany
+    private List<Passenger> passengerList;
     
     @ManyToOne (optional = false)
     @JoinColumn (nullable = false)
@@ -38,9 +46,29 @@ public class FlightReservation implements Serializable {
     public FlightReservation() {    
     }
 
-    public FlightReservation(Customer customer) {
+    public FlightReservation(Customer customer, String creditCardNumber) {
         this.customer = customer;
         this.flightBookingList = new ArrayList<FlightBooking>();
+        this.passengerList = new ArrayList<Passenger>();
+        this.creditCardNumber = creditCardNumber;
+    }
+
+    public String getCreditCardNumber() {
+        return creditCardNumber;
+    }
+
+    public void setCreditCardNumber(String creditCardNumber) {
+        this.creditCardNumber = creditCardNumber;
+    }
+    
+    
+
+    public List<Passenger> getPassengerList() {
+        return passengerList;
+    }
+
+    public void setPassengerList(List<Passenger> passengerList) {
+        this.passengerList = passengerList;
     }
 
     public Customer getCustomer() {

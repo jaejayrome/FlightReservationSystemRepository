@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import util.enumerations.AircraftTypeName;
 import util.enumerations.CabinClassType;
 import util.enumerations.JobTitle;
+import util.exception.InvalidStringLengthException;
 
 /**
  *
@@ -68,8 +69,12 @@ public class FleetManagerUseCase {
                 List<String> seatingConfigurationList = new ArrayList<String>();
                 promptUserForCabinClass(cabinClassNameList, numAislesList, numRowsList, numSeatsAbreastList, seatingConfigurationList);
                 
+                try {
                 fleetManagerUseCaseSessionBeanRemote.createAircraftConfigurationForFleetManager(JobTitle.FLEET_MANAGER, aircraftTypeName, configurationName
                     , cabinClassNameList, numAislesList, numRowsList, numSeatsAbreastList, seatingConfigurationList);
+                } catch (InvalidStringLengthException exception) {
+                    System.out.println(exception.getMessage());
+                }
                }
            }
     }

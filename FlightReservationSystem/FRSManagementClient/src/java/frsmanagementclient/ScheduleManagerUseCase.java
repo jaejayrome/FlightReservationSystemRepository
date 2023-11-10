@@ -144,7 +144,7 @@ public class ScheduleManagerUseCase {
             return routeComparison;
         };
                 
-       flightList.stream().sorted(flightComparator).forEach(x -> printSingleFlight(x));
+       flightList.stream().forEach(x -> printSingleFlight(x));
     }
     
     // everything down to the cabin class have been printed out
@@ -614,7 +614,7 @@ public class ScheduleManagerUseCase {
         return date;
     }
     
-     public Date formatDate(String dateTimeInput) {
+    public Date formatDate(String dateTimeInput) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime dateTime = LocalDateTime.parse(dateTimeInput, formatter);
         ZoneId zoneId = ZoneId.of("Asia/Singapore");

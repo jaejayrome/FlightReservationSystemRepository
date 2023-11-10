@@ -4,6 +4,7 @@
  */
 package ejb.session.stateless;
 
+import entity.Customer;
 import entity.FlightReservation;
 import java.util.List;
 import javax.ejb.Local;
@@ -21,5 +22,6 @@ public interface CustomerSessionBeanLocal {
 //    
     Long createNewCustomer(String firstName, String lastName, String email, 
             String phoneNumber, String address, String password);
+   Customer getCustomerById(long customerId);
 
 }

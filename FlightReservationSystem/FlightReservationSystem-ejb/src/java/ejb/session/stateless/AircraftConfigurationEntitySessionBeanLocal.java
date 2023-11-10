@@ -10,6 +10,7 @@ import entity.CabinClass;
 import java.util.List;
 import javax.ejb.Local;
 import util.enumerations.AircraftTypeName;
+import util.exception.InvalidStringLengthException;
 
 /**
  *
@@ -17,10 +18,10 @@ import util.enumerations.AircraftTypeName;
  */
 @Local
 public interface AircraftConfigurationEntitySessionBeanLocal {
-    public long createNewAircraftConfiguration(AircraftType aircraftType, String configurationName, List<CabinClass> cabinClassList);
+    public long createNewAircraftConfiguration(AircraftType aircraftType, String configurationName, List<CabinClass> cabinClassList) throws InvalidStringLengthException;
     public AircraftConfiguration getAircraftConfigurationById(long id);
     public List<AircraftConfiguration> getAllAircraftConfigurationPerAircraftType(AircraftTypeName aircraftTypeName);
-    public List<AircraftConfiguration> getAllAircraftConfigurations();
+    public List<AircraftConfiguration> getAllAircraftConfigurations();;
     public AircraftConfiguration getAircraftConfigurationPerConfigurationName(String configurationName);
     // public AircraftConfiguration recreateAircraftConfiguration(AircraftConfiguration aircraftConfiguration);
 }

@@ -46,7 +46,7 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanLocal {
     public List<Flight> viewAllFlights() {
         return em.createQuery("SELECT f " +
                "FROM Flight f " +
-               "ORDER BY f.flightGroup, f.flightNumber").getResultList();
+               "ORDER BY f.flightGroup ASC, f.flightNumber ASC").getResultList();
         
     }
     

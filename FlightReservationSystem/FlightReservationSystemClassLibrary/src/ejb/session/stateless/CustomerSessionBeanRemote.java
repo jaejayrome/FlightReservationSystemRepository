@@ -4,6 +4,7 @@
  */
 package ejb.session.stateless;
 
+import entity.Customer;
 import entity.FlightReservation;
 import java.util.List;
 import javax.ejb.Remote;
@@ -19,5 +20,7 @@ public interface CustomerSessionBeanRemote {
             String phoneNumber, String address, String password);
 
     List<FlightReservation> addFlightReservation();
+    
+    Customer getCustomerById(long customerId);
 
 }
