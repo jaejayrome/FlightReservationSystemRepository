@@ -17,7 +17,10 @@ import entity.RecurrentFlightSchedulePlan;
 import entity.WeeklyFlightSchedulePlan;
 import entity.SingleFlightSchedulePlan;
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -49,6 +52,8 @@ public class ScheduleManagerUseCase {
    
     private ScheduleManagerUseCaseSessionBeanRemote scheduleManagerUseCaseSessionBeanRemote;
     
+    private HashMap<String, DayOfWeek> dayOfWeekMap; 
+    
     public ScheduleManagerUseCase() {
     }
     
@@ -57,7 +62,9 @@ public class ScheduleManagerUseCase {
       this.employeeUseCaseSessionBeanRemote = employeeUseCaseSessionBeanRemote;
       this.hashMap = new HashMap<Integer, ScheduleType>();
       this.scheduleManagerUseCaseSessionBeanRemote = scheduleManagerUseCaseSessionBeanRemote;
+      this.dayOfWeekMap = new HashMap<String, DayOfWeek>();
       this.initialiseMap();
+      this.initialiseWeekMap();
     }
     
     /*
@@ -254,6 +261,12 @@ public class ScheduleManagerUseCase {
                 inputForScheduleType(number, flightNumber, departureDateList);
                 duration = checkDuration();
                 endDate = checkEndDate();
+                System.out.println("Enter the day of the week that you would like this schedule to be based on (e.g: MON)");
+                System.out.print("> ");
+                String abbreviation = scanner.next();
+                scanner.nextLine();
+                Date updatedDate = findNearestDayOfWeek(departureDateList, endDate, abbreviation); 
+                departureDateList.set(0, updatedDate);
                 frequency = checkFrequency(true);
                 break;
         }
@@ -446,14 +459,7 @@ public class ScheduleManagerUseCase {
             System.out.println("Fare Amount: " + y.getFareAmount());
             System.out.println("");
         });
-//        flightSchedulePlan.getCabinClassList().forEach(x -> {
-//            System.out.println("Number of Cabin Class: " + init);
-//            x.getFareList().forEach(y -> {
-//                System.out.println("Fare Basis Code: " + y.getFareBasicCode());
-//                System.out.println("Fare Amount: " + y.getFareAmount());
-//                System.out.println("");
-//            });
-//        });
+
         flightSchedulePlan.getFlightScheduleList().forEach(x -> printSpecificFlightSchedule(x));
     }
     
@@ -628,6 +634,50 @@ public class ScheduleManagerUseCase {
         hashMap.put(3, ScheduleType.RECURRENT);
         hashMap.put(4, ScheduleType.RECURRENT_WEEK);
     }
+    
+    public void initialiseWeekMap() {
+        dayOfWeekMap.put("MON", DayOfWeek.MONDAY);
+        dayOfWeekMap.put("TUE", DayOfWeek.TUESDAY);
+        dayOfWeekMap.put("WED", DayOfWeek.WEDNESDAY);
+        dayOfWeekMap.put("THU", DayOfWeek.THURSDAY);
+        dayOfWeekMap.put("FRI", DayOfWeek.FRIDAY);
+        dayOfWeekMap.put("SAT", DayOfWeek.SATURDAY);
+        dayOfWeekMap.put("SUN", DayOfWeek.SUNDAY);
+    }
+    
+    
+    public Date findNearestDayOfWeek(List<Date> departureDateList, Date endDate, String abbreviation) {
+        
+        DayOfWeek targetDayOfWeek = dayOfWeekMap.get(abbreviation);
+        Date startDate = departureDateList.get(0);
+        Instant startInstant = startDate.toInstant();
+        Instant endInstant = endDate.toInstant();
+
+        LocalDateTime startLocalDateTime = startInstant.atZone(ZoneId.systemDefault()).toLocalDateTime();
+        LocalDateTime endLocalDateTime = endInstant.atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+        if (startLocalDateTime.isAfter(endLocalDateTime)) {
+            throw new IllegalArgumentException("End date must be after start date");
+        }
+
+        LocalDateTime currentLocalDateTime = startLocalDateTime;
+
+        while (currentLocalDateTime.isBefore(endLocalDateTime)) {
+            if (currentLocalDateTime.getDayOfWeek() == targetDayOfWeek) {
+                Instant resultInstant = currentLocalDateTime.atZone(ZoneId.systemDefault()).toInstant();
+                return Date.from(resultInstant);
+            }
+            currentLocalDateTime = currentLocalDateTime.plusDays(1);
+        }
+
+        currentLocalDateTime = startLocalDateTime.plusDays(7 - startLocalDateTime.getDayOfWeek().getValue() + targetDayOfWeek.getValue());
+
+        Instant resultInstant = currentLocalDateTime.atZone(ZoneId.systemDefault()).toInstant();
+        
+        // update the departureDateList to that time
+        return (resultInstant.isBefore(endInstant) || resultInstant.equals(endInstant)) ? Date.from(resultInstant) : null;
+    }
+         
 
    
 }

@@ -254,7 +254,7 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
             }
             
         } else {
-            // create a recurrent weekly flight schedule
+            // create a recurrent weekly flight schedule (need to assume that a day of the week is being chosen for this)
            if (!makeReturn) {
                 WeeklyFlightSchedulePlan flightSchedulePlan = this.makeRecurrentWeeklyFlightSchedulePlan(flight, departureDateList, duration, faresForCabinClassList, endDate);
                 flightSchedulePlan.setFlightSchedulePlanGroup(flightSchedulePlan.getId());
