@@ -9,5 +9,5 @@ package util.enumerations;
  * @author jeromegoh
  */
 public enum CabinClassType {
-    F, J, W, Y
+    F, J, W, Y, BUSINESS, FIRST, PREMIUM_ECONOMY, ECONOMY
 }

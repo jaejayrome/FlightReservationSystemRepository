@@ -246,6 +246,100 @@ public class DataInitSessionBean  {
        
         // flight schedule plan (recurrent need to change logic)
         
+        // recurrent weekly flight schedule plan
+        Date firstRWDate = formatDate("2023-12-04 09:00:00");
+        List<Date> firstDepartDateList = new ArrayList<Date>();
+        firstDepartDateList.add(firstRWDate);
+        HashMap<CabinClassType, List<Fare>> firstRWfaresForCabinClassList = new HashMap<CabinClassType, List<Fare>>();
+        AircraftConfiguration a1 = aircraftConfigurationEntitySessionBean.getAircraftConfigurationPerConfigurationName("Boeing 747 Three Classes");
+        a1.getCabinClassList().size();
+        
+        Fare f1 = new Fare("ABD1234", new BigDecimal(6000), a1.getCabinClassList().stream().filter(x -> x.getCabinClassName() == CabinClassType.F).findFirst().get());
+        List<Fare> fareList10 = new ArrayList<Fare>();
+        fareList10.add(f1);
+        
+        Fare j1 = new Fare("ABE1234", new BigDecimal(3000), a1.getCabinClassList().stream().filter(x -> x.getCabinClassName() == CabinClassType.J).findFirst().get());
+        List<Fare> fareList11 = new ArrayList<Fare>();
+        fareList11.add(j1);
+        
+        Fare y1 = new Fare("ABF1234", new BigDecimal(1000), a1.getCabinClassList().stream().filter(x -> x.getCabinClassName() == CabinClassType.Y).findFirst().get());
+        List<Fare> fareList12 = new ArrayList<Fare>();
+        fareList12.add(y1);
+        
+        firstRWfaresForCabinClassList.put(CabinClassType.F, fareList10);
+        firstRWfaresForCabinClassList.put(CabinClassType.J, fareList11);
+        firstRWfaresForCabinClassList.put(CabinClassType.Y, fareList12);
+        long idFirstt = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML711", firstDepartDateList, Duration.ofSeconds(14 * 60 * 60), formatDate("2023-12-31 09:00:00"), 7, firstRWfaresForCabinClassList, false, -1, null);
+        scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML712", firstDepartDateList, Duration.ofSeconds(14 * 60 * 60), formatDate("2023-12-31 09:00:00"), 7, firstRWfaresForCabinClassList, true, idFirstt, Duration.ofSeconds(2 * 60 * 60));
+        
+        // recurrent weekly flight schedule plan 2
+        Date secondRWDate = formatDate("2023-12-03 12:00:00");
+        List<Date> secondDepartDateList = new ArrayList<Date>();
+        secondDepartDateList.add(secondRWDate);
+        HashMap<CabinClassType, List<Fare>> secondRWfaresForCabinClassList = new HashMap<CabinClassType, List<Fare>>();
+        AircraftConfiguration a2 = aircraftConfigurationEntitySessionBean.getAircraftConfigurationPerConfigurationName("Boeing 737 Three Classes");
+        a2.getCabinClassList().size();
+        
+        Fare f2 = new Fare("ABW1234", new BigDecimal(3000), a2.getCabinClassList().stream().filter(x -> x.getCabinClassName() == CabinClassType.F).findFirst().get());
+        List<Fare> fareList13 = new ArrayList<Fare>();
+        fareList10.add(f2);
+        
+        Fare j2 = new Fare("ABX1234", new BigDecimal(1500), a2.getCabinClassList().stream().filter(x -> x.getCabinClassName() == CabinClassType.J).findFirst().get());
+        List<Fare> fareList14 = new ArrayList<Fare>();
+        fareList11.add(j2);
+        
+        Fare y2 = new Fare("ABY1234", new BigDecimal(500), a2.getCabinClassList().stream().filter(x -> x.getCabinClassName() == CabinClassType.Y).findFirst().get());
+        List<Fare> fareList15 = new ArrayList<Fare>();
+        fareList12.add(y2);
+        
+        secondRWfaresForCabinClassList.put(CabinClassType.F, fareList13);
+        secondRWfaresForCabinClassList.put(CabinClassType.J, fareList14);
+        secondRWfaresForCabinClassList.put(CabinClassType.Y, fareList15);
+        long idsecondt = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML611", secondDepartDateList, Duration.ofSeconds(8 * 60 * 60), formatDate("2023-12-31 12:00:00"), 7, secondRWfaresForCabinClassList, false, -1, null);
+        scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML612", secondDepartDateList, Duration.ofSeconds(8 * 60 * 60), formatDate("2023-12-31 12:00:00"), 7, secondRWfaresForCabinClassList, true, idsecondt, Duration.ofSeconds(2 * 60 * 60));
+        
+        // refcurrent weekly flight schedule plan 3
+        Date thirdRWDate = formatDate("2023-12-05 10:00:00");
+        List<Date> thirdDepartDateList = new ArrayList<Date>();
+        thirdDepartDateList.add(thirdRWDate);
+        HashMap<CabinClassType, List<Fare>> thirdRWfaresForCabinClassList = new HashMap<CabinClassType, List<Fare>>();
+        AircraftConfiguration a3 = aircraftConfigurationEntitySessionBean.getAircraftConfigurationPerConfigurationName("Boeing 737 All Economy");
+        a3.getCabinClassList().size();
+        
+        Fare y3 = new Fare("ABF1234", new BigDecimal(700), a3.getCabinClassList().stream().filter(x -> x.getCabinClassName() == CabinClassType.Y).findFirst().get());
+        List<Fare> fareList16 = new ArrayList<Fare>();
+        fareList16.add(y3);
+
+        thirdRWfaresForCabinClassList.put(CabinClassType.Y, fareList16);
+        long idthirdt = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML621", thirdDepartDateList, Duration.ofSeconds(8 * 60 * 60), formatDate("2023-12-31 10:00:00"), 7, thirdRWfaresForCabinClassList, false, -1, null);
+        scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML622", thirdDepartDateList, Duration.ofSeconds(8 * 60 * 60), formatDate("2023-12-31 10:00:00"), 7, thirdRWfaresForCabinClassList, true, idthirdt, Duration.ofSeconds(2 * 60 * 60));
+        
+        // recurrent weekly flight schedule plan 4
+        Date fourthRWDate = formatDate("2023-12-04 10:00:00");
+        List<Date> fourthDepartDateList = new ArrayList<Date>();
+        fourthDepartDateList.add(fourthRWDate);
+        HashMap<CabinClassType, List<Fare>> fourthRWfaresForCabinClassList = new HashMap<CabinClassType, List<Fare>>();
+        AircraftConfiguration a4 = aircraftConfigurationEntitySessionBean.getAircraftConfigurationPerConfigurationName("Boeing 747 Three Classes");
+        a4.getCabinClassList().size();
+
+        Fare f3 = new Fare("BBF1234", new BigDecimal(3100), a4.getCabinClassList().stream().filter(x -> x.getCabinClassName() == CabinClassType.F).findFirst().get());
+        List<Fare> fareList17 = new ArrayList<Fare>();
+        fareList17.add(f3);
+
+        Fare j3 = new Fare("CBF1234", new BigDecimal(1600), a4.getCabinClassList().stream().filter(x -> x.getCabinClassName() == CabinClassType.J).findFirst().get());
+        List<Fare> fareList18 = new ArrayList<Fare>();
+        fareList18.add(j3);
+
+        Fare y4 = new Fare("DBF1234", new BigDecimal(600), a4.getCabinClassList().stream().filter(x -> x.getCabinClassName() == CabinClassType.Y).findFirst().get());
+        List<Fare> fareList19 = new ArrayList<Fare>();
+        fareList19.add(y4);
+
+        fourthRWfaresForCabinClassList.put(CabinClassType.F, fareList17);
+        fourthRWfaresForCabinClassList.put(CabinClassType.J, fareList18);
+        fourthRWfaresForCabinClassList.put(CabinClassType.Y, fareList19);
+        long idfourtht = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML311", fourthDepartDateList, Duration.ofSeconds(23400), formatDate("2023-12-31 10:00:00"), 7, fourthRWfaresForCabinClassList, false, -1, null);
+        scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML312", fourthDepartDateList, Duration.ofSeconds(23400), formatDate("2023-12-31 10:00:00"), 7, fourthRWfaresForCabinClassList, true, idfourtht, Duration.ofSeconds(3 * 60 * 60));
+        
         // recurrent n day flight schedule plan
         Date firstFormatDate = formatDate("2023-12-01 13:00:00");
         List<Date> firstDepartureDateList = new ArrayList<Date>();
