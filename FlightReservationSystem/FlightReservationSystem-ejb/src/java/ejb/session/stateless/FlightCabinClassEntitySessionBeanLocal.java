@@ -17,4 +17,5 @@ import javax.ejb.Local;
 public interface FlightCabinClassEntitySessionBeanLocal {
     public FlightCabinClass createFlightCabinClass(FlightCabinClass fcc);
     public List<FlightCabinClass> findFccForParticularFS(String flightNumber, Date uniqueDate);
+    public FlightCabinClass getFCCByID(long id);
 }

@@ -212,6 +212,7 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
                 Flight returnFlight = flightEntitySessionBean.checkReturnFlight(flight.getFlightRoute().getOrigin().getIataAirportCode(), flight.getFlightRoute().getDestination().getIataAirportCode());
                 Date arrivalTime = this.computeArrivalTime(departureDateList.get(0), duration);
                 departureDateList.set(0, this.computeArrivalTime(arrivalTime, layover));
+                // i should reference the same fares for cabin class and not refernce new one? 
                 SingleFlightSchedulePlan flightSchedulePlan = this.makeSingleFlightSchedulePlan(returnFlight, departureDateList, duration, faresForCabinClassList);
                 flightSchedulePlan.setFlightSchedulePlanGroup(id);
                 return id;
@@ -427,7 +428,6 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
     @Override
     public List<FlightSchedulePlan> viewAllFlightSchedulePlan() {
         List<FlightSchedulePlan> collatedList = flightSchedulePlanEntitySessionBean.viewAllFlightSchedulePlan();
-        // unsure by what it means by complementary return flight schedule
         Comparator<FlightSchedulePlan> compare = (x, y) -> {
             // sort by ascending order in flight number 
             if (x.getFlight().getFlightNumber().compareTo(y.getFlight().getFlightNumber()) == 0) {
