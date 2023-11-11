@@ -19,4 +19,5 @@ public interface RoutePlannerUseCaseSessionBeanRemote {
     public List<FlightRoute> viewAllFlightRoute();
     public List<Airport> getAllAirport();
     public boolean deleteFlightRoute(String originAirport, String destinationAirport);
+    public long createNewFlightRouteDataInit(String originIATA, String destinationIATA, FlightRoute flightRoute, boolean makeReturnFlightRoute);
 }

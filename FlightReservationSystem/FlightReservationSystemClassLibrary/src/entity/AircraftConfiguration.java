@@ -39,6 +39,9 @@ public class AircraftConfiguration implements Serializable {
     @Column(nullable = false)
     private BigDecimal numCabinClass;
     
+//    @Column(nullable = false)
+//    private BigDecimal maxCapacity;
+    
     // relationships
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -59,7 +62,16 @@ public class AircraftConfiguration implements Serializable {
         this.numCabinClass = numCabinClass;
         this.cabinClassList = new ArrayList<CabinClass>();
         this.flightList = new ArrayList<Flight>();
+//        this.maxCapacity = maxCapacity;
     }
+
+//    public BigDecimal getMaxCapacity() {
+//        return maxCapacity;
+//    }
+//
+//    public void setMaxCapacity(BigDecimal maxCapacity) {
+//        this.maxCapacity = maxCapacity;
+//    }
 
     public BigDecimal getNumCabinClass() {
         return numCabinClass;

@@ -16,5 +16,5 @@ import javax.ejb.Local;
 public interface AirportEntitySessionBeanLocal {
     public Airport createNewAirport(String airportName, String iataAirportCode, String city, String state, String country);
     public List<Airport> getAllAirports();
-    public long findAirport(String iataCode);
+    public Airport findAirport(String iataCode);
 }
