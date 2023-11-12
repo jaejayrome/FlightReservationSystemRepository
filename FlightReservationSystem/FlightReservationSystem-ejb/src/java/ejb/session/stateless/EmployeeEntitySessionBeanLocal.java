@@ -10,6 +10,7 @@ import util.enumerations.EmploymentType;
 import util.enumerations.GenderType;
 import util.enumerations.JobTitle;
 import util.exception.EmployeeNotFoundException;
+import util.exception.InitialDatabaseException;
 import util.exception.InvalidLoginCredentialsException;
 
 /**
@@ -25,5 +26,6 @@ public interface EmployeeEntitySessionBeanLocal {
     public void processLogout(long employeeId);
     // edited from this
      public Employee authenticateEmployeeDetails(String username, String password) throws InvalidLoginCredentialsException;
+     public Employee checkActualDataInitialised(String username) throws InitialDatabaseException;
     
 }

@@ -90,14 +90,16 @@ public class DataInitSessionBean  {
     // initialised all the data in the post construct 
     @PostConstruct
     public void seedDatabase() {
-        try {
-            checkDatabaseInitialised();
-        } catch (InitialDatabaseException exception) {
-            initialiseData();
-            System.out.println(exception.getMessage());
-        }
+//        try {
+//            checkDatabaseInitialised();
+//            return;
+//        } catch (InitialDatabaseException exception) {
+//            System.out.println(exception.getMessage());
+//            initialiseData(); // Do not proceed with data initialization if the database is already seeded
+//        }
+
     }
-    // 
+
     public void checkDatabaseInitialised() throws InitialDatabaseException{
         try {
             Employee employee = employeeEntitySessionBeanLocal.retrieveEmployeeById(1l);

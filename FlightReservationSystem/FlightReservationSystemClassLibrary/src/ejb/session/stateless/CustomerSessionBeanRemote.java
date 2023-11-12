@@ -8,6 +8,7 @@ import entity.Customer;
 import entity.FlightReservation;
 import java.util.List;
 import javax.ejb.Remote;
+import util.exception.CustomerAuthenticationFailedException;
 
 /**
  *

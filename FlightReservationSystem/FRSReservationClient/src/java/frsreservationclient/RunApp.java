@@ -25,6 +25,7 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import util.enumerations.SeatStatus;
+import util.exception.CustomerAuthenticationFailedException;
 import util.exception.NoFlightFoundException;
 import util.util.Pair;
 
@@ -37,6 +38,7 @@ public class RunApp {
     private CustomerSessionBeanRemote customerSessionBean;
     private CustomerUseCaseSessionBeanRemote customerUseCaseSessionBean;
     private boolean customerIsLoggedIn;
+    private long customerId;
 
     public RunApp() {}
     
@@ -77,9 +79,15 @@ public class RunApp {
                 String loginEmail = sc.nextLine();
                 System.out.println("Enter Your Password: ");
                 String loginPassword = sc.nextLine();
-                int customerLogin = customerUseCaseSessionBean.customerLogin(loginEmail, loginPassword);
-                switch (customerLogin) {
-                    case -1:
+                try {
+                    long customerId = customerUseCaseSessionBean.customerLogin(loginEmail, loginPassword);
+                    this.customerId = customerId;
+                    System.out.println("Welcome, Customer Found & Authenticated");
+                    customerIsLoggedIn = true;
+                    mainMenuCustomer(sc);
+                        
+                } catch (CustomerAuthenticationFailedException e) {
+                    if (e.getMessage().equals("noAccount")) {
                         System.out.println("Customer account has not been "
                                 + "created yet, would you like to create a new "
                                 + "account?\n");
@@ -93,19 +101,10 @@ public class RunApp {
                         } else {
                             userAuthPrompt(sc);
                         }
-                        break;
-                    case 0:
+                    } else {
                         System.out.println("Invalid Password, please try again");
                         userAuthPrompt(sc);
-                        break;
-                    case 1:
-                        System.out.println("Welcome, Customer Found & Authenticated");
-                        customerIsLoggedIn = true;
-                        mainMenuCustomer(sc);
-                        break;
-                    default: 
-                        invalidOption();
-                        break;
+                    }
                 }
                 break;
                 
@@ -342,8 +341,15 @@ public class RunApp {
                     System.out.print("> ");
                     String creditCardNumber = sc.next();
                     sc.nextLine();
+                    // get customer id
+//                    System.out.println(finalFlightScheduleIdList.size());
+//                    finalFlightScheduleIdList.stream().forEach(x -> System.out.print(x + " "));
+//                    
+//                    System.out.println(finalFlightCabinClassIdList.size());
+//                    finalFlightCabinClassIdList.stream().forEach(x -> System.out.print(x + " "));
+//                    System.out.println(finalSeatsChoice.size());
                     // send to the backend 
-//                    customerUseCaseSessionBean
+                    customerUseCaseSessionBean.makeFlightReservation(this.customerId, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails, creditCardNumber);
                     System.out.println("Transaction Successful!");
                     return;
                 } else {
@@ -393,6 +399,7 @@ public class RunApp {
         FlightSchedule flightSchedule = flightScheduleList.get(choice).get(sc.nextInt() -1);
         long chosenFlightScheduleId = flightSchedule.getId();
         sc.nextLine();
+        System.out.println("flight schedule is " + flightSchedule.getId());
         finalFlightScheduleIdList.add(chosenFlightScheduleId);
 
         // fare should be computed here 
@@ -400,6 +407,7 @@ public class RunApp {
         System.out.println("");
         FlightCabinClass chosenFlightCabinClass = chooseFCC(flightSchedule, sc);
         long chosenFCCId = chosenFlightCabinClass.getId();
+        System.out.println("cabin class id is " + chosenFCCId);
         finalFlightCabinClassIdList.add(chosenFCCId);
         Comparator<Fare> lowestFareComparator = Comparator.comparingDouble(fare -> fare.getFareAmount().doubleValue());
         List<Fare> faresForThisCabinClass = chosenFlightCabinClass.getFlightSchedule().getFlightSchedulePlan().getFares().stream().filter(x -> x.getCabinClass().getCabinClassName().equals(chosenFlightCabinClass.getCabinClass().getCabinClassName())).collect(Collectors.toList());
@@ -687,7 +695,12 @@ public class RunApp {
                 if (breakpointSet.contains(j)) {
                     seatLayout[i][j] = "<=>";
                 } else {
-                    seatLayout[i][j] = seatList.get(counter).getSeatNumber();
+                    if (seatList.get(counter).getSeatStatus() == SeatStatus.RESERVED) {
+                        String xxx = seatList.get(counter).getSeatNumber().length() == 3 ? "XXX" : "XX";
+                        seatLayout[i][j] = xxx;
+                    } else {
+                        seatLayout[i][j] = seatList.get(counter).getSeatNumber();
+                    }
                     counter += 1;
                 }
             }

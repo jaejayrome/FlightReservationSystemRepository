@@ -28,9 +28,12 @@ import javax.ejb.EJB;
 import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import util.enumerations.FlightSchedulePlanStatus;
 import util.enumerations.SeatStatus;
+import util.exception.CustomerAuthenticationFailedException;
+import util.exception.CustomerNotRegisteredException;
 import util.util.Pair;
 
 /**
@@ -77,40 +80,37 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
     
     
     @Override
-    public int customerLogin(String email, String password) {
-        List <Customer> customerEmailLs = em.createQuery(
+    public long customerLogin(String email, String password) throws CustomerAuthenticationFailedException {
+        Customer authCustomer = null;
+        try {
+        authCustomer = (Customer)em.createQuery(
                 "SELECT cust FROM Customer cust "
                     + "WHERE cust.email = :email", 
                 Customer.class)
                 .setParameter("email", email)
-                .getResultList();
+                .getSingleResult();
+        } catch (NoResultException e) {
+            // this means the customer doesn't exist at all
+            throw new CustomerAuthenticationFailedException("noAccount");
+        }
         
-        if (customerEmailLs.isEmpty()) {
-            System.out.println("Customer account has not been created yet");      
-            return -1;
-        } else {
-            //customer email exists in system 
-            List <Customer> customer = em.createQuery(
+        try {
+            authCustomer = (Customer)em.createQuery(
                 "SELECT cust FROM Customer cust "
                     + "WHERE cust.password = :password "
                     + "AND cust.email = :email", 
                 Customer.class)
                 .setParameter("email", email)
                 .setParameter("password", password)
-                .getResultList();
-            
-            if (customer.isEmpty()) {
-                System.out.println("Invalid Password");
-                return 0;
-            } else if (!customer.isEmpty()) {
-                System.out.println("Customer Found & Authenticated");
-                return 1;
-            }
+                .getSingleResult();
+        } catch (NoResultException e) {
+            // this means that the customer password entered is wrong
+             throw new CustomerAuthenticationFailedException("passwordFailed");
         }
         
-            
-        
-        return -1;
+        // if authenticated 
+        if (authCustomer != null) return authCustomer.getId();
+        else return -1;
     }
     
     
@@ -300,7 +300,7 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
         for (int i = 0; i < flightScheduleIdList.size(); i++) {
             // cannot use seat booking because there might be duplciate seat numbers between cabin classes
             // massive assumption, assuming that one flight schedule and one cabin class is chosen
-            FlightBooking flightBooking = this.makeFlightBooking(flightScheduleIdList.get(i), flightCabinClassList.get(i), seatNumberList.get(i));
+            FlightBooking flightBooking = this.makeFlightBooking(flightScheduleIdList.get(i), flightCabinClassList.get(i), seatNumberList.get(i), flightReservation);
             // association between flight reservation and flightBooking 
             int init = flightReservation.getFlightBookingList().size();
             flightReservation.getFlightBookingList().add(flightBooking);            
@@ -312,7 +312,7 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
     
     // persist the flight booking
     // handle the lgogic of the seats
-    public FlightBooking makeFlightBooking(long flightSchdeduleId, long flightCabinClassId, List<String> seatNumber) {
+    public FlightBooking makeFlightBooking(long flightSchdeduleId, long flightCabinClassId, List<String> seatNumber, FlightReservation flightReservation) {
             FlightSchedule flightSchedule = flightScheduleEntitySessionBean.getFlightScheduleById(flightSchdeduleId);
             String flightNumber = flightSchedule.getFlightSchedulePlan().getFlight().getFlightNumber();
             FlightCabinClass flightCabinClass = flightCabinClassEntitySessionBean.getFCCByID(flightCabinClassId);
@@ -338,6 +338,7 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
             }
             // associationdone flight booking to flight schedule
             FlightBooking flightBooking = new FlightBooking(flightNumber, flightSchedule);
+            flightBooking.setFlightReservation(flightReservation);
             flightBooking = flightBookingEntitySessionBean.makeBooking(flightBooking);
             int init = flightBooking.getReservedSeats().size();
             // association done flight booking to seats

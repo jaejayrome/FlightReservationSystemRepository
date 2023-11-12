@@ -13,6 +13,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -21,6 +22,7 @@ import util.enumerations.EmploymentType;
 import util.enumerations.GenderType;
 import util.enumerations.JobTitle;
 import util.exception.EmployeeNotFoundException;
+import util.exception.InitialDatabaseException;
 import util.exception.InvalidLoginCredentialsException;
 
 /**
@@ -84,6 +86,18 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanLocal
         } else {
             employee.setIsLoggedIn(true);
             return employee;
+        }
+    }
+    
+    @Override
+    public Employee checkActualDataInitialised(String username) throws InitialDatabaseException {
+        try {
+        Employee e = (Employee)em.createQuery("SELECT e FROM Employee e WHERE e.loginUsername = :username")
+                .setParameter("username", username)
+                .getSingleResult();
+        return e;
+        } catch (NoResultException e) {
+            throw new InitialDatabaseException("Database Not Initalised");
         }
     }
     

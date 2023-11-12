@@ -30,12 +30,15 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
+import javax.ejb.Startup;
+import javax.persistence.NoResultException;
 import util.enumerations.AircraftTypeName;
 import util.enumerations.CabinClassType;
 import util.enumerations.EmploymentType;
 import util.enumerations.FlightRouteStatus;
 import util.enumerations.GenderType;
 import util.enumerations.JobTitle;
+import util.exception.InitialDatabaseException;
 import util.exception.InitialFlightNotInstantiatedException;
 import util.exception.InvalidStringLengthException;
 
@@ -45,7 +48,11 @@ import util.exception.InvalidStringLengthException;
  */
 @Singleton
 @LocalBean
+
 public class ActualDataInitSessionBean {
+
+    @EJB
+    private EmployeeEntitySessionBeanLocal employeeEntitySessionBean;
     
     @EJB
     private FleetManagerUseCaseSessionBeanLocal fleetManagerUseCaseSessionBean;
@@ -71,10 +78,16 @@ public class ActualDataInitSessionBean {
     
     @EJB
     private RoutePlannerUseCaseSessionBeanLocal routePlannerUseCaseSessionBean;
+    
+    
 
     @PostConstruct
     public void seedDatabase() {
-        
+        try {
+            employeeEntitySessionBean.checkActualDataInitialised("fleetmanager");
+        } catch (InitialDatabaseException e) {
+            initialiseActualTestData();
+        }
     }
     
     public Date formatDate(String dateTimeInput) {
