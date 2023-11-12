@@ -513,7 +513,6 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
                 // associate FSP to fare
                 int init = flightSchedulePlan.getFares().size();
                 flightSchedulePlan.getFares().add(x); 
-                // cabinclass to fare is NULL
             });
            
         }
@@ -524,7 +523,7 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
         int numCols = numAisles + 1;
         List<String> alphabets = generateLetters(numSeatAbreast);
         List<Seat> seatingList = new ArrayList<Seat>();
-//        String[] seatsEachRowEachColumn = seatConfiguration.split("-");
+
         for (int i = 1; i <= numRows; i++) {
             int counter = 0;
             for (int j = 1; j <= numSeatAbreast; j++) {

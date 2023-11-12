@@ -48,15 +48,6 @@ public class CabinClass implements Serializable {
     @ManyToMany(mappedBy= "cabinClassList")
     private List<AircraftConfiguration> aircraftConfigurationList;
     
-    @OneToMany(mappedBy= "cabinClass")
-    private List<Fare> fareList;
-    
-    
-    // careful! this must be optional because we can create one w/o having a flight assigned to it 
-//    @ManyToOne (optional = true)
-//    @JoinColumn (nullable = true)
-//    private FlightSchedule flightSchedule;
-    
 
     // constructors
     public CabinClass() {
@@ -69,26 +60,9 @@ public class CabinClass implements Serializable {
         this.numSeatsAbreast = numSeatsAbreast;
         this.seatingConfiguration = seatingConfiguration;
         this.aircraftConfigurationList = new ArrayList<AircraftConfiguration>();
-        this.fareList = new ArrayList<Fare>();
-        
     }
     
      // getters and settters
-//    public FlightSchedulePlan getFlightSchedulePlan() {
-//        return flightSchedulePlan;
-//    }
-//
-//    public void setFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) {
-//        this.flightSchedulePlan = flightSchedulePlan;
-//    }
-//   
-    public List<Fare> getFareList() {
-        return fareList;
-    }
-
-    public void setFareList(List<Fare> fareList) {
-        this.fareList = fareList;
-    }
     
     public List<AircraftConfiguration> getAircraftConfigurationList() {
         return aircraftConfigurationList;

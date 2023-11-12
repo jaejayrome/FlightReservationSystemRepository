@@ -41,7 +41,6 @@ import util.util.Pair;
 public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRemote, CustomerUseCaseSessionBeanLocal {
 
     
-    
     @Resource
     private EJBContext ejbContext;
     
@@ -143,9 +142,10 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
             .getResultList();
         flightScheduleList1.stream().forEach(x -> {
             int init = x.getFccList().size();
-            x.getFccList().stream().forEach(y -> y.getCabinClass().getFareList().size());
             x.getFccList().stream().forEach(y -> y.getSeatList().size());
+            x.getFlightSchedulePlan().getFares().size();
         });
+        
         if (flightScheduleList1.size() == 0) {
                throw new NoFlightFoundException("No Flight has been found!");
         }
@@ -171,7 +171,7 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
                 .getResultList();
            flightScheduleList2.stream().forEach(x -> {
             int init = x.getFccList().size();
-            x.getFccList().stream().forEach(y -> y.getCabinClass().getFareList().size());
+            x.getFlightSchedulePlan().getFares().size();
             x.getFccList().stream().forEach(y -> y.getSeatList().size());
         });
            if (flightScheduleList2.size() == 0) {
@@ -195,11 +195,12 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
             listOfAllCombinations = listOfAllCombinations.stream().filter(x -> x.getFirst().getDepartureTime().after(startDate3) && x.getFirst().getDepartureTime().before(endDate3)).collect(Collectors.toList());
             for (Pair<FlightSchedule> connectingFlightPair : listOfAllCombinations) {
                 connectingFlightPair.getFirst().getFccList().size();
-                connectingFlightPair.getFirst().getFccList().stream().forEach(x -> x.getCabinClass().getFareList().size());
+                connectingFlightPair.getFirst().getFlightSchedulePlan().getFares().size();
                 connectingFlightPair.getFirst().getFccList().stream().forEach(x -> x.getSeatList().size());
                 leg1.add(connectingFlightPair.getFirst());
+                
                 connectingFlightPair.getSecond().getFccList().size();
-                connectingFlightPair.getSecond().getFccList().stream().forEach(x -> x.getCabinClass().getFareList().size());
+                connectingFlightPair.getSecond().getFlightSchedulePlan().getFares().size();
                 connectingFlightPair.getSecond().getFccList().stream().forEach(x -> x.getSeatList().size());
                 leg2.add(connectingFlightPair.getSecond());
             }
@@ -219,11 +220,12 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
                 listOfAllCombinations = listOfAllCombinations.stream().filter(x -> x.getFirst().getDepartureTime().after(startDate4) && x.getFirst().getDepartureTime().before(endDate4)).collect(Collectors.toList());
                 for (Pair<FlightSchedule> connectingFlightPair : listOfAllCombinationsS) {
                     connectingFlightPair.getFirst().getFccList().size();
-                    connectingFlightPair.getFirst().getFccList().stream().forEach(x -> x.getCabinClass().getFareList().size());
+                    connectingFlightPair.getFirst().getFlightSchedulePlan().getFares().size();
                     connectingFlightPair.getFirst().getFccList().stream().forEach(x -> x.getSeatList().size());
                     leg3.add(connectingFlightPair.getFirst());
+                    
                     connectingFlightPair.getSecond().getFccList().size();
-                    connectingFlightPair.getSecond().getFccList().stream().forEach(x -> x.getCabinClass().getFareList().size());
+                    connectingFlightPair.getSecond().getFlightSchedulePlan().getFares().size();
                     connectingFlightPair.getSecond().getFccList().stream().forEach(x -> x.getSeatList().size());
                     leg4.add(connectingFlightPair.getSecond());
                 }

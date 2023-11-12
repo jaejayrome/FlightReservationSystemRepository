@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import util.enumerations.SeatStatus;
 import util.exception.NoFlightFoundException;
@@ -401,7 +402,9 @@ public class RunApp {
         long chosenFCCId = chosenFlightCabinClass.getId();
         finalFlightCabinClassIdList.add(chosenFCCId);
         Comparator<Fare> lowestFareComparator = Comparator.comparingDouble(fare -> fare.getFareAmount().doubleValue());
-        Fare fare = chosenFlightCabinClass.getCabinClass().getFareList().stream().min(lowestFareComparator).get();
+        List<Fare> faresForThisCabinClass = chosenFlightCabinClass.getFlightSchedule().getFlightSchedulePlan().getFares().stream().filter(x -> x.getCabinClass().getCabinClassName().equals(chosenFlightCabinClass.getCabinClass().getCabinClassName())).collect(Collectors.toList());
+        Fare fare = faresForThisCabinClass.stream().min(lowestFareComparator).get();
+        
         // this would be the total amount of money for one leg of the flight itnerary
         double totalAmount = fare.getFareAmount().doubleValue() * numPassengers;
 
@@ -621,7 +624,8 @@ public class RunApp {
         System.out.println("Cabin Class Type: " + fcc.getCabinClass().getCabinClassName());
 //        System.out.println("No. of Fares " + fcc.getCabinClass().getFareList().size());
         Comparator<Fare> fareLowest = (x, y) -> (int)(x.getFareAmount().doubleValue() - y.getFareAmount().doubleValue());
-        Fare lowestFare = fcc.getCabinClass().getFareList().stream().sorted(fareLowest).findFirst().get();
+        List<Fare> faresForThisCabinClass = fcc.getFlightSchedule().getFlightSchedulePlan().getFares().stream().filter(x -> x.getCabinClass().getCabinClassName().equals(fcc.getCabinClass().getCabinClassName())).collect(Collectors.toList());
+        Fare lowestFare = faresForThisCabinClass.stream().min(fareLowest).get();
         if (!isConnecting){
             // System.out.println("Lowest Fare Offered!");
             System.out.println("Fare Basis Code is " + lowestFare.getFareBasicCode());
@@ -638,7 +642,8 @@ public class RunApp {
 //        System.out.println("No. of Fares: "  + fcc.getCabinClass().getFareList().size());
         if (isConnecting) {
             Comparator<Fare> fareLowest = (x, y) -> (int)(x.getFareAmount().doubleValue() - y.getFareAmount().doubleValue());
-            Fare lowestFare = fcc.getCabinClass().getFareList().stream().sorted(fareLowest).findFirst().get();
+            List<Fare> faresForThisCabinClass = fcc.getFlightSchedule().getFlightSchedulePlan().getFares().stream().filter(x -> x.getCabinClass().getCabinClassName().equals(fcc.getCabinClass().getCabinClassName())).collect(Collectors.toList());
+            Fare lowestFare = faresForThisCabinClass.stream().min(fareLowest).get();
             return  (lowestFare.getFareAmount().doubleValue());
         } else {
             return 0.0;
