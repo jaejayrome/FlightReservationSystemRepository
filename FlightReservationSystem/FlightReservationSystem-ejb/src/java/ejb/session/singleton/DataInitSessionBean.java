@@ -4,25 +4,46 @@
  */
 package ejb.session.singleton;
 
+import ejb.session.stateless.AircraftConfigurationEntitySessionBeanLocal;
 import ejb.session.stateless.AircraftTypeEntitySessionBeanLocal;
 import javax.annotation.PostConstruct;
 import ejb.session.stateless.AirportEntitySessionBeanLocal;
 import ejb.session.stateless.CustomerSessionBeanLocal;
 import ejb.session.stateless.EmployeeEntitySessionBeanLocal;
+import ejb.session.stateless.FleetManagerUseCaseSessionBeanLocal;
+import ejb.session.stateless.FlightRouteEntitySessionBeanLocal;
 import ejb.session.stateless.PartnerEntitySessionBeanLocal;
+import ejb.session.stateless.RoutePlannerUseCaseSessionBeanLocal;
+import ejb.session.stateless.ScheduleManagerUseCaseSessionBeanLocal;
+import entity.AircraftConfiguration;
 import entity.Employee;
+import entity.Fare;
+import entity.Flight;
+import entity.FlightRoute;
 import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import util.enumerations.AircraftTypeName;
+import util.enumerations.CabinClassType;
 import util.enumerations.EmploymentType;
+import util.enumerations.FlightRouteStatus;
 import util.enumerations.GenderType;
 import util.enumerations.JobTitle;
 import util.enumerations.RoleType;
 import util.exception.EmployeeNotFoundException;
 import util.exception.InitialDatabaseException;
+import util.exception.InitialFlightNotInstantiatedException;
+import util.exception.InvalidStringLengthException;
 
 /**
  *
@@ -33,8 +54,16 @@ import util.exception.InitialDatabaseException;
 @Startup
 public class DataInitSessionBean  {
 
-    @EJB(name = "CustomerSessionBeanLocal")
-    private CustomerSessionBeanLocal customerSessionBeanLocal;
+    
+
+    @EJB
+    private FleetManagerUseCaseSessionBeanLocal fleetManagerUseCaseSessionBean;
+
+    @EJB
+    private ScheduleManagerUseCaseSessionBeanLocal scheduleManagerUseCaseSessionBean;
+    
+    @EJB
+    private CustomerSessionBeanLocal customerSessionBean;
     
     @EJB
     private AirportEntitySessionBeanLocal airportEntitySessionBeanLocal;
@@ -44,6 +73,16 @@ public class DataInitSessionBean  {
     private PartnerEntitySessionBeanLocal partnerEntitySessionBeanLocal;
     @EJB
     private AircraftTypeEntitySessionBeanLocal aircraftTypeEntitySessionBeanLocal;
+    @EJB
+    private AircraftConfigurationEntitySessionBeanLocal aircraftConfigurationEntitySessionBean;
+    @EJB
+    private FlightRouteEntitySessionBeanLocal flightRouteEntitySessionBean;
+    
+    @EJB
+    private RoutePlannerUseCaseSessionBeanLocal routePlannerUseCaseSessionBean;
+
+    
+    
     
     public DataInitSessionBean() {
     }
@@ -51,14 +90,16 @@ public class DataInitSessionBean  {
     // initialised all the data in the post construct 
     @PostConstruct
     public void seedDatabase() {
-        try {
-            checkDatabaseInitialised();
-        } catch (InitialDatabaseException exception) {
-            initialiseData();
-            System.out.println(exception.getMessage());
-        }
+//        try {
+//            checkDatabaseInitialised();
+//            return;
+//        } catch (InitialDatabaseException exception) {
+//            System.out.println(exception.getMessage());
+//            initialiseData(); // Do not proceed with data initialization if the database is already seeded
+//        }
+
     }
-    // 
+
     public void checkDatabaseInitialised() throws InitialDatabaseException{
         try {
             Employee employee = employeeEntitySessionBeanLocal.retrieveEmployeeById(1l);
@@ -66,6 +107,8 @@ public class DataInitSessionBean  {
             throw new InitialDatabaseException("Database has not been seeded yet!");
         }
     }
+    
+    
     
     public void initialiseData() {
         System.out.println("Seeding the database with initial data");
@@ -136,7 +179,8 @@ public class DataInitSessionBean  {
     
 
         //default customer creation is already init as roleType.customer
-        customerSessionBeanLocal.createNewCustomer("FirstName", "LastName", "email@test", "phoneNumber", "Address", "Password");
+        customerSessionBean.createNewCustomer("FirstName", "LastName", "email@test", "phoneNumber", "Address", "Password");
 
     }
+
 }

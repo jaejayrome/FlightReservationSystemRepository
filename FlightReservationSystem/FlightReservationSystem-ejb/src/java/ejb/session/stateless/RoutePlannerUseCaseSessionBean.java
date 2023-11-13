@@ -53,6 +53,27 @@ public class RoutePlannerUseCaseSessionBean implements RoutePlannerUseCaseSessio
     }
     
     @Override
+    public long createNewFlightRouteDataInit(String originIATA, String destinationIATA, FlightRoute flightRoute, boolean makeReturnFlightRoute) {
+        FlightRoute persistedFlightRoute = flightRouteEntitySessionBean.createFlightRoute(flightRoute);
+        
+        Airport originAirport = airportEntitySessionBean.findAirport(originIATA);
+        Airport destinationAirport = airportEntitySessionBean.findAirport(destinationIATA);
+        persistedFlightRoute.setOrigin(originAirport);
+        persistedFlightRoute.setDestination(destinationAirport);
+        persistedFlightRoute.setFlightGroup(persistedFlightRoute.getId());
+        
+        if (makeReturnFlightRoute) {
+            FlightRoute returnFlightRoute = new FlightRoute(FlightRouteStatus.DISABLED);
+            FlightRoute returnPersistedFlightRoute = flightRouteEntitySessionBean.createFlightRoute(returnFlightRoute);
+            returnPersistedFlightRoute.setOrigin(destinationAirport);
+            returnPersistedFlightRoute.setDestination(originAirport);
+            returnPersistedFlightRoute.setFlightGroup(persistedFlightRoute.getId());
+        }
+        
+        return persistedFlightRoute.getId();
+    }
+    
+    @Override
     public List<FlightRoute> viewAllFlightRoute() {
         return flightRouteEntitySessionBean.getAllFlightRoutes();
     }

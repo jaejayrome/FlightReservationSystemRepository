@@ -36,6 +36,11 @@ public class FlightCabinClassEntitySessionBean implements FlightCabinClassEntity
                 .setParameter("flightNumber", flightNumber)
                 .getResultList();
     }
+    
+    @Override
+    public FlightCabinClass getFCCByID(long id) {
+        return em.find(FlightCabinClass.class, id);
+    }
 
  
 }

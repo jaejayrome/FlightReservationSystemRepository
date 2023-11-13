@@ -150,17 +150,17 @@ public class FleetManagerUseCase {
     }
     
     public void printAllCabinClassTypes() {
-        System.out.println("Press 1 for First Class");
-        System.out.println("Press 2 for Business Class");
-        System.out.println("Press 3 for Premium Economy Class");
-        System.out.println("Press 4 for Economy Class");
+        System.out.println("Press 1 for First (F) Class");
+        System.out.println("Press 2 for Business (J) Class");
+        System.out.println("Press 3 for Premium Economy (W) Class");
+        System.out.println("Press 4 for Economy (Y) Class");
     }
     
     public void initialiseMap() {
-        hashMap.put(1, CabinClassType.FIRST);
-        hashMap.put(2, CabinClassType.BUSINESS);
-        hashMap.put(3, CabinClassType.PREMIUM_ECONOMY);
-        hashMap.put(4, CabinClassType.ECONOMY);
+        hashMap.put(1, CabinClassType.F);
+        hashMap.put(2, CabinClassType.J);
+        hashMap.put(3, CabinClassType.W);
+        hashMap.put(4, CabinClassType.Y);
     }
     
     public void printAircraftTypeChoices() {

@@ -66,8 +66,6 @@ public class FleetManagerUseCaseSessionBean implements FleetManagerUseCaseSessio
                     BigDecimal numAvailableSeats = new BigDecimal(numRows.intValue() * numSeatsAbreast.intValue());
                     CabinClass cabinClass = new CabinClass(cabinClassName, numAisles, numRows, numSeatsAbreast, seatingConfiguration);
                     cabinClassEntitySessionBean.createCabinClass(cabinClass);
-//                    // associate cabin class with the seats 
-//                    cabinClass.setSeatList(createSeatsForCabinClass(numRows.intValue(),numAisles.intValue(), numSeatsAbreast.intValue(), seatingConfiguration, cabinClass));
                     cabinClassList.add(cabinClass);
                     totalSeats += (numRows.intValue() * numSeatsAbreast.intValue());
                 }

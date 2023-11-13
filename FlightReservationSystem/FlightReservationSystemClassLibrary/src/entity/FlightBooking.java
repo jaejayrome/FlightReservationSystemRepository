@@ -32,14 +32,7 @@ public class FlightBooking implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
-    
-//    @Digits(integer=6, fraction = 2)
-//    @DecimalMin("0.01")
-//    @Column(nullable = false)
-//    private BigDecimal passengerPrice;
-    
+    private Long id;  
     
     @NotNull
     @Size(max = 10)
@@ -62,11 +55,10 @@ public class FlightBooking implements Serializable {
     public FlightBooking() {
     }
 
-    public FlightBooking(String fareBasisCode, String flightNumber, FlightSchedule flightSchedule) {
+    public FlightBooking(String flightNumber, FlightSchedule flightSchedule) {
         this.flightNumber = flightNumber;
         this.reservedSeats = new ArrayList<Seat>();
         this.flightSchedule = flightSchedule;
-//        this.passengerPrice = passengerPrice;
     }
     
     // getters and setter
@@ -77,14 +69,6 @@ public class FlightBooking implements Serializable {
     public void setFlightReservation(FlightReservation flightReservation) {
         this.flightReservation = flightReservation;
     }
-
-//    public BigDecimal getPassengerPrice() {
-//        return passengerPrice;
-//    }
-//
-//    public void setPassengerPrice(BigDecimal passengerPrice) {
-//        this.passengerPrice = passengerPrice;
-//    }
 
     public String getFlightNumber() {
         return flightNumber;

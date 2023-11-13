@@ -212,6 +212,7 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
                 Flight returnFlight = flightEntitySessionBean.checkReturnFlight(flight.getFlightRoute().getOrigin().getIataAirportCode(), flight.getFlightRoute().getDestination().getIataAirportCode());
                 Date arrivalTime = this.computeArrivalTime(departureDateList.get(0), duration);
                 departureDateList.set(0, this.computeArrivalTime(arrivalTime, layover));
+                // i should reference the same fares for cabin class and not refernce new one? 
                 SingleFlightSchedulePlan flightSchedulePlan = this.makeSingleFlightSchedulePlan(returnFlight, departureDateList, duration, faresForCabinClassList);
                 flightSchedulePlan.setFlightSchedulePlanGroup(id);
                 return id;
@@ -253,7 +254,7 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
             }
             
         } else {
-            // create a recurrent weekly flight schedule
+            // create a recurrent weekly flight schedule (need to assume that a day of the week is being chosen for this)
            if (!makeReturn) {
                 WeeklyFlightSchedulePlan flightSchedulePlan = this.makeRecurrentWeeklyFlightSchedulePlan(flight, departureDateList, duration, faresForCabinClassList, endDate);
                 flightSchedulePlan.setFlightSchedulePlanGroup(flightSchedulePlan.getId());
@@ -427,7 +428,6 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
     @Override
     public List<FlightSchedulePlan> viewAllFlightSchedulePlan() {
         List<FlightSchedulePlan> collatedList = flightSchedulePlanEntitySessionBean.viewAllFlightSchedulePlan();
-        // unsure by what it means by complementary return flight schedule
         Comparator<FlightSchedulePlan> compare = (x, y) -> {
             // sort by ascending order in flight number 
             if (x.getFlight().getFlightNumber().compareTo(y.getFlight().getFlightNumber()) == 0) {
@@ -513,7 +513,6 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
                 // associate FSP to fare
                 int init = flightSchedulePlan.getFares().size();
                 flightSchedulePlan.getFares().add(x); 
-                // cabinclass to fare is NULL
             });
            
         }
@@ -524,7 +523,7 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
         int numCols = numAisles + 1;
         List<String> alphabets = generateLetters(numSeatAbreast);
         List<Seat> seatingList = new ArrayList<Seat>();
-//        String[] seatsEachRowEachColumn = seatConfiguration.split("-");
+
         for (int i = 1; i <= numRows; i++) {
             int counter = 0;
             for (int j = 1; j <= numSeatAbreast; j++) {
