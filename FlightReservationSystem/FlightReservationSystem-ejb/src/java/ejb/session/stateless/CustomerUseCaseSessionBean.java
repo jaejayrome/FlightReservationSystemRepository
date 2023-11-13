@@ -4,7 +4,6 @@
  */
 package ejb.session.stateless;
 
-import com.sun.xml.wss.util.DateUtils;
 import entity.Customer;
 import entity.Flight;
 import entity.FlightBooking;
@@ -32,7 +31,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import util.enumerations.FlightSchedulePlanStatus;
 import util.enumerations.SeatStatus;
 import util.exception.CustomerAuthenticationFailedException;
 import util.exception.CustomerNotRegisteredException;
@@ -115,8 +113,18 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
         else return -1;
     }
     
-    
-    
+    @Override
+    public List<FlightSchedule> displayAllFlightRoutes() {
+        
+        return em.createQuery("SELECT fs " +
+               "FROM FlightSchedule fs ")
+                .getResultList();
+//        
+//        
+//        return em.createQuery(
+//            "SELECT flight FROM FlightSchedule flight")
+//            .getResultList();
+    }
 
     @Override
     //no need add return flights
@@ -377,5 +385,34 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
             flightBooking.getReservedSeats().addAll(toAdd);
             return flightBooking;
     }
+    
+    
+    //viewMyFlightReservations use case (returns list of flights)
+    //view my FLight reservation details: Need to retyurn 
+    public List<FlightReservation> retrieveAllCustomerReservations(long customerId) {
+        Customer customerToReturn = (Customer) em.createQuery("SELECT cust" +
+               "FROM CUSTOMER cust " +
+               "WHERE CUSTOMER.id =: customerId")
+                .setParameter("customerId", customerId)                
+                .getSingleResult();
+        
+        return customerToReturn.getFlightReservationList();
+    }
+    
+    public Flight retrieveFlightReservationDetails(long customerId, long flightId) {
+        List<FlightReservation> customerFlightReservations = 
+                this.retrieveAllCustomerReservations(customerId);
+        
+        for (int i = 0; i < customerFlightReservations.size(); i ++) {
+            FlightReservation frTmp = customerFlightReservations.get(i);
+            
+            
+        }
+        
+        
+        return null;
+    }
+    
+     
     
 }

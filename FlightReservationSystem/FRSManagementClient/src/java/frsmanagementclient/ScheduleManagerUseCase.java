@@ -303,8 +303,8 @@ public class ScheduleManagerUseCase {
         }
         
        
-       long promptReturnFlightSchedule = scheduleManagerUseCaseSessionBeanRemote.createNewFlightSchedulePlan(flightNumber, departureDateList, duration, endDate, frequency, faresForCabinClassList, false, -1, null);
-       if (promptReturnFlightSchedule != -1) {
+        long promptReturnFlightSchedule = scheduleManagerUseCaseSessionBeanRemote.createNewFlightSchedulePlan(flightNumber, departureDateList, duration, endDate, frequency, faresForCabinClassList, false, -1, null);
+        if (promptReturnFlightSchedule != -1) {
             System.out.println("An existing complementary flight schedule plan has been detected!");
             System.out.println("Press '1' if you would like to create this return flight schedule plan");
             System.out.print("> ");
