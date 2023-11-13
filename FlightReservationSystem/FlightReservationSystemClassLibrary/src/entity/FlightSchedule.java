@@ -48,6 +48,9 @@ public class FlightSchedule implements Serializable {
     private FlightSchedulePlan flightSchedulePlan;
     
     @OneToMany(mappedBy = "flightSchedule")
+    private List<FlightBooking> flightBookingList;
+    
+    @OneToMany(mappedBy = "flightSchedule")
     private List<FlightCabinClass> fccList;
     
 
@@ -59,8 +62,17 @@ public class FlightSchedule implements Serializable {
         this.flightDuration = flightDuration;
         this.arrivalTime = arrivalTime;
         this.fccList = new ArrayList<FlightCabinClass>();
+        this.flightBookingList = new ArrayList<FlightBooking>();
     }
 
+    public List<FlightBooking> getFlightBookingList() {
+        return flightBookingList;
+    }
+
+    public void setFlightBookingList(List<FlightBooking> flightBookingList) {
+        this.flightBookingList = flightBookingList;
+    }
+    
     public List<FlightCabinClass> getFccList() {
         return fccList;
     }

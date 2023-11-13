@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import util.enumerations.SeatStatus;
 
 /**
@@ -33,11 +34,14 @@ public class Seat implements Serializable {
     @Column(nullable = false)
     private SeatStatus seatStatus;
     
+    
     // relationships
     @ManyToOne(optional = true)
     @JoinColumn(nullable = true)
     private FlightCabinClass flightCabinClass;
     
+    @OneToOne (optional = true)
+    private Passenger passenger;
     // constructors
 
     public Seat() {
@@ -50,6 +54,14 @@ public class Seat implements Serializable {
     }
     
     // getters and setters
+
+    public Passenger getPassenger() {
+        return passenger;
+    }
+
+    public void setPassenger(Passenger passenger) {
+        this.passenger = passenger;
+    }
 
     public String getSeatNumber() {
         return seatNumber;

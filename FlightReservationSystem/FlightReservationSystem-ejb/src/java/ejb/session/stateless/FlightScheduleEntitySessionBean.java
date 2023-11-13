@@ -5,6 +5,7 @@
 package ejb.session.stateless;
 
 import entity.FlightSchedule;
+import entity.FlightSchedulePlan;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -49,6 +50,7 @@ public class FlightScheduleEntitySessionBean implements FlightScheduleEntitySess
                 .getResultList();
     }
     
+
     @Override
     public FlightSchedule getFlightScheduleById(long id) {
         return em.find(FlightSchedule.class, id);

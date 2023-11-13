@@ -7,6 +7,7 @@ package entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -45,10 +46,10 @@ public abstract class FlightSchedulePlan implements Serializable {
     @JoinColumn(nullable = false)
     private Flight flight;
 
-    @OneToMany (mappedBy = "flightSchedulePlan")
+    @OneToMany(mappedBy= "flightSchedulePlan", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Fare> fares;
     
-    @OneToMany(mappedBy= "flightSchedulePlan")
+    @OneToMany(mappedBy= "flightSchedulePlan", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<FlightSchedule> flightScheduleList;
     
     // constructors

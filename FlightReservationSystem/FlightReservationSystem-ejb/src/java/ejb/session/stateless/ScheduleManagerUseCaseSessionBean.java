@@ -38,6 +38,7 @@ import util.enumerations.FlightStatus;
 import util.enumerations.SeatStatus;
 import util.exception.InitialFlightNotInstantiatedException;
 import util.exception.NoFlightRouteFoundException;
+import util.exception.UpdateFlightSchedulePlanException;
 
 /**
  *
@@ -150,6 +151,15 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
         flight.getFlightSchedulePlanList().stream().forEach(x -> {
             x.getFlightScheduleList().size();
             x.getFares().size();
+            x.getFlightScheduleList().stream().forEach(y -> {
+                y.getFlightBookingList().size();
+                y.getFccList().size();
+                y.getFccList().stream().forEach(z -> {
+                    z.getSeatList().size();
+                });
+                y.getFlightBookingList().stream().forEach(a -> a.getReservedSeats().size());
+            });
+            
         });
         
         return flight;
@@ -451,14 +461,54 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
     }
     
     @Override
-    public FlightSchedulePlan updateFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) {
-     // should prompt the user to enter the flight number 
-     // prompt the user which flight schedule plan is to be updated
-     // using the id, send it to the backend 
-     // then check business rules 
+    public void updateFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) throws UpdateFlightSchedulePlanException {
+     if (flightSchedulePlan.getId() != null && flightSchedulePlan != null) {
+        // find the oldOne 
+        long oldId = flightSchedulePlan.getId();
+        FlightSchedulePlan oldPlan = flightSchedulePlanEntitySessionBean.getFSPfromID(oldId);
+        // check for any flight schedules that ar enot inside the new FSP
+        int init = flightSchedulePlan.getFlightScheduleList().size();
+        int init2 = oldPlan.getFlightScheduleList().size();
+        // iterate through the old plans 
+        List<FlightSchedule> deletedPlans = oldPlan.getFlightScheduleList().stream().filter(x -> !(flightSchedulePlan.getFlightScheduleList().contains(x))).collect(Collectors.toList());
+        for (FlightSchedule fs : deletedPlans) {
+            int init3 = fs.getFlightBookingList().size();
+            if (fs.getFlightBookingList().size() > 0) {
+                throw new UpdateFlightSchedulePlanException("You are trying to delete flight schedule plans that have current flight bookings ongoing!");
+            }
+        }
+        // ensure that the price of the booking is not affected, make each booking store their own fare 
+        oldPlan.setFares(flightSchedulePlan.getFares());
+        oldPlan.setFlightScheduleList(flightSchedulePlan.getFlightScheduleList());
+     }
      
-     return null;
      
+    }
+    
+    @Override
+    public void deleteFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) {
+        if (flightSchedulePlan != null) {
+             // find the flightSchedulePlan
+             long planToDeleteId = flightSchedulePlan.getId();
+             FlightSchedulePlan planToDelete = flightSchedulePlanEntitySessionBean.getFSPfromID(planToDeleteId);
+             // need to check whether is there any flight schedules that currently have reservations 
+             int init = planToDelete.getFlightScheduleList().size();
+             boolean businessRuleViolated = false;
+             for (FlightSchedule fs : planToDelete.getFlightScheduleList()) {
+                 int init1 = fs.getFlightBookingList().size();
+                 if (fs.getFlightBookingList().size() > 0) {
+                    // means there is at least one fs that has a booking 
+                    flightSchedulePlanEntitySessionBean.disableFlightSchedulePlan(planToDelete);
+                    businessRuleViolated = true;
+                 }
+             }
+             
+             if (!businessRuleViolated) {
+                 flightSchedulePlanEntitySessionBean.deleteFlightSchedulePlan(planToDelete);
+             }
+             
+        }
+        
     }
     
     
