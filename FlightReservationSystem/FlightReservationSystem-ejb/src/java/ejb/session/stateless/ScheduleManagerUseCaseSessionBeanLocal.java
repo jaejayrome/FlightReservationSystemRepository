@@ -15,6 +15,7 @@ import javax.ejb.Local;
 import util.enumerations.CabinClassType;
 import util.enumerations.FlightStatus;
 import util.exception.InitialFlightNotInstantiatedException;
+import util.exception.UpdateFlightSchedulePlanException;
 
 /**
  *
@@ -30,5 +31,6 @@ public interface ScheduleManagerUseCaseSessionBeanLocal {
     public void updateFlightNumber(String flightNumber, String newFlightNumber);
     public void updateFlightStatus(String flightNumber, FlightStatus newStatus);
     public boolean deleteFlight(String flightNumber);
-    public FlightSchedulePlan updateFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan);
+    public void updateFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) throws UpdateFlightSchedulePlanException;
+    public void deleteFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan);
 }

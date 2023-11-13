@@ -6,6 +6,7 @@ package entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,6 +33,9 @@ public class FlightReservation implements Serializable {
     @Column (nullable = false)
     private String creditCardNumber; 
     
+    @Column (nullable = false)
+    private Date date;
+    
     // relationships
     @OneToMany (mappedBy= "flightReservation")
     private List<FlightBooking> flightBookingList;
@@ -51,6 +55,15 @@ public class FlightReservation implements Serializable {
         this.flightBookingList = new ArrayList<FlightBooking>();
         this.passengerList = new ArrayList<Passenger>();
         this.creditCardNumber = creditCardNumber;
+        this.date = new Date();
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public String getCreditCardNumber() {

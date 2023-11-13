@@ -16,4 +16,7 @@ import javax.ejb.Local;
 public interface FlightSchedulePlanEntitySessionBeanLocal {
     public FlightSchedulePlan createFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan);
     public List<FlightSchedulePlan> viewAllFlightSchedulePlan();
+    public FlightSchedulePlan getFSPfromID(long id);
+    public void disableFlightSchedulePlan(FlightSchedulePlan fsp);
+    public void deleteFlightSchedulePlan(FlightSchedulePlan fsp);
 }

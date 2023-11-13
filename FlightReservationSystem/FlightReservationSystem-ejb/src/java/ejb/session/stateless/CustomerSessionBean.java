@@ -42,4 +42,11 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
     public Customer getCustomerById(long customerId) {
         return em.find(Customer.class, customerId);
     }
+    
+    @Override
+    public List<FlightReservation> returnAllFlightReservations(long customerId) {
+        Customer customer = this.getCustomerById(customerId);
+        customer.getFlightReservationList().size();
+        return customer.getFlightReservationList();
+    } 
 }

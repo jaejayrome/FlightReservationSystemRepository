@@ -23,7 +23,10 @@ public interface CustomerUseCaseSessionBeanRemote {
     public long customerLogin(String email, String password) throws CustomerAuthenticationFailedException;  
     public List<List<FlightSchedule>> searchForFlightRoutes(
     String departureAirport, Date departureDate, String destinationAirport, Date returnDate, int directFlight) throws NoFlightFoundException;
-    public FlightReservation makeFlightReservation(long customerId, List<Long> flightScheduleIdList, List<Long> flightCabinClassList, List<List<String>> seatNumberList, List<HashMap<Integer, String>> passengerDetails, String creditCardNumber);
-    public List<FlightReservation> retrieveAllCustomerReservations(long customerId);
-     public List<FlightSchedule> displayAllFlightRoutes();
+
+    //public List<FlightReservation> retrieveAllCustomerReservations(long customerId);
+    //public List<FlightSchedule> displayAllFlightRoutes();
+
+    public FlightReservation makeFlightReservation(long customerId, List<Long> flightScheduleIdList, List<Long> flightCabinClassList, List<List<String>> seatNumberList, List<HashMap<Integer, String>> passengerDetails, String creditCardNumber, List<Double> ticketPricesForEachFlightScheduleList);
+    public List<FlightReservation> viewAllFlightReservations(long customerId);
 }

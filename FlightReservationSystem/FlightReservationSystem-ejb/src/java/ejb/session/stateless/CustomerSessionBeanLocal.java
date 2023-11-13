@@ -18,11 +18,9 @@ import util.enumerations.RoleType;
  */
 @Local
 public interface CustomerSessionBeanLocal {
-//    Long createNewCustomer(String firstName, String lastName, String email, 
-//            String phoneNumber, String address, String password, RoleType roleType);
-//    
-    Long createNewCustomer(String firstName, String lastName, String email, 
+    public Long createNewCustomer(String firstName, String lastName, String email, 
             String phoneNumber, String address, String password);
-    Customer getCustomerById(long customerId);
 
+   public Customer getCustomerById(long customerId);
+   public List<FlightReservation> returnAllFlightReservations(long customerId);
 }
