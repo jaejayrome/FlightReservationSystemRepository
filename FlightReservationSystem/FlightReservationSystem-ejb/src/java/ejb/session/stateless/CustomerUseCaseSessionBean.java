@@ -27,6 +27,8 @@ import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -263,11 +265,18 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
         return connectingFlightList;
     }
     
-      // need a list<list<string>>, each list would contain the seat numbers, ned take in flightcabinclass 
+    
     @Override
-    public FlightReservation makeFlightReservation(long customerId, List<Long> flightScheduleIdList, List<Long> flightCabinClassList, List<List<String>> seatNumberList, List<HashMap<Integer, String>> passengerDetails, String creditCardNumber) {
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public FlightReservation makeFlightReservation(long customerId, List<Long> flightScheduleIdList, List<Long> flightCabinClassList, List<List<String>> seatNumberList, List<HashMap<Integer, String>> passengerDetails, String creditCardNumber, List<Double> ticketPricesForEachFlightScheduleList) {
         int numPassengers = passengerDetails.size();
-
+        
+        // check whether flight schedule plan disabled
+        FlightSchedule test = flightScheduleEntitySessionBean.getFlightScheduleById(flightScheduleIdList.get(0));
+        if (test.getFlightSchedulePlan().getStatus() == FlightSchedulePlanStatus.DISABLED) {
+            ejbContext.setRollbackOnly();
+        }
+        
         // get Customer 
         Customer customer = customerSessionBean.getCustomerById(customerId);
 
@@ -280,6 +289,7 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
         int init1 = flightReservation.getPassengerList().size();
         
         // take in passenger data
+        List<Passenger> passengerList = new ArrayList<Passenger>();
         for (HashMap<Integer, String> passenger : passengerDetails) {
             String firstName = passenger.get(1);
             String lastName = passenger.get(2);
@@ -289,6 +299,8 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
             passengerEntitySessionBean.persistPassenger(persistPassenger);
             // association between flight reservation and passenger
             flightReservation.getPassengerList().add(persistPassenger);
+            
+            passengerList.add(persistPassenger);
         }
 
         
@@ -300,7 +312,7 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
         for (int i = 0; i < flightScheduleIdList.size(); i++) {
             // cannot use seat booking because there might be duplciate seat numbers between cabin classes
             // massive assumption, assuming that one flight schedule and one cabin class is chosen
-            FlightBooking flightBooking = this.makeFlightBooking(flightScheduleIdList.get(i), flightCabinClassList.get(i), seatNumberList.get(i), flightReservation);
+            FlightBooking flightBooking = this.makeFlightBooking(flightScheduleIdList.get(i), flightCabinClassList.get(i), seatNumberList.get(i), flightReservation, ticketPricesForEachFlightScheduleList.get(i), passengerList);
             // association between flight reservation and flightBooking 
             int init = flightReservation.getFlightBookingList().size();
             flightReservation.getFlightBookingList().add(flightBooking);            
@@ -310,9 +322,20 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
         return flightReservation;
     }
     
+    @Override
+    public List<FlightReservation> viewAllFlightReservations(long customerId) {
+        List<FlightReservation> myFRList = customerSessionBean.returnAllFlightReservations(customerId);
+        myFRList.stream().forEach(x -> x.getFlightBookingList().size());
+        myFRList.stream().forEach(x -> x.getPassengerList().size());
+        myFRList.stream().forEach(x -> x.getFlightBookingList().stream().forEach(y -> y.getReservedSeats().size()));
+        myFRList.stream().forEach(x -> x.getFlightBookingList().stream().forEach(y -> y.getFlightSchedule().getFccList().size()));
+        
+        return myFRList;
+    }
+    
     // persist the flight booking
     // handle the lgogic of the seats
-    public FlightBooking makeFlightBooking(long flightSchdeduleId, long flightCabinClassId, List<String> seatNumber, FlightReservation flightReservation) {
+    public FlightBooking makeFlightBooking(long flightSchdeduleId, long flightCabinClassId, List<String> seatNumber, FlightReservation flightReservation, double ticketPricesForEachFlightSchedule, List<Passenger> passengerList) {
             FlightSchedule flightSchedule = flightScheduleEntitySessionBean.getFlightScheduleById(flightSchdeduleId);
             String flightNumber = flightSchedule.getFlightSchedulePlan().getFlight().getFlightNumber();
             FlightCabinClass flightCabinClass = flightCabinClassEntitySessionBean.getFCCByID(flightCabinClassId);
@@ -327,19 +350,28 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
             List<Seat> toAdd = new ArrayList<Seat>();
             
             // navigate to the correct flight cabin class
+            int counter = 0;
             flightCabinClass.getSeatList().size();
             for (String str : seatNumber) {
                 for (Seat s : flightCabinClass.getSeatList()) {
                     if (s.getSeatNumber().equals(str)) {
                         s.setSeatStatus(SeatStatus.RESERVED);
+                        s.setPassenger(passengerList.get(counter));
                         toAdd.add(s);
                     }
                 }
+                counter += 1;
             }
-            // associationdone flight booking to flight schedule
-            FlightBooking flightBooking = new FlightBooking(flightNumber, flightSchedule);
+            // associationdone flight booking to flight schedule (records the price paid by the customer for the seat)
+            FlightBooking flightBooking = new FlightBooking(flightNumber, flightSchedule, new BigDecimal(ticketPricesForEachFlightSchedule));
+            // associate flight booking to flight reservation
             flightBooking.setFlightReservation(flightReservation);
+            // persist flight booking
             flightBooking = flightBookingEntitySessionBean.makeBooking(flightBooking);
+            // association flight schedule to flight booking 
+            int initLazy = flightSchedule.getFlightBookingList().size();
+            flightSchedule.getFlightBookingList().add(flightBooking);
+            
             int init = flightBooking.getReservedSeats().size();
             // association done flight booking to seats
             flightBooking.getReservedSeats().addAll(toAdd);

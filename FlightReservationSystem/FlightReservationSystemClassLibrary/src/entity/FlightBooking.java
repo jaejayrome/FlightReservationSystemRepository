@@ -39,6 +39,9 @@ public class FlightBooking implements Serializable {
     @Column(nullable = false)
     private String flightNumber;
     
+    @Column(nullable = false)
+    private BigDecimal flightLegCost;
+    
     // relationships
     @OneToMany
     private List<Seat> reservedSeats;
@@ -55,13 +58,23 @@ public class FlightBooking implements Serializable {
     public FlightBooking() {
     }
 
-    public FlightBooking(String flightNumber, FlightSchedule flightSchedule) {
+    public FlightBooking(String flightNumber, FlightSchedule flightSchedule, BigDecimal flightLegCost) {
         this.flightNumber = flightNumber;
         this.reservedSeats = new ArrayList<Seat>();
         this.flightSchedule = flightSchedule;
+        this.flightLegCost = flightLegCost;
     }
     
     // getters and setter
+
+    public BigDecimal getFlightLegCost() {
+        return flightLegCost;
+    }
+
+    public void setFlightLegCost(BigDecimal flightLegCost) {
+        this.flightLegCost = flightLegCost;
+    }
+    
     public FlightReservation getFlightReservation() {
         return flightReservation;
     }

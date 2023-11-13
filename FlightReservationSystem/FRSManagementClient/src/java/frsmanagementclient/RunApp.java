@@ -234,6 +234,8 @@ public class RunApp {
                 System.out.println("Press '8' to View Flight Schedule Plan Details");
                 System.out.println("Press '9' to Update Flight Schedule Plan Details");
                 System.out.println("Press '10' to Delete Flight Schedule Plan Details");
+                System.out.println("Press '11' to View Seat Inventory");
+                System.out.println("Press '12' to View Flight Reservations");
                 System.out.println("Press '0' to Logout from this session");
                 System.out.println("-------------------------------");
                 ScheduleManagerUseCase scheduleManagerUseCase = new ScheduleManagerUseCase(employeeUseCaseSessionBeanRemote, scheduleManagerUseCaseSessionBeanRemote);
@@ -281,6 +283,14 @@ public class RunApp {
                         break;
                     case 10: 
                         scheduleManagerUseCase.deleteFlightSchedulePlan();
+                        showUseCaseOptions(scanner, jobtitle);
+                        break;
+                    case 11: 
+                        scheduleManagerUseCase.viewSeatsInventory();
+                        showUseCaseOptions(scanner, jobtitle);
+                        break;
+                    case 12: 
+                        scheduleManagerUseCase.viewFlightReservations();
                         showUseCaseOptions(scanner, jobtitle);
                         break;
                     default:
