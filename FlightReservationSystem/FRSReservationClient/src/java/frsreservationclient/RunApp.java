@@ -52,11 +52,8 @@ public class RunApp {
     
     //test method to test functions
     public void test() {
-        long customerId = 1;
-        
-        
-        
-        customerUseCaseSessionBean.retrieveAllCustomerReservations(1);
+        long customerId = 1;        
+//        customerUseCaseSessionBean.retrieveAllCustomerReservations(1);
     }
         
     

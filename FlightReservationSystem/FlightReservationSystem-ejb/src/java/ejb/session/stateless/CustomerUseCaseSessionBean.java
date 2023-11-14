@@ -9,9 +9,7 @@ import entity.Flight;
 import entity.FlightBooking;
 import entity.FlightCabinClass;
 import entity.FlightReservation;
-import entity.FlightRoute;
 import entity.FlightSchedule;
-import entity.FlightSchedulePlan;
 import entity.Passenger;
 import entity.Seat;
 import java.math.BigDecimal;
@@ -31,9 +29,9 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import util.enumerations.FlightSchedulePlanStatus;
 import util.enumerations.SeatStatus;
 import util.exception.CustomerAuthenticationFailedException;
-import util.exception.CustomerNotRegisteredException;
 import util.util.Pair;
 
 /**
@@ -405,14 +403,7 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
         
         for (int i = 0; i < customerFlightReservations.size(); i ++) {
             FlightReservation frTmp = customerFlightReservations.get(i);
-            
-            
         }
-        
-        
         return null;
-    }
-    
-     
-    
+    }    
 }
