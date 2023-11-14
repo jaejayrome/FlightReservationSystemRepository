@@ -238,7 +238,7 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
         return toReturn;
     }
     
-      public List<Pair<FlightSchedule>> getConnectingFlightsOneWay(String originIATACode, String destinationIATACode) {
+    public List<Pair<FlightSchedule>> getConnectingFlightsOneWay(String originIATACode, String destinationIATACode) {
           // NEED CHECK AGAIN
         List<FlightSchedule> originList = flightScheduleEntitySessionBean.getFlightSchedulesByAirportOrigin(originIATACode);
         List<FlightSchedule> destinationList = flightScheduleEntitySessionBean.getFlightSchedulesByAirportDestination(destinationIATACode);
