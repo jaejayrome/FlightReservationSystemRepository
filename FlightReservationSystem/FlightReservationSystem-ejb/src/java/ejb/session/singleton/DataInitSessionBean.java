@@ -51,7 +51,7 @@ import util.exception.InvalidStringLengthException;
  */
 @Singleton
 @LocalBean
-@Startup
+
 public class DataInitSessionBean  {
 
     

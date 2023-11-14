@@ -49,7 +49,7 @@ public class FleetManagerUseCaseSessionBean implements FleetManagerUseCaseSessio
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public long createAircraftConfigurationForFleetManager(JobTitle jobTitle, AircraftTypeName aircraftTypeName, String configurationName, List<CabinClassType> cabinClassNameList, List<Integer> numAislesList, List<Integer> numRowsList, List<Integer> numSeatsAbreastList, List<String> seatingConfigurationList) throws InvalidStringLengthException {
+    public long createAircraftConfigurationForFleetManager(JobTitle jobTitle, AircraftTypeName aircraftTypeName, String configurationName, List<CabinClassType> cabinClassNameList, List<Integer> numAislesList, List<Integer> numRowsList, List<Integer> numSeatsAbreastList, List<String> seatingConfigurationList) throws InvalidStringLengthException{
         try {
             if (jobTitle == JobTitle.FLEET_MANAGER) {
                 AircraftType aircraftType = aircraftTypeEntitySessionBean.getAircraftTypeFromName(aircraftTypeName);
@@ -86,6 +86,44 @@ public class FleetManagerUseCaseSessionBean implements FleetManagerUseCaseSessio
             // Handle the exception if needed
             System.out.println(e.getMessage());
         }
+        return 0L;
+    }
+    
+    
+    @Override
+    public long createAircraftConfigurationForFleetManagerDatabaseInit(JobTitle jobTitle, AircraftTypeName aircraftTypeName, String configurationName, List<CabinClassType> cabinClassNameList, List<Integer> numAislesList, List<Integer> numRowsList, List<Integer> numSeatsAbreastList, List<String> seatingConfigurationList) {
+        
+        if (jobTitle == JobTitle.FLEET_MANAGER) {
+            AircraftType aircraftType = aircraftTypeEntitySessionBean.getAircraftTypeFromName(aircraftTypeName);
+
+            // Calculate the total number of seats
+            int totalSeats = 0;
+            List<CabinClass> cabinClassList = new ArrayList<CabinClass>();
+            for (int i = 0; i < cabinClassNameList.size(); i++) {
+                CabinClassType cabinClassName = cabinClassNameList.get(i);
+                BigDecimal numAisles = new BigDecimal(numAislesList.get(i));
+                BigDecimal numRows = new BigDecimal(numRowsList.get(i));
+                BigDecimal numSeatsAbreast = new BigDecimal(numSeatsAbreastList.get(i));
+                String seatingConfiguration = seatingConfigurationList.get(i);
+                BigDecimal numAvailableSeats = new BigDecimal(numRows.intValue() * numSeatsAbreast.intValue());
+                CabinClass cabinClass = new CabinClass(cabinClassName, numAisles, numRows, numSeatsAbreast, seatingConfiguration);
+                cabinClassEntitySessionBean.createCabinClass(cabinClass);
+                cabinClassList.add(cabinClass);
+                totalSeats += (numRows.intValue() * numSeatsAbreast.intValue());
+            }
+
+
+            // Create and persist the aircraft configuration
+        try {
+            long configurationId = aircraftConfigurationEntitySessionBean.createNewAircraftConfiguration(aircraftType, configurationName, cabinClassList);
+            // If everything is successful, return the configurationId
+            return configurationId;
+            } catch (InvalidStringLengthException e) {
+                System.out.println(e.getMessage());
+            }
+            
+        } 
+
         return 0L;
     }
     

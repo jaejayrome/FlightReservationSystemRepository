@@ -24,4 +24,5 @@ public interface FleetManagerUseCaseSessionBeanRemote {
     public List<AircraftConfiguration> viewAllAircraftConfiguration();
     public AircraftConfiguration viewAircraftConfigurationDetails(String configurationName);
     public long createAircraftConfigurationForFleetManager(JobTitle jobTitle, AircraftTypeName aircraftTypeName, String configurationName, List<CabinClassType> cabinClassNameList, List<Integer> numAislesList, List<Integer> numRowsList, List<Integer> numSeatsAbreastList, List<String> seatingConfigurationList) throws InvalidStringLengthException;
+    public long createAircraftConfigurationForFleetManagerDatabaseInit(JobTitle jobTitle, AircraftTypeName aircraftTypeName, String configurationName, List<CabinClassType> cabinClassNameList, List<Integer> numAislesList, List<Integer> numRowsList, List<Integer> numSeatsAbreastList, List<String> seatingConfigurationList);
 }

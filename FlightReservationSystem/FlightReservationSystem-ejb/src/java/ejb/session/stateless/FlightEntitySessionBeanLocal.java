@@ -19,7 +19,8 @@ public interface FlightEntitySessionBeanLocal {
     public Flight getFlightById(long id);
     public long getIdByFlightNumber(String flightNumber);
     public long updateFlightNumber(long id, String newFlightNumber);
-    public Flight checkReturnFlight(String orignCity, String destinationCity);
+    public Flight checkReturnFlight(String originAirport, String destinationAirport, long flightGroup);
     public boolean deleteFlight(Flight flight);
     public boolean disableFlight(Flight flight);
+    public List<Flight> checkFlightRouteUsed(String originAirport, String destinationAirport);
 }

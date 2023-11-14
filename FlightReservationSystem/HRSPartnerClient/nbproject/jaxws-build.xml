@@ -13,13 +13,13 @@
     <target name="wsimport-init" depends="init">
         <mkdir dir="${build.generated.sources.dir}/jax-ws"/>
         <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
-            <classpath path="${libs.jaxws21.classpath}"/>
+            <classpath path="${libs.metro.classpath}"/>
         </taskdef>
     </target>
     <target name="wsimport-client-FlightReservationSystemWebService" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/FlightReservationSystemWebService"/>
         <property name="wsdl-FlightReservationSystemWebService" location="xml-resources/web-service-references/FlightReservationSystemWebService/wsdl/localhost_8080/FlightReservationSystemWebService/FlightReservationSystemWebService.wsdl"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/FlightReservationSystemWebService" destdir="${build.generated.dir}/jax-wsCache/FlightReservationSystemWebService" wsdl="${wsdl-FlightReservationSystemWebService}" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://localhost:8080/FlightReservationSystemWebService/FlightReservationSystemWebService?wsdl" xnocompile="true" xendorsed="true" package="hrspartnerclient">
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/FlightReservationSystemWebService" destdir="${build.generated.dir}/jax-wsCache/FlightReservationSystemWebService" wsdl="${wsdl-FlightReservationSystemWebService}" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://localhost:8080/FlightReservationSystemWebService/FlightReservationSystemWebService?wsdl" xnocompile="true" xendorsed="true" package="ws.entity">
             <depends file="${wsdl-FlightReservationSystemWebService}"/>
             <produces dir="${build.generated.dir}/jax-wsCache/FlightReservationSystemWebService"/>
         </wsimport>
@@ -31,7 +31,7 @@
     </target>
     <target name="wsimport-client-clean-FlightReservationSystemWebService" depends="-init-project">
         <delete dir="${build.generated.dir}/jax-wsCache/FlightReservationSystemWebService"/>
-        <delete dir="${build.generated.sources.dir}/jax-ws/hrspartnerclient"/>
+        <delete dir="${build.generated.sources.dir}/jax-ws/ws/entity"/>
     </target>
     <target name="wsimport-client-generate" depends="wsimport-client-FlightReservationSystemWebService"/>
 </project>

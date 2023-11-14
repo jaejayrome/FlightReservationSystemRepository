@@ -48,7 +48,7 @@ import util.exception.InvalidStringLengthException;
  */
 @Singleton
 @LocalBean
-
+@Startup
 public class ActualDataInitSessionBean {
 
     @EJB
@@ -121,79 +121,77 @@ public class ActualDataInitSessionBean {
         aircraftTypeEntitySessionBeanLocal.createNewAircraftType(AircraftTypeName.BOEING_747, new BigDecimal(400));
         
         // aircraft configuration (need to change)
-        try {
-            List<CabinClassType> firstCabinClassType = new ArrayList<CabinClassType>();
-            firstCabinClassType.add(CabinClassType.Y);
-            List<Integer> firstNumAisles = new ArrayList<Integer>();
-            firstNumAisles.add(1);
-            List<Integer> firstNumRows = new ArrayList<Integer>();
-            firstNumRows.add(30);
-            List<Integer> firstSeatAbreast = new ArrayList<Integer>();
-            firstSeatAbreast.add(6);
-            List<String> firstSeatingConfiguration = new ArrayList<String>();
-            firstSeatingConfiguration.add("3-3");
-            fleetManagerUseCaseSessionBean.createAircraftConfigurationForFleetManager(JobTitle.FLEET_MANAGER, AircraftTypeName.BOEING_737, "Boeing 737 All Economy", firstCabinClassType, firstNumAisles, firstNumRows, firstSeatAbreast, firstSeatingConfiguration);
-            
-            List<CabinClassType> secondCabinClassType = new ArrayList<CabinClassType>();
-            secondCabinClassType.add(CabinClassType.F);
-            secondCabinClassType.add(CabinClassType.J);
-            secondCabinClassType.add(CabinClassType.Y);
-            List<Integer> secondNumAisles = new ArrayList<Integer>();
-            secondNumAisles.add(1);
-            secondNumAisles.add(1);
-            secondNumAisles.add(1);
-            List<Integer> secondNumRows = new ArrayList<Integer>();
-            secondNumRows.add(5);
-            secondNumRows.add(5);
-            secondNumRows.add(25);
-            List<Integer> secondSeatAbreast = new ArrayList<Integer>();
-            secondSeatAbreast.add(2);
-            secondSeatAbreast.add(4);
-            secondSeatAbreast.add(6);
-            List<String> secondSeatingConfiguration = new ArrayList<String>();
-            secondSeatingConfiguration.add("1-1");
-            secondSeatingConfiguration.add("2-2");
-            secondSeatingConfiguration.add("3-3");
-            fleetManagerUseCaseSessionBean.createAircraftConfigurationForFleetManager(JobTitle.FLEET_MANAGER, AircraftTypeName.BOEING_737, "Boeing 737 Three Classes", secondCabinClassType, secondNumAisles, secondNumRows, secondSeatAbreast, secondSeatingConfiguration);
-            
-            List<CabinClassType> thirdCabinClassType = new ArrayList<CabinClassType>();
-            thirdCabinClassType.add(CabinClassType.Y);
-            List<Integer> thirdNumAisles = new ArrayList<Integer>();
-            thirdNumAisles.add(2);
-            List<Integer> thirdNumRows = new ArrayList<Integer>();
-            thirdNumRows.add(38);
-            List<Integer> thirdSeatAbreast = new ArrayList<Integer>();
-            thirdSeatAbreast.add(10);
-            List<String> thirdSeatingConfiguration = new ArrayList<String>();
-            thirdSeatingConfiguration.add("3-4-3");
-            fleetManagerUseCaseSessionBean.createAircraftConfigurationForFleetManager(JobTitle.FLEET_MANAGER, AircraftTypeName.BOEING_737, "Boeing 747 All Economy", thirdCabinClassType, thirdNumAisles, thirdNumRows, thirdSeatAbreast, thirdSeatingConfiguration);
-            
-            List<CabinClassType> fourthCabinClassType = new ArrayList<CabinClassType>();
-            fourthCabinClassType.add(CabinClassType.F);
-            fourthCabinClassType.add(CabinClassType.J);
-            fourthCabinClassType.add(CabinClassType.Y);
-            List<Integer> fourthNumAisles = new ArrayList<Integer>();
-            fourthNumAisles.add(1);
-            fourthNumAisles.add(2);
-            fourthNumAisles.add(2);
-            List<Integer> fourthNumRows = new ArrayList<Integer>();
-            fourthNumRows.add(5);
-            fourthNumRows.add(5);
-            fourthNumRows.add(32);
-            List<Integer> fourthSeatAbreast = new ArrayList<Integer>();
-            fourthSeatAbreast.add(2);
-            fourthSeatAbreast.add(6);
-            fourthSeatAbreast.add(10);
-            List<String> fourthSeatingConfiguration = new ArrayList<String>();
-            fourthSeatingConfiguration.add("1-1");
-            fourthSeatingConfiguration.add("2-2-2");
-            fourthSeatingConfiguration.add("3-4-3");
-            fleetManagerUseCaseSessionBean.createAircraftConfigurationForFleetManager(JobTitle.FLEET_MANAGER, AircraftTypeName.BOEING_737, "Boeing 747 Three Classes", fourthCabinClassType, fourthNumAisles, fourthNumRows, fourthSeatAbreast, fourthSeatingConfiguration);
-            
-        } catch (InvalidStringLengthException e) {
-            System.out.println(e.getMessage());
-        }
-        
+       
+        List<CabinClassType> firstCabinClassType = new ArrayList<CabinClassType>();
+        firstCabinClassType.add(CabinClassType.Y);
+        List<Integer> firstNumAisles = new ArrayList<Integer>();
+        firstNumAisles.add(1);
+        List<Integer> firstNumRows = new ArrayList<Integer>();
+        firstNumRows.add(30);
+        List<Integer> firstSeatAbreast = new ArrayList<Integer>();
+        firstSeatAbreast.add(6);
+        List<String> firstSeatingConfiguration = new ArrayList<String>();
+        firstSeatingConfiguration.add("3-3");
+        fleetManagerUseCaseSessionBean.createAircraftConfigurationForFleetManagerDatabaseInit(JobTitle.FLEET_MANAGER, AircraftTypeName.BOEING_737, "Boeing 737 All Economy", firstCabinClassType, firstNumAisles, firstNumRows, firstSeatAbreast, firstSeatingConfiguration);
+
+        List<CabinClassType> secondCabinClassType = new ArrayList<CabinClassType>();
+        secondCabinClassType.add(CabinClassType.F);
+        secondCabinClassType.add(CabinClassType.J);
+        secondCabinClassType.add(CabinClassType.Y);
+        List<Integer> secondNumAisles = new ArrayList<Integer>();
+        secondNumAisles.add(1);
+        secondNumAisles.add(1);
+        secondNumAisles.add(1);
+        List<Integer> secondNumRows = new ArrayList<Integer>();
+        secondNumRows.add(5);
+        secondNumRows.add(5);
+        secondNumRows.add(25);
+        List<Integer> secondSeatAbreast = new ArrayList<Integer>();
+        secondSeatAbreast.add(2);
+        secondSeatAbreast.add(4);
+        secondSeatAbreast.add(6);
+        List<String> secondSeatingConfiguration = new ArrayList<String>();
+        secondSeatingConfiguration.add("1-1");
+        secondSeatingConfiguration.add("2-2");
+        secondSeatingConfiguration.add("3-3");
+        fleetManagerUseCaseSessionBean.createAircraftConfigurationForFleetManagerDatabaseInit(JobTitle.FLEET_MANAGER, AircraftTypeName.BOEING_737, "Boeing 737 Three Classes", secondCabinClassType, secondNumAisles, secondNumRows, secondSeatAbreast, secondSeatingConfiguration);
+
+        List<CabinClassType> thirdCabinClassType = new ArrayList<CabinClassType>();
+        thirdCabinClassType.add(CabinClassType.Y);
+        List<Integer> thirdNumAisles = new ArrayList<Integer>();
+        thirdNumAisles.add(2);
+        List<Integer> thirdNumRows = new ArrayList<Integer>();
+        thirdNumRows.add(38);
+        List<Integer> thirdSeatAbreast = new ArrayList<Integer>();
+        thirdSeatAbreast.add(10);
+        List<String> thirdSeatingConfiguration = new ArrayList<String>();
+        thirdSeatingConfiguration.add("3-4-3");
+        fleetManagerUseCaseSessionBean.createAircraftConfigurationForFleetManagerDatabaseInit(JobTitle.FLEET_MANAGER, AircraftTypeName.BOEING_737, "Boeing 747 All Economy", thirdCabinClassType, thirdNumAisles, thirdNumRows, thirdSeatAbreast, thirdSeatingConfiguration);
+
+        List<CabinClassType> fourthCabinClassType = new ArrayList<CabinClassType>();
+        fourthCabinClassType.add(CabinClassType.F);
+        fourthCabinClassType.add(CabinClassType.J);
+        fourthCabinClassType.add(CabinClassType.Y);
+        List<Integer> fourthNumAisles = new ArrayList<Integer>();
+        fourthNumAisles.add(1);
+        fourthNumAisles.add(2);
+        fourthNumAisles.add(2);
+        List<Integer> fourthNumRows = new ArrayList<Integer>();
+        fourthNumRows.add(5);
+        fourthNumRows.add(5);
+        fourthNumRows.add(32);
+        List<Integer> fourthSeatAbreast = new ArrayList<Integer>();
+        fourthSeatAbreast.add(2);
+        fourthSeatAbreast.add(6);
+        fourthSeatAbreast.add(10);
+        List<String> fourthSeatingConfiguration = new ArrayList<String>();
+        fourthSeatingConfiguration.add("1-1");
+        fourthSeatingConfiguration.add("2-2-2");
+        fourthSeatingConfiguration.add("3-4-3");
+        fleetManagerUseCaseSessionBean.createAircraftConfigurationForFleetManagerDatabaseInit(JobTitle.FLEET_MANAGER, AircraftTypeName.BOEING_737, "Boeing 747 Three Classes", fourthCabinClassType, fourthNumAisles, fourthNumRows, fourthSeatAbreast, fourthSeatingConfiguration);
+
+
+
         // flight route
         routePlannerUseCaseSessionBean.createNewFlightRouteDataInit("SIN", "HKG", new FlightRoute(FlightRouteStatus.DISABLED), true);
         routePlannerUseCaseSessionBean.createNewFlightRouteDataInit("SIN", "TPE", new FlightRoute(FlightRouteStatus.DISABLED), true);
@@ -202,38 +200,32 @@ public class ActualDataInitSessionBean {
         routePlannerUseCaseSessionBean.createNewFlightRouteDataInit("TPE", "NRT", new FlightRoute(FlightRouteStatus.DISABLED), true);
         routePlannerUseCaseSessionBean.createNewFlightRouteDataInit("SIN", "SYD", new FlightRoute(FlightRouteStatus.DISABLED), true);
         routePlannerUseCaseSessionBean.createNewFlightRouteDataInit("SYD", "NRT", new FlightRoute(FlightRouteStatus.DISABLED), true);
-        
-        
-        // flights
-        try {
-            long firstPairId = scheduleManagerUseCaseSessionBean.createNewFlight("ML111", "Boeing 737 Three Classes", "SIN", "HKG", false, -1);
-            scheduleManagerUseCaseSessionBean.createNewFlight("ML112", "Boeing 737 Three Classes", "HKG", "SIN", true, firstPairId);
 
-            long secondpairId = scheduleManagerUseCaseSessionBean.createNewFlight("ML211", "Boeing 737 Three Classes", "SIN", "TPE", false, -1);
-            scheduleManagerUseCaseSessionBean.createNewFlight("ML212", "Boeing 737 Three Classes", "TPE", "SIN", true, secondpairId);
 
-            long thirdPairId = scheduleManagerUseCaseSessionBean.createNewFlight("ML311", "Boeing 747 Three Classes", "SIN", "NRT", false, -1);
-            scheduleManagerUseCaseSessionBean.createNewFlight("ML312", "Boeing 747 Three Classes", "NRT", "SIN", true, thirdPairId);
+        long firstPairId = scheduleManagerUseCaseSessionBean.createNewFlightForDataInit("ML111", "Boeing 737 Three Classes", "SIN", "HKG", false, -1);
+        scheduleManagerUseCaseSessionBean.createNewFlightForDataInit("ML112", "Boeing 737 Three Classes", "HKG", "SIN", true, firstPairId);
 
-            long fourthPairId = scheduleManagerUseCaseSessionBean.createNewFlight("ML411", "Boeing 737 Three Classes", "HKG", "NRT", false, -1);
-            scheduleManagerUseCaseSessionBean.createNewFlight("ML412", "Boeing 737 Three Classes", "NRT", "HKG", true, fourthPairId);
+        long secondpairId = scheduleManagerUseCaseSessionBean.createNewFlightForDataInit("ML211", "Boeing 737 Three Classes", "SIN", "TPE", false, -1);
+        scheduleManagerUseCaseSessionBean.createNewFlightForDataInit("ML212", "Boeing 737 Three Classes", "TPE", "SIN", true, secondpairId);
 
-            long fifthPairId = scheduleManagerUseCaseSessionBean.createNewFlight("ML511", "Boeing 737 Three Classes", "TPE", "NRT", false, -1);
-            scheduleManagerUseCaseSessionBean.createNewFlight("ML512", "Boeing 737 Three Classes", "NRT", "TPE", true, fifthPairId);
+        long thirdPairId = scheduleManagerUseCaseSessionBean.createNewFlightForDataInit("ML311", "Boeing 747 Three Classes", "SIN", "NRT", false, -1);
+        scheduleManagerUseCaseSessionBean.createNewFlightForDataInit("ML312", "Boeing 747 Three Classes", "NRT", "SIN", true, thirdPairId);
 
-            long sixthPairId = scheduleManagerUseCaseSessionBean.createNewFlight("ML611", "Boeing 737 Three Classes", "SIN", "SYD", false, -1);
-            scheduleManagerUseCaseSessionBean.createNewFlight("ML612", "Boeing 737 Three Classes", "SYD", "SIN", true, sixthPairId);
+        long fourthPairId = scheduleManagerUseCaseSessionBean.createNewFlightForDataInit("ML411", "Boeing 737 Three Classes", "HKG", "NRT", false, -1);
+        scheduleManagerUseCaseSessionBean.createNewFlightForDataInit("ML412", "Boeing 737 Three Classes", "NRT", "HKG", true, fourthPairId);
 
-            long seventhPair = scheduleManagerUseCaseSessionBean.createNewFlight("ML621", "Boeing 737 All Economy", "SIN", "SYD", false, -1);
-            scheduleManagerUseCaseSessionBean.createNewFlight("ML622", "Boeing 737 All Economy", "SYD", "SIN", true, seventhPair);
+        long fifthPairId = scheduleManagerUseCaseSessionBean.createNewFlightForDataInit("ML511", "Boeing 737 Three Classes", "TPE", "NRT", false, -1);
+        scheduleManagerUseCaseSessionBean.createNewFlightForDataInit("ML512", "Boeing 737 Three Classes", "NRT", "TPE", true, fifthPairId);
 
-            long eightPair = scheduleManagerUseCaseSessionBean.createNewFlight("ML711", "Boeing 747 Three Classes", "SYD", "NRT", false, -1);
-            scheduleManagerUseCaseSessionBean.createNewFlight("ML712", "Boeing 747 Three Classes", "NRT", "SYD", true, seventhPair);
-        } catch (InitialFlightNotInstantiatedException e) {
-            System.out.println(e.getMessage());
-        }
-        
-       
+        long sixthPairId = scheduleManagerUseCaseSessionBean.createNewFlightForDataInit("ML611", "Boeing 737 Three Classes", "SIN", "SYD", false, -1);
+        scheduleManagerUseCaseSessionBean.createNewFlightForDataInit("ML612", "Boeing 737 Three Classes", "SYD", "SIN", true, sixthPairId);
+
+        long seventhPair = scheduleManagerUseCaseSessionBean.createNewFlightForDataInit("ML621", "Boeing 737 All Economy", "SIN", "SYD", false, -1);
+        scheduleManagerUseCaseSessionBean.createNewFlightForDataInit("ML622", "Boeing 737 All Economy", "SYD", "SIN", true, seventhPair);
+
+        long eightPair = scheduleManagerUseCaseSessionBean.createNewFlightForDataInit("ML711", "Boeing 747 Three Classes", "SYD", "NRT", false, -1);
+        scheduleManagerUseCaseSessionBean.createNewFlightForDataInit("ML712", "Boeing 747 Three Classes", "NRT", "SYD", true, eightPair);
+
         // flight schedule plan (recurrent need to change logic)
         
         // recurrent weekly flight schedule plan
@@ -259,6 +251,7 @@ public class ActualDataInitSessionBean {
         firstRWfaresForCabinClassList.put(CabinClassType.F, fareList10);
         firstRWfaresForCabinClassList.put(CabinClassType.J, fareList11);
         firstRWfaresForCabinClassList.put(CabinClassType.Y, fareList12);
+        
         long idFirstt = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML711", firstDepartDateList, Duration.ofSeconds(14 * 60 * 60), formatDate("2023-12-31 09:00:00"), 7, firstRWfaresForCabinClassList, false, -1, null);
         scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML712", firstDepartDateList, Duration.ofSeconds(14 * 60 * 60), formatDate("2023-12-31 09:00:00"), 7, firstRWfaresForCabinClassList, true, idFirstt, Duration.ofSeconds(2 * 60 * 60));
         

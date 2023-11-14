@@ -4,13 +4,20 @@
  */
 package hrspartnerclient;
 
+import ws.entity.FlightReservationSystemWebService;
+import ws.entity.FlightReservationSystemWebService_Service;
+
 /**
  *
  * @author jeromegoh
  */
 public class HRSPartnerClient {
+
     public static void main(String[] args) {
-        System.out.println("jj");
+        FlightReservationSystemWebService_Service service = new FlightReservationSystemWebService_Service();
+        FlightReservationSystemWebService port = service.getFlightReservationSystemWebServicePort();
+        port.partnerLogin("trivago", "password");
+         
     }
     
 }

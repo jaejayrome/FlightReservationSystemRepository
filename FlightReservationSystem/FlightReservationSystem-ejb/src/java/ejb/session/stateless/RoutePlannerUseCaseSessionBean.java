@@ -86,9 +86,9 @@ public class RoutePlannerUseCaseSessionBean implements RoutePlannerUseCaseSessio
     @Override
     public boolean deleteFlightRoute(String originAirport, String destinationAirport) {
         // checks whether is this flight route in use 
-        Flight flight = flightEntitySessionBean.checkReturnFlight(destinationAirport, originAirport);
+        List<Flight> flightsFound = flightEntitySessionBean.checkFlightRouteUsed(originAirport, destinationAirport);
         // if in use ,disable it 
-        if (flight == null) {
+        if (!flightsFound.isEmpty()) {
             return flightRouteEntitySessionBean.deleteFlightRoute(originAirport, destinationAirport);
         } else {
             return flightRouteEntitySessionBean.disableFlightRoute(originAirport, destinationAirport);

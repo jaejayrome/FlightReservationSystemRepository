@@ -136,6 +136,65 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
        
     }
     
+    
+    @Override
+    public long createNewFlightForDataInit(String flightNumber, String configurationName, String originAirport, String destinationAirport, boolean createReturn, long initialId){
+        Flight flight = null;
+        try {
+            // cannot use city because there an be a city with 2 airports
+            AircraftConfiguration aircraftConfiguration = aircraftConfigurationEntitySessionBean.getAircraftConfigurationPerConfigurationName(configurationName);
+            FlightRoute flightRoute = flightRouteEntitySessionBean.getFlightRouteByCityName(originAirport, destinationAirport);
+            flight = new Flight(flightNumber, FlightStatus.DISABLED);
+            
+            
+            // associate flight -> aircraft configuration
+            flight.setAircraftConfiguration(aircraftConfiguration);
+            if (!createReturn) {
+                // flight.setAircraftConfiguration(aircraftConfiguration);
+            } else {
+//                AircraftConfiguration returnAC = aircraftConfigurationEntitySessionBean.recreateAircraftConfiguration(aircraftConfiguration);
+            }
+            // associate flight -> flightroute
+            flight.setFlightRoute(flightRoute);
+
+            // persist to database
+            flightEntitySessionBean.createFlight(flight);
+
+            // associate flightRoute -> flight
+            int init = flightRoute.getFlightList().size();
+            flightRoute.getFlightList().add(flight);
+            flightRoute.setFlightRouteStatus(FlightRouteStatus.ACTIVE);
+
+            // associate aircraftConfig -> flight
+            int init2 = aircraftConfiguration.getFlightList().size();
+            aircraftConfiguration.getFlightList().add(flight);
+            
+            // (if createReturnFlight is true)
+            
+            if (createReturn) {
+                long flightGroup = flightEntitySessionBean.getFlightById(initialId).getFlightGroup();
+                flight.setFlightGroup(flightGroup);
+            } else {
+                flight.setFlightGroup(flight.getId());
+            }
+        } catch (NoFlightRouteFoundException e) {
+            // exception is thrown if initial flight cannot be created in the first place
+        }
+        
+        // would try to create return flight but would return true or false based on this
+        try {
+            // if return flight route can be created
+            FlightRoute returnFlightRoute = flightRouteEntitySessionBean.getFlightRouteByCityName(destinationAirport, originAirport);
+            return flight.getId();
+            
+        } catch (NoFlightRouteFoundException e) {
+            // if flight route cannot be created
+            return -1;
+        }
+    }
+    
+
+    
     @Override
     public List<Flight> viewAllFlights() {
         return flightEntitySessionBean.viewAllFlights();
@@ -215,11 +274,13 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
                 // create a single flight schedule
                 SingleFlightSchedulePlan flightSchedulePlan = this.makeSingleFlightSchedulePlan(flight, departureDateList, duration, faresForCabinClassList);
                 flightSchedulePlan.setFlightSchedulePlanGroup(flightSchedulePlan.getId());
-                Flight returnFlight = flightEntitySessionBean.checkReturnFlight(flight.getFlightRoute().getOrigin().getIataAirportCode(), flight.getFlightRoute().getDestination().getIataAirportCode());
+                long flightGroupId = flight.getFlightGroup();
+                Flight returnFlight = flightEntitySessionBean.checkReturnFlight(flight.getFlightRoute().getOrigin().getIataAirportCode(), flight.getFlightRoute().getDestination().getIataAirportCode(), flightGroupId);
                 return returnFlight != null ? flightSchedulePlan.getId() : -1;
             } else {
                 // add layover duration to this (return)
-                Flight returnFlight = flightEntitySessionBean.checkReturnFlight(flight.getFlightRoute().getOrigin().getIataAirportCode(), flight.getFlightRoute().getDestination().getIataAirportCode());
+                long flightGroupId = flight.getFlightGroup();
+                Flight returnFlight = flightEntitySessionBean.checkReturnFlight(flight.getFlightRoute().getOrigin().getIataAirportCode(), flight.getFlightRoute().getDestination().getIataAirportCode(), flightGroupId);
                 Date arrivalTime = this.computeArrivalTime(departureDateList.get(0), duration);
                 departureDateList.set(0, this.computeArrivalTime(arrivalTime, layover));
                 // i should reference the same fares for cabin class and not refernce new one? 
@@ -233,11 +294,13 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
             if (!makeReturn) {
                 MultipleFlightSchedulePlan flightSchedulePlan = this.makeMultipleFlightSchedulePlan(flight, departureDateList, duration, faresForCabinClassList);
                 flightSchedulePlan.setFlightSchedulePlanGroup(flightSchedulePlan.getId());
-                Flight returnFlight = flightEntitySessionBean.checkReturnFlight(flight.getFlightRoute().getOrigin().getIataAirportCode(), flight.getFlightRoute().getDestination().getIataAirportCode());
+                long flightGroupId = flight.getFlightGroup();
+                Flight returnFlight = flightEntitySessionBean.checkReturnFlight(flight.getFlightRoute().getOrigin().getIataAirportCode(), flight.getFlightRoute().getDestination().getIataAirportCode(), flightGroupId);
                 return returnFlight != null ? flightSchedulePlan.getId() : -1;
             } else {
                 // add layover duration to this (return)
-                Flight returnFlight = flightEntitySessionBean.checkReturnFlight(flight.getFlightRoute().getOrigin().getIataAirportCode(), flight.getFlightRoute().getDestination().getIataAirportCode());
+                long flightGroupId = flight.getFlightGroup();
+                Flight returnFlight = flightEntitySessionBean.checkReturnFlight(flight.getFlightRoute().getOrigin().getIataAirportCode(), flight.getFlightRoute().getDestination().getIataAirportCode(), flightGroupId);
                 List<Date> modifiedDepatureList = departureDateList.stream().map(x -> {
                     Date arrivalTime = this.computeArrivalTime(x, duration);
                     return this.computeArrivalTime(arrivalTime, layover);
@@ -252,11 +315,14 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
             if (!makeReturn) {
                 RecurrentFlightSchedulePlan flightSchedulePlan = this.makeRecurrentFlightSchedulePlan(flight, departureDateList, duration, faresForCabinClassList, endDate, frequency);
                 flightSchedulePlan.setFlightSchedulePlanGroup(flightSchedulePlan.getId());
-                Flight returnFlight = flightEntitySessionBean.checkReturnFlight(flight.getFlightRoute().getOrigin().getIataAirportCode(), flight.getFlightRoute().getDestination().getIataAirportCode());
+                // get the flight group id 
+                long flightGroupId = flight.getFlightGroup();
+                Flight returnFlight = flightEntitySessionBean.checkReturnFlight(flight.getFlightRoute().getOrigin().getIataAirportCode(), flight.getFlightRoute().getDestination().getIataAirportCode(), flightGroupId);
                 return returnFlight != null ? flightSchedulePlan.getId() : -1;
             } else {
                 // add layover duration to this (return)
-                Flight returnFlight = flightEntitySessionBean.checkReturnFlight(flight.getFlightRoute().getOrigin().getIataAirportCode(), flight.getFlightRoute().getDestination().getIataAirportCode());
+                long flightGroupId = flight.getFlightGroup();
+                Flight returnFlight = flightEntitySessionBean.checkReturnFlight(flight.getFlightRoute().getOrigin().getIataAirportCode(), flight.getFlightRoute().getDestination().getIataAirportCode(), flightGroupId);
                 departureDateList.set(0, this.computeArrivalTime(this.computeArrivalTime(departureDateList.get(0), duration), layover));
                 RecurrentFlightSchedulePlan flightSchedulePlan = this.makeRecurrentFlightSchedulePlan(returnFlight, departureDateList, duration, faresForCabinClassList, endDate, frequency);
                 flightSchedulePlan.setFlightSchedulePlanGroup(id);
@@ -268,11 +334,15 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
            if (!makeReturn) {
                 WeeklyFlightSchedulePlan flightSchedulePlan = this.makeRecurrentWeeklyFlightSchedulePlan(flight, departureDateList, duration, faresForCabinClassList, endDate);
                 flightSchedulePlan.setFlightSchedulePlanGroup(flightSchedulePlan.getId());
-                Flight returnFlight = flightEntitySessionBean.checkReturnFlight(flight.getFlightRoute().getOrigin().getIataAirportCode(), flight.getFlightRoute().getDestination().getIataAirportCode());
+                // get the flight group id 
+                long flightGroupId = flight.getFlightGroup();
+                Flight returnFlight = flightEntitySessionBean.checkReturnFlight(flight.getFlightRoute().getOrigin().getIataAirportCode(), flight.getFlightRoute().getDestination().getIataAirportCode(), flightGroupId);
                 return returnFlight != null ? flightSchedulePlan.getId() : -1;
             } else {
                // add layover duration to this (return)
-                Flight returnFlight = flightEntitySessionBean.checkReturnFlight(flight.getFlightRoute().getOrigin().getIataAirportCode(), flight.getFlightRoute().getDestination().getIataAirportCode());
+               // idea is that if they have the same flight group and opposite flight route 
+                long flightGroupId = flight.getFlightGroup();
+                Flight returnFlight = flightEntitySessionBean.checkReturnFlight(flight.getFlightRoute().getOrigin().getIataAirportCode(), flight.getFlightRoute().getDestination().getIataAirportCode(), flightGroupId);
                 departureDateList.set(0, this.computeArrivalTime(this.computeArrivalTime(departureDateList.get(0), duration), layover));
                 WeeklyFlightSchedulePlan flightSchedulePlan = this.makeRecurrentWeeklyFlightSchedulePlan(returnFlight, departureDateList, duration, faresForCabinClassList, endDate);
                 flightSchedulePlan.setFlightSchedulePlanGroup(id);

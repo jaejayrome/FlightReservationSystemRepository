@@ -71,18 +71,27 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanLocal {
     }
     
     @Override
-    public Flight checkReturnFlight(String originAirport, String destinationAirport) {
+    public Flight checkReturnFlight(String originAirport, String destinationAirport, long flightGroup) {
         try { 
-        Flight flight = (Flight) em.createQuery("Select flight FROM Flight flight WHERE flight.flightRoute.origin.iataAirportCode = :destinationAirport AND flight.flightRoute.destination.iataAirportCode = :originAirport")
+        Flight flight = (Flight)em.createQuery("SELECT flight FROM Flight flight WHERE flight.flightRoute.origin.iataAirportCode = :destinationAirport AND flight.flightRoute.destination.iataAirportCode = :originAirport AND flight.flightGroup = :flightGroup")
                              .setParameter("originAirport", originAirport)
                              .setParameter("destinationAirport", destinationAirport)
+                             .setParameter("flightGroup", flightGroup)
                              .getSingleResult();
         return flight;
         } catch (NoResultException exception) {
             return null;
             // throw new NoReturnFlightFoundException("No Complementary Return Flight has been found!");
         }
-       
+    }
+    
+    @Override
+    public List<Flight> checkFlightRouteUsed(String originAirport, String destinationAirport) {
+        return em.createQuery("SELECT flight FROM Flight flight WHERE flight.flightRoute.origin = :originAirport AND flight.flightRoute.destination = :destinationAirport")
+                .setParameter("originAirport", originAirport)
+                .setParameter("destinationAirport", destinationAirport)
+                .getResultList();
+                
     }
     
     @Override

@@ -33,4 +33,5 @@ public interface ScheduleManagerUseCaseSessionBeanLocal {
     public boolean deleteFlight(String flightNumber);
     public void updateFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) throws UpdateFlightSchedulePlanException;
     public void deleteFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan);
+    public long createNewFlightForDataInit(String flightNumber, String configurationName, String originAirport, String destinationAirport, boolean createReturn, long initialId);
 }
