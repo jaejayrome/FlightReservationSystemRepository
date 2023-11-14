@@ -50,8 +50,14 @@ public class RunApp {
         this.customerUseCaseSessionBean = customerUseCaseSessionBean;
     }
     
+    //test method to test functions
+    public void test() {
+        long customerId = 1;        
+//        customerUseCaseSessionBean.retrieveAllCustomerReservations(1);
+    }
+        
     
-    
+    //this is the first method that main calls to run everything
     public void showVisitorHomeScreen() {
         Scanner sc = new Scanner(System.in);
         
@@ -82,8 +88,8 @@ public class RunApp {
                 System.out.println("Enter Your Password: ");
                 String loginPassword = sc.nextLine();
                 try {
-                    long customerId = customerUseCaseSessionBean.customerLogin(loginEmail, loginPassword);
-                    this.customerId = customerId;
+                    long tmpCustId = customerUseCaseSessionBean.customerLogin(loginEmail, loginPassword);
+                    this.customerId = tmpCustId;
                     System.out.println("Welcome, Customer Found & Authenticated");
                     customerIsLoggedIn = true;
                     mainMenuCustomer(sc);
@@ -94,12 +100,13 @@ public class RunApp {
                                 + "created yet, would you like to create a new "
                                 + "account?\n");
                         System.out.println("Enter Y to register new account");
-                        System.out.println("Enter N try logging in again");
+                        System.out.println("Enter N to go back");
                         String tmpOption = sc.nextLine();
                         if (tmpOption.equals("Y")) {
                             createNewCustomerAccount(sc);
                             this.customerIsLoggedIn = true;
-                            System.out.println("You account has been created and you are logged in");
+                            System.out.println("You account has been created please log in");
+                            userAuthPrompt(sc);
                         } else {
                             userAuthPrompt(sc);
                         }
@@ -142,8 +149,12 @@ public class RunApp {
     public void mainMenuCustomer(Scanner scanner) {
         System.out.println("Press 0 to logout");
         System.out.println("Press 1 to search flights and make reservations");
+
+//        System.out.println("Press 2 to view all flights");
+
         System.out.println("Press 2 to view my flight reservations");
         System.out.println("Press 3 to view my flight reservation details");
+        
         System.out.print("> ");
         int choice = scanner.nextInt();
         scanner.nextLine();
@@ -156,6 +167,10 @@ public class RunApp {
                 searchForFlightRoutes(scanner, true);
                 mainMenuCustomer(scanner);
                 break;
+//            case 2: 
+////                makeFlightReservation(scanner);
+//                viewAllFlights();
+//                break;
             case 2: 
                 viewAllFlightReservations();
                 mainMenuCustomer(scanner);
@@ -164,9 +179,20 @@ public class RunApp {
                 viewFlightReservationDetails(scanner);
                 mainMenuCustomer(scanner);
                 break;
+
         }
          
     }
+    
+//    public void viewAllFlights() {
+//        List<FlightSchedule> fsList = customerUseCaseSessionBean.displayAllFlightRoutes();
+//        for (int i = 0; i < fsList.size(); i ++) {
+//            FlightSchedule tmpFs = fsList.get(i);
+//            
+//            
+//            System.out.println(fsList.get(i));
+//        }
+//    }
     
     public void invalidOption() {
         System.out.println("You have selected an invalid option!");
@@ -513,8 +539,7 @@ public class RunApp {
         System.out.print("> ");
         FlightCabinClass chosenFlightCabinclass = fs.getFccList().get(scanner.nextInt() - 1);
         return chosenFlightCabinclass;
-    }
-    
+    }  
     
     public List<HashMap<Integer, String>> enterPassengerDetails(int numP, Scanner scanner) {
         List<HashMap<Integer, String>> allDetails = new ArrayList<HashMap<Integer, String>>();
@@ -626,7 +651,7 @@ public class RunApp {
         return totalCostForThisSingleFlight;
     }
     
-        public static double printConnectingFlightsSingle(List<FlightSchedule> fsList, int numPassengers) {
+    public static double printConnectingFlightsSingle(List<FlightSchedule> fsList, int numPassengers) {
         System.out.println();
         int counter = 1;
         double totalCostForThisSingleFlight = 0.0;

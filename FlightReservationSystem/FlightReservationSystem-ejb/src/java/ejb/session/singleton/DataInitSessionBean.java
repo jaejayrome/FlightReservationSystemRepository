@@ -181,6 +181,10 @@ public class DataInitSessionBean  {
         //default customer creation is already init as roleType.customer
         customerSessionBean.createNewCustomer("FirstName", "LastName", "email@test", "phoneNumber", "Address", "Password");
 
+        
+        
+        //initialize one flight
+        
     }
 
 }

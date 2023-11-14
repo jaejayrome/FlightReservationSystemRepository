@@ -73,11 +73,13 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanLocal {
     @Override
     public Flight checkReturnFlight(String originAirport, String destinationAirport, long flightGroup) {
         try { 
+
         Flight flight = (Flight)em.createQuery("SELECT flight FROM Flight flight WHERE flight.flightRoute.origin.iataAirportCode = :destinationAirport AND flight.flightRoute.destination.iataAirportCode = :originAirport AND flight.flightGroup = :flightGroup")
                              .setParameter("originAirport", originAirport)
                              .setParameter("destinationAirport", destinationAirport)
                              .setParameter("flightGroup", flightGroup)
                              .getSingleResult();
+
         return flight;
         } catch (NoResultException exception) {
             return null;
