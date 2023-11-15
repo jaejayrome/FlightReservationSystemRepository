@@ -6,6 +6,7 @@ package entity;
 
 import java.io.Serializable;
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -23,7 +24,7 @@ import util.enumerations.JobTitle;
  *
  * @author jeromegoh
  */
-@Cacheable(true)
+//@Cacheable(true)
 @Entity
 public class Employee implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -33,12 +34,12 @@ public class Employee implements Serializable {
     
     // bean validation
     // database validation 
-    @Column(nullable = false, length = 64)
-//    @NotNull
-//    @Size(min = 1, max = 64)
-    public String firstName; 
+//    @Column(nullable = false, length = 64)
+    @Column (nullable = false, length = 64)
+    @Size(max = 64)
+    private String firstName; 
     
-    @Column(nullable = false, length = 64)
+    @Column(nullable=true, length = 64)
 //    @NotNull
 //    @Size(min = 1, max = 64)
     private String lastName;
@@ -52,24 +53,33 @@ public class Employee implements Serializable {
     @Size(min = 1, max = 64)
     private String email; 
     
-    @Column(nullable = false)
+    @Column (nullable = false, length = 64)
+    @NotNull
+    @Size(min = 1, max = 64)
     private String phoneNumber;
     
     // @Enumerated(EnumType.STRING)
+    @Column (nullable = false, length = 64)
     @NotNull
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private JobTitle jobTitle;
     
     // @Enumerated(EnumType.STRING)
+//    @NotNull
+//    @Column(nullable = false)
+    @Column (nullable = false, length = 64)
     @NotNull
-    @Column(nullable = false)
     private EmploymentType employmentType;
     
+//    @Column(nullable = false)
+    
+    @Column (nullable = false, length = 64)
+    @NotNull
     @Size(min = 1, max = 64)
-    @Column(nullable = false)
     private String loginUsername;
     
     @Size(min = 1, max = 64)
+    @NotNull
     @Column(nullable = false)
     private String loginPassword;
     

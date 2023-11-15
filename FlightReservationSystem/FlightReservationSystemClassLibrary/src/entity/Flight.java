@@ -7,6 +7,7 @@ package entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -35,12 +36,16 @@ public class Flight implements Serializable {
     private Long id;
     
     @NotNull
-    @Size(max = 10)
-    @Column(nullable = false)
+    
+    @Column (nullable = false, length = 10)
+    @NotNull
+    @Size(min = 1, max = 10)
+    
     private String flightNumber; 
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @NotNull
     private FlightStatus status;
     
     @Column(nullable = true)
@@ -55,7 +60,7 @@ public class Flight implements Serializable {
     @JoinColumn(nullable = true)
     private FlightRoute flightRoute;
     
-    @OneToMany(mappedBy = "flight")
+    @OneToMany(mappedBy = "flight", cascade = CascadeType.PERSIST)
     private List<FlightSchedulePlan> flightSchedulePlanList;
     
     

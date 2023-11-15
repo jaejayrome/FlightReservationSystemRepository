@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -37,7 +38,7 @@ public class FlightReservation implements Serializable {
     private Date date;
     
     // relationships
-    @OneToMany (mappedBy= "flightReservation")
+    @OneToMany (mappedBy= "flightReservation", cascade = CascadeType.PERSIST)
     private List<FlightBooking> flightBookingList;
     
     @OneToMany

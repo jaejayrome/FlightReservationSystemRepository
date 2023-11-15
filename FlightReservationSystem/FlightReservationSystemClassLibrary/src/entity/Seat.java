@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 import util.enumerations.SeatStatus;
 
 /**
@@ -29,6 +30,7 @@ public class Seat implements Serializable {
     private Long id;
     
     @Column(nullable = false)
+    @NotNull
     private String seatNumber;
     
     @Column(nullable = false)

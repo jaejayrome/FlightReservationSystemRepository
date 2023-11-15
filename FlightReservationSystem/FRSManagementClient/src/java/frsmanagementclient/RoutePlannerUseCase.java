@@ -112,7 +112,7 @@ public class RoutePlannerUseCase {
         System.out.println("Airport Name: " + airport.getAirportName());
         System.out.println("Airport IATA Code: " + airport.getIataAirportCode());
         System.out.println("Airport City: " + airport.getCity());
-        System.out.println("Airport State: " + airport.getState());
+        System.out.println("Airport State: " + airport.getCountryState());
         System.out.println("Airport Country: " + airport.getCountry());
     }
     

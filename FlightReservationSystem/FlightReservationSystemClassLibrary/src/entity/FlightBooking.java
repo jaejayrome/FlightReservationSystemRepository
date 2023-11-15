@@ -39,7 +39,9 @@ public class FlightBooking implements Serializable {
     @Column(nullable = false)
     private String flightNumber;
     
-    @Column(nullable = false)
+    @Column (nullable = false, length = 10000)
+    @NotNull
+    @Size(min = 1, max = 10000) 
     private BigDecimal flightLegCost;
     
     // relationships

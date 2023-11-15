@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -24,15 +26,29 @@ public class Airport implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true, length = 64)
+    @NotNull
+    @Size(max = 64)
     private String airportName;
-    @Column(nullable = false, unique = true)
+    
+    @Column(nullable = false, unique = true, length = 64)
+    @NotNull
+    @Size(max = 64)
     private String iataAirportCode;
-    @Column(nullable = false)
+    
+    @Column(nullable = false, length = 64)
+    @NotNull
+    @Size(max = 64)
     private String city; 
-    @Column(nullable = false)
-    private String state; 
-    @Column(nullable = false)
+    
+    @Column(nullable = false, length = 64)
+    @NotNull
+    @Size(max = 64)
+    private String countryState; 
+    
+    @Column(nullable = false, length = 64)
+    @NotNull
+    @Size(max = 64)
     private String country;
     
     // relationships
@@ -45,7 +61,7 @@ public class Airport implements Serializable {
         this.airportName = airportName;
         this.iataAirportCode = iataAirportCode;
         this.city = city;
-        this.state = state;
+        this.countryState = state;
         this.country = country;
     }
     
@@ -74,12 +90,12 @@ public class Airport implements Serializable {
         this.city = city;
     }
 
-    public String getState() {
-        return state;
+    public String getCountryState() {
+        return countryState;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setCountryState(String countryState) {
+        this.countryState = countryState;
     }
 
     public String getCountry() {

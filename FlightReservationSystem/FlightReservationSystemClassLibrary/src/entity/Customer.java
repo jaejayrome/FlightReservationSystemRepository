@@ -7,6 +7,7 @@ package entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -42,23 +43,32 @@ public class Customer implements Serializable {
     @Size(min = 1, max = 64)       
     private String lastName;
 
-    @Column (nullable = false)        
+    @Column (nullable = false, unique = true, length = 64)
+    @NotNull
+    @Size(min = 1, max = 64)       
     private String email;
     
-    @Column (nullable = false)
+    @Column (nullable = false, unique = true, length = 64)
+    @NotNull
+    @Size(min = 1, max = 64)       
     private String phoneNumber;
     
-    @Column (nullable = false)
+    @Column (nullable = false, length = 64)
+    @NotNull
+    @Size(min = 1, max = 64)       
     private String address;
     
-    @Column (nullable = false)
+    @Column (nullable = false, length = 64)
+    @NotNull
+    @Size(min = 4, max = 64)       
     private String password;
     
     // relationships
-    @OneToMany (mappedBy = "customer")
+    @OneToMany (mappedBy = "customer", cascade = CascadeType.PERSIST)
     private List<FlightReservation> flightReservationList;
     
     @Column (nullable = false)
+    @NotNull
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
     

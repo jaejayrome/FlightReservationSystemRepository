@@ -9,6 +9,7 @@ import util.enumerations.CabinClassType;
 import java.util.List;
 import java.util.ArrayList;
 import java.math.BigDecimal;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,6 +19,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -33,19 +37,32 @@ public class CabinClass implements Serializable {
     private Long id;
  
     @Column(nullable = false)
+    @NotNull
     private CabinClassType cabinClassName;
+    
     @Column(nullable = false)
+    @NotNull
+    @Min(0)
     private BigDecimal numAisles;
+    
     @Column(nullable = false)
+    @NotNull
+    @Min(1)
     private BigDecimal numRows;
+    
     @Column(nullable = false)
+    @NotNull
+    @Min(1)
     private BigDecimal numSeatsAbreast;
-    @Column(nullable = false)
+    
+    @Column(nullable = false, length = 64)
+    @NotNull
+    @Size(max = 64)
     private String seatingConfiguration;
 
     
     // relationships
-    @ManyToMany(mappedBy= "cabinClassList")
+    @ManyToMany(mappedBy= "cabinClassList", cascade = CascadeType.PERSIST)
     private List<AircraftConfiguration> aircraftConfigurationList;
     
 

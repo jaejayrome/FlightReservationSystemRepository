@@ -18,6 +18,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Max;
 import util.enumerations.FlightSchedulePlanStatus;
 
 /**
@@ -37,7 +38,8 @@ public abstract class FlightSchedulePlan implements Serializable {
     @Column(nullable = false)
     private FlightSchedulePlanStatus status;
     
-    @Column(nullable = true)
+    @Column(nullable = true, length = 10000000)
+    @Max(10000000)
     private long flightSchedulePlanGroup;
     
     // relationships
