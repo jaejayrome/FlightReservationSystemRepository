@@ -70,13 +70,15 @@ public class FleetManagerUseCase {
                 promptUserForCabinClass(cabinClassNameList, numAislesList, numRowsList, numSeatsAbreastList, seatingConfigurationList);
                 
                 try {
-                fleetManagerUseCaseSessionBeanRemote.createAircraftConfigurationForFleetManager(JobTitle.FLEET_MANAGER, aircraftTypeName, configurationName
-                    , cabinClassNameList, numAislesList, numRowsList, numSeatsAbreastList, seatingConfigurationList);
+                    fleetManagerUseCaseSessionBeanRemote.createAircraftConfigurationForFleetManager(JobTitle.FLEET_MANAGER, aircraftTypeName, configurationName
+                        , cabinClassNameList, numAislesList, numRowsList, numSeatsAbreastList, seatingConfigurationList);
                 } catch (InvalidStringLengthException exception) {
                     System.out.println(exception.getMessage());
+                } catch (Exception e) {
+                    System.out.println("Please try again. An error occured. " + e.getMessage());
                 }
-               }
-           }
+            }
+        }
     }
     
     public void viewAllAircraftConfiguration() {

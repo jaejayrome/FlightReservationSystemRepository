@@ -118,17 +118,26 @@ public class RunApp {
         System.out.println("");
         System.out.println("");
         System.out.println("");
-        System.out.print("Enter Username: ");
+        System.out.print("Welcome to Flight Reservation System (Management). Enter Username: ");
         String username = scanner.next();
-        System.out.print("Enter Password: ");
+        System.out.print("Enter Your Password: ");
         String password = scanner.next();
  
         try {
 //            System.out.println(employeeUseCaseSessionBeanRemote == null);
-            this.currentEmployee = employeeUseCaseSessionBeanRemote.doLogin(username, password);
-            showUseCaseOptions(scanner, this.currentEmployee.getJobTitle());
+
+            Employee tmpEmployee = employeeUseCaseSessionBeanRemote.doLogin(username, password);
+            if (tmpEmployee == null) {
+                doLogin(scanner);
+            } else {
+                this.currentEmployee = employeeUseCaseSessionBeanRemote.doLogin(username, password);
+                showUseCaseOptions(scanner, this.currentEmployee.getJobTitle());
+            }
+            
+            
         } catch (InvalidLoginCredentialsException exception) {
-            System.out.println(exception.getMessage());
+            System.out.println("Catch executes");            
+            System.out.println(exception.getMessage());            
             doLogin(scanner);
         } 
     }
@@ -142,7 +151,10 @@ public class RunApp {
                 System.out.println("Press '3' to View Specific Aircraft Configuration Details");
                 System.out.println("Press '0' to Logout from this session");
                 System.out.println("-------------------------------");
-                FleetManagerUseCase fleetManagerUseCase = new FleetManagerUseCase(this.fleetManagerUseCaseSessionBean, this.currentEmployee);
+                FleetManagerUseCase fleetManagerUseCase = 
+                        new FleetManagerUseCase(
+                                this.fleetManagerUseCaseSessionBean, 
+                                this.currentEmployee);
                 System.out.print("> ");
                 int choice = scanner.nextInt();
                 switch (choice) {

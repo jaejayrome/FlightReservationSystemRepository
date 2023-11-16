@@ -6,6 +6,7 @@ package ejb.session.stateless;
 
 import entity.Employee;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
 import javax.ejb.EJBContext;
@@ -74,18 +75,23 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanLocal
     public Employee authenticateEmployeeDetails(String username, String password) throws InvalidLoginCredentialsException{
         
         String query = "SELECT employee FROM Employee employee WHERE employee.loginUsername = :username";
-        Employee employee = (Employee)em.createQuery(query)
+        List<Employee> employeeList = em.createQuery(query)
                 .setParameter("username", username)
-                .getSingleResult();
-        if (employee == null) {
+                .getResultList();     
+        
+        if (employeeList.isEmpty()) {
+            //no employee in db
              ejbContext.setRollbackOnly();
-             throw new InvalidLoginCredentialsException("Your have entered an invalid username!");
-        } else if (!employee.getLoginPassword().equals(password)) {
-             ejbContext.setRollbackOnly();
-             throw new InvalidLoginCredentialsException("You have entered an invalid password!");
+             throw new InvalidLoginCredentialsException("Your have entered an invalid username! Please try logging in again");
         } else {
-            employee.setIsLoggedIn(true);
-            return employee;
+            Employee employee = employeeList.get(0);
+            if (!employee.getLoginPassword().equals(password)) {
+             ejbContext.setRollbackOnly();
+             throw new InvalidLoginCredentialsException("You have entered an invalid password! Please try logging in again");
+            } else {
+                employee.setIsLoggedIn(true);
+                return employee;
+           }
         }
     }
     

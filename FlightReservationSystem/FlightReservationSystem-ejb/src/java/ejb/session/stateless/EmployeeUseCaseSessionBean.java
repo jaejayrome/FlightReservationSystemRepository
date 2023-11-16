@@ -49,10 +49,4 @@ public class EmployeeUseCaseSessionBean implements EmployeeUseCaseSessionBeanRem
     public void doLogout(long employeeId) {
        employeeEntitySessionBeanLocal.processLogout(employeeId);
     }
-       
-
-    
-    
-    
-    
 }
