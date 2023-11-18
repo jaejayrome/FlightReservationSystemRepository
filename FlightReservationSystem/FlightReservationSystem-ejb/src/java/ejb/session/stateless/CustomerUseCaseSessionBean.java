@@ -4,7 +4,6 @@
  */
 package ejb.session.stateless;
 
-import com.sun.xml.wss.util.DateUtils;
 import entity.Customer;
 import entity.Flight;
 import entity.FlightBooking;
