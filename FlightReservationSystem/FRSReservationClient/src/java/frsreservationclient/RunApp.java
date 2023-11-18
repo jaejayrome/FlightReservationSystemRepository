@@ -706,6 +706,7 @@ public class RunApp {
         System.out.println("FCC ID IS " + fcc.getId());
         System.out.println("FS ID IS " + fcc.getFlightSchedule().getId());
         System.out.println("FSP ID IS " + fcc.getFlightSchedule().getFlightSchedulePlan().getId());
+         System.out.println("FS ID IS " + fcc.getFlightSchedule().getFlightSchedulePlan());
         System.out.println("FSP FARE SIZE IS " + fcc.getFlightSchedule().getFlightSchedulePlan().getFares().size());
         List<Fare> faresForThisCabinClass = fcc.getFlightSchedule().getFlightSchedulePlan().getFares().stream().filter(x -> x.getCabinClass().getCabinClassName().equals(fcc.getCabinClass().getCabinClassName())).collect(Collectors.toList());       
         Fare lowestFare = faresForThisCabinClass.stream().min(fareLowest).get();
