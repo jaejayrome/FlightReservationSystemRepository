@@ -46,8 +46,14 @@ public class RunApp {
     
     public RunApp(CustomerSessionBeanRemote customerSessionBean, CustomerUseCaseSessionBeanRemote customerUseCaseSessionBean) {
         //expose runApp to remote SessionBean methods
+        
+       
+
         this.customerSessionBean = customerSessionBean; 
         this.customerUseCaseSessionBean = customerUseCaseSessionBean;
+        
+        System.out.println(customerSessionBean == null);
+        System.out.println(customerUseCaseSessionBean == null);
     }
     
     
@@ -162,6 +168,7 @@ public class RunApp {
                 break;
             case 2: 
                 viewAllFlightReservations();
+                
                 mainMenuCustomer(scanner);
                 break;
             case 3: 
@@ -411,6 +418,11 @@ public class RunApp {
     
     public void viewAllFlightReservations() {
         List<FlightReservation> myFRList = customerUseCaseSessionBean.viewAllFlightReservations(this.customerId);
+        if (myFRList.isEmpty()) {
+            System.out.println("No existing flight reservations");
+            System.out.println("");
+            return;
+        } 
         
         int counter = 1; 
         for (FlightReservation fr : myFRList) {
@@ -424,8 +436,12 @@ public class RunApp {
     
     public void viewFlightReservationDetails(Scanner scanner) {
         List<FlightReservation> myFRList = customerUseCaseSessionBean.viewAllFlightReservations(customerId);
-        FlightReservation chosenFR = chooseFlightReservation(myFRList, scanner);
-        printSpecificFlightReservation(chosenFR);
+        if (myFRList.isEmpty()) {
+            System.out.println("No Flight Reservation Details found");
+        } else {
+            FlightReservation chosenFR = chooseFlightReservation(myFRList, scanner);
+            printSpecificFlightReservation(chosenFR);
+        }
     }
     
     public FlightReservation chooseFlightReservation(List<FlightReservation> myFRList, Scanner sc) {

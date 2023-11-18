@@ -27,6 +27,8 @@ public class Main {
         // TODO code application logic here
         RunApp runApp = new RunApp(customerSessionBean, customerUseCaseSessionBean);
         
+        System.out.println(runApp == null);
+        
         
         runApp.showVisitorHomeScreen();
 

@@ -11,6 +11,7 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import util.enumerations.FlightRouteStatus;
+import util.exception.NoFlightRouteFoundException;
 
 /**
  *
@@ -54,6 +55,7 @@ public class RoutePlannerUseCaseSessionBean implements RoutePlannerUseCaseSessio
     
     @Override
     public long createNewFlightRouteDataInit(String originIATA, String destinationIATA, FlightRoute flightRoute, boolean makeReturnFlightRoute) {
+        // check for duplicates
         FlightRoute persistedFlightRoute = flightRouteEntitySessionBean.createFlightRoute(flightRoute);
         
         Airport originAirport = airportEntitySessionBean.findAirport(originIATA);
@@ -68,6 +70,17 @@ public class RoutePlannerUseCaseSessionBean implements RoutePlannerUseCaseSessio
             returnPersistedFlightRoute.setOrigin(destinationAirport);
             returnPersistedFlightRoute.setDestination(originAirport);
             returnPersistedFlightRoute.setFlightGroup(persistedFlightRoute.getId());
+        } else {
+            // check whether is there any flight route for it  
+            // airportEntitySessionBean
+            try {
+                FlightRoute complementaryFlightRoute = flightRouteEntitySessionBean.getFlightRouteByCityName(destinationIATA, originIATA);
+                // if there is flight route that is being found 
+                long flightRouteGroup = complementaryFlightRoute.getId();
+                persistedFlightRoute.setFlightGroup(flightRouteGroup);
+            } catch (NoFlightRouteFoundException e) {
+                System.out.println(e.toString());
+            }
         }
         
         return persistedFlightRoute.getId();

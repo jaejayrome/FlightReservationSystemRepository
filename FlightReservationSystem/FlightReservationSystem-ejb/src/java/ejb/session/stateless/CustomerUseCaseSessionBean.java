@@ -4,6 +4,7 @@
  */
 package ejb.session.stateless;
 
+import com.sun.xml.wss.util.DateUtils;
 import entity.Customer;
 import entity.Flight;
 import entity.FlightBooking;
@@ -34,6 +35,7 @@ import javax.persistence.PersistenceContext;
 import util.enumerations.FlightSchedulePlanStatus;
 import util.enumerations.SeatStatus;
 import util.exception.CustomerAuthenticationFailedException;
+import util.exception.CustomerNotRegisteredException;
 import util.util.Pair;
 
 /**
@@ -236,7 +238,7 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
         return toReturn;
     }
     
-      public List<Pair<FlightSchedule>> getConnectingFlightsOneWay(String originIATACode, String destinationIATACode) {
+    public List<Pair<FlightSchedule>> getConnectingFlightsOneWay(String originIATACode, String destinationIATACode) {
           // NEED CHECK AGAIN
         List<FlightSchedule> originList = flightScheduleEntitySessionBean.getFlightSchedulesByAirportOrigin(originIATACode);
         List<FlightSchedule> destinationList = flightScheduleEntitySessionBean.getFlightSchedulesByAirportDestination(destinationIATACode);
