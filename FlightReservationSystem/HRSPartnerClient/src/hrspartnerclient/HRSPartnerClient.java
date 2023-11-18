@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javafx.util.Pair;
 import ws.entity.Fare;
+import ws.entity.Flight;
 import ws.entity.FlightCabinClass;
 import ws.entity.FlightReservationSystemWebService;
 import ws.entity.FlightReservationSystemWebService_Service;
@@ -160,11 +161,9 @@ public class HRSPartnerClient {
         String dateTimeInput = startDateInput + " " + timeInput;
         startDateTimeInput = dateTimeInput;
         
-        
-        
             try {
                 // check date time input here
-                System.out.println("start is " + startDateTimeInput);
+                // System.out.println("start is " + startDateTimeInput);
             } catch (Exception e) {                    
                 System.out.println("Invalid Date format. Please try again");
             }
@@ -182,7 +181,7 @@ public class HRSPartnerClient {
             returnDateTimeInput = end;
             try {
                 // check returnDate
-                System.out.println("return is " + returnDateTimeInput);
+                // System.out.println("return is " + returnDateTimeInput);
             } catch (Exception e) {
                 System.out.println("Invalid Date format. Please try again");
             }
@@ -193,29 +192,42 @@ public class HRSPartnerClient {
         directFlight = sc.nextInt(); 
         sc.nextLine();
         
-        if (directFlight == 1) {
+        
             // DIRECT: TO
+            System.out.println("DIRECT: TO");
+            System.out.println("");
             printFlightScheduleInformation(departureAirport, startDateTimeInput, destinationAirport, sc, port);
 
             // DIRECT: RETURN
-            if (!returnDateTimeInput.isEmpty()) {
-                printFlightScheduleInformation(destinationAirport, returnDateTimeInput, departureAirport, sc, port);
-            }
-        } else {
-            // CONNECTING: TO : LEG 1
-            printFlightScheduleInformationConnecting(departureAirport, startDateTimeInput, destinationAirport, sc, port, true);
-
-            // CONNECTING TO : LEG 2
-            printFlightScheduleInformationConnecting(departureAirport, startDateTimeInput, destinationAirport, sc, port, false);
             
             if (!returnDateTimeInput.isEmpty()) {
-                // CONNECTING BACK : LEG 1
-                printFlightScheduleInformationConnecting(destinationAirport, returnDateTimeInput, departureAirport, sc, port, true);
-
-                // CONNECTING BACK : LEG 2
-                printFlightScheduleInformationConnecting(destinationAirport, returnDateTimeInput, departureAirport, sc, port, false);
+                System.out.println("DIRECT: RETURN");
+                System.out.println("");
+                printFlightScheduleInformation(destinationAirport, returnDateTimeInput, departureAirport, sc, port);
             }
-        }
+            if (directFlight == 2) {
+                // CONNECTING: TO : LEG 1
+                System.out.println("CONNECTING TO: LEG 1");
+                System.out.println("");
+                printFlightScheduleInformationConnecting(departureAirport, startDateTimeInput, destinationAirport, sc, port, true);
+
+                // CONNECTING TO : LEG 2
+                System.out.println("CONNECTING TO: LEG 2");
+                System.out.println("");
+                printFlightScheduleInformationConnecting(departureAirport, startDateTimeInput, destinationAirport, sc, port, false);
+
+                if (!returnDateTimeInput.isEmpty()) {
+                    // CONNECTING BACK : LEG 1
+                    System.out.println("CONNECTING RETURN: LEG 1");
+                    System.out.println("");
+                    printFlightScheduleInformationConnecting(destinationAirport, returnDateTimeInput, departureAirport, sc, port, true);
+
+                    // CONNECTING BACK : LEG 2
+                    System.out.println("CONNECTING RETURN: LEG 2");
+                    System.out.println("");
+                    printFlightScheduleInformationConnecting(destinationAirport, returnDateTimeInput, departureAirport, sc, port, false);
+            }
+            }
         
 
 
@@ -247,6 +259,12 @@ public class HRSPartnerClient {
                 
                 if (choice == 1) {
                     Pair<String, Fare> chosenFareList = chooseFCC(fareListForEachCabinClass, sc);
+                    // print flight information
+                    Flight flight = port.retrieveFlights(fspId);
+                    System.out.println(flight.getFlightNumber());
+                    // print flight route information
+                    List<String> flightRouteAirports = port.retrieveFlightRoute(fspId);
+                    System.out.println(flightRouteAirports.get(0) + " -> " + flightRouteAirports.get(1));
                     // print single cabin class preference
                     printSingleCabinClassFares(chosenFareList);
                     // print all flight schedules
@@ -268,8 +286,7 @@ public class HRSPartnerClient {
     
     public static void printFlightScheduleInformation(String departureAirport, String startDateTimeInput, String destinationAirport, Scanner sc, FlightReservationSystemWebService port) {
         List<FlightSchedule> flightScheduleList = port.partnerSearchFlight(departureAirport, startDateTimeInput, destinationAirport);
-        System.out.println("Hellow");
-        System.out.println(flightScheduleList.isEmpty());
+       
         // print flight cabin class fares
             HashMap<String, Fare> fareListForEachCabinClass = new HashMap<>();
             if (!flightScheduleList.isEmpty()) {
@@ -278,10 +295,6 @@ public class HRSPartnerClient {
                 // get all flight cabin calsses
                 fareListForEachCabinClass = getFaresFromBackend(port, fspId);
                 
-                // allow user to customise their flight cabin class preferences
-                if (fareListForEachCabinClass.isEmpty()) {
-                    System.out.println("Nothing inside");
-                }
                 System.out.println("Do you have any cabin class preferences?");
                 System.out.println("Press 0 if there isn't");
                 System.out.println("Press 1 if there is");
@@ -381,7 +394,8 @@ public class HRSPartnerClient {
         }
         System.out.println("Enter Your Option:");
         System.out.print("> ");
-        String chosenCabinClassName = mapToChoose.get(scanner.nextInt() - 1);
+        String chosenCabinClassName = mapToChoose.get(scanner.nextInt());
+        System.out.println(fareForEachCabinClass.get(chosenCabinClassName));
         return new Pair<String, Fare>(chosenCabinClassName, fareForEachCabinClass.get(chosenCabinClassName));
     }
     

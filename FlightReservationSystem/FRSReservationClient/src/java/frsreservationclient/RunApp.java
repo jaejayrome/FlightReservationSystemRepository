@@ -770,13 +770,15 @@ public class RunApp {
                 if (breakpointSet.contains(j)) {
                     seatLayout[i][j] = "<=>";
                 } else {
-                    if (seatList.get(counter).getSeatStatus() == SeatStatus.RESERVED) {
-                        String xxx = seatList.get(counter).getSeatNumber().length() == 3 ? "XXX" : "XX";
-                        seatLayout[i][j] = xxx;
-                    } else {
-                        seatLayout[i][j] = seatList.get(counter).getSeatNumber();
+                    if (counter < seatList.size()) {
+                        if (seatList.get(counter).getSeatStatus() == SeatStatus.RESERVED) {
+                            String xxx = seatList.get(counter).getSeatNumber().length() == 3 ? "XXX" : "XX";
+                            seatLayout[i][j] = xxx;
+                        } else {
+                            seatLayout[i][j] = seatList.get(counter).getSeatNumber();
+                        }
+                        counter += 1;
                     }
-                    counter += 1;
                 }
             }
         }

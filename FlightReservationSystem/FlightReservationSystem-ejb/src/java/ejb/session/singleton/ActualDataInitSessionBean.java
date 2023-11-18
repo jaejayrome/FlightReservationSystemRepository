@@ -253,7 +253,7 @@ public class ActualDataInitSessionBean {
         firstRWfaresForCabinClassList.put(CabinClassType.Y, fareList12);
         
         long idFirstt = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML711", firstDepartDateList, Duration.ofSeconds(14 * 60 * 60), formatDate("2023-12-31 09:00:00"), 7, firstRWfaresForCabinClassList, false, -1, null);
-        scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML712", firstDepartDateList, Duration.ofSeconds(14 * 60 * 60), formatDate("2023-12-31 09:00:00"), 7, firstRWfaresForCabinClassList, true, idFirstt, Duration.ofSeconds(2 * 60 * 60));
+        scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML711", firstDepartDateList, Duration.ofSeconds(14 * 60 * 60), formatDate("2023-12-31 09:00:00"), 7, firstRWfaresForCabinClassList, true, idFirstt, Duration.ofSeconds(2 * 60 * 60));
         
         // recurrent weekly flight schedule plan 2
         Date secondRWDate = formatDate("2023-12-03 12:00:00");
@@ -279,7 +279,7 @@ public class ActualDataInitSessionBean {
         secondRWfaresForCabinClassList.put(CabinClassType.J, fareList14);
         secondRWfaresForCabinClassList.put(CabinClassType.Y, fareList15);
         long idsecondt = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML611", secondDepartDateList, Duration.ofSeconds(8 * 60 * 60), formatDate("2023-12-31 12:00:00"), 7, secondRWfaresForCabinClassList, false, -1, null);
-        scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML612", secondDepartDateList, Duration.ofSeconds(8 * 60 * 60), formatDate("2023-12-31 12:00:00"), 7, secondRWfaresForCabinClassList, true, idsecondt, Duration.ofSeconds(2 * 60 * 60));
+        scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML611", secondDepartDateList, Duration.ofSeconds(8 * 60 * 60), formatDate("2023-12-31 12:00:00"), 7, secondRWfaresForCabinClassList, true, idsecondt, Duration.ofSeconds(2 * 60 * 60));
         
         // refcurrent weekly flight schedule plan 3
         Date thirdRWDate = formatDate("2023-12-05 10:00:00");
@@ -295,7 +295,7 @@ public class ActualDataInitSessionBean {
 
         thirdRWfaresForCabinClassList.put(CabinClassType.Y, fareList16);
         long idthirdt = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML621", thirdDepartDateList, Duration.ofSeconds(8 * 60 * 60), formatDate("2023-12-31 10:00:00"), 7, thirdRWfaresForCabinClassList, false, -1, null);
-        scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML622", thirdDepartDateList, Duration.ofSeconds(8 * 60 * 60), formatDate("2023-12-31 10:00:00"), 7, thirdRWfaresForCabinClassList, true, idthirdt, Duration.ofSeconds(2 * 60 * 60));
+        scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML621", thirdDepartDateList, Duration.ofSeconds(8 * 60 * 60), formatDate("2023-12-31 10:00:00"), 7, thirdRWfaresForCabinClassList, true, idthirdt, Duration.ofSeconds(2 * 60 * 60));
         
         // recurrent weekly flight schedule plan 4
         Date fourthRWDate = formatDate("2023-12-04 10:00:00");
@@ -321,7 +321,7 @@ public class ActualDataInitSessionBean {
         fourthRWfaresForCabinClassList.put(CabinClassType.J, fareList18);
         fourthRWfaresForCabinClassList.put(CabinClassType.Y, fareList19);
         long idfourtht = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML311", fourthDepartDateList, Duration.ofSeconds(23400), formatDate("2023-12-31 10:00:00"), 7, fourthRWfaresForCabinClassList, false, -1, null);
-        scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML312", fourthDepartDateList, Duration.ofSeconds(23400), formatDate("2023-12-31 10:00:00"), 7, fourthRWfaresForCabinClassList, true, idfourtht, Duration.ofSeconds(3 * 60 * 60));
+        scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML311", fourthDepartDateList, Duration.ofSeconds(23400), formatDate("2023-12-31 10:00:00"), 7, fourthRWfaresForCabinClassList, true, idfourtht, Duration.ofSeconds(3 * 60 * 60));
         
         // recurrent n day flight schedule plan
         Date firstFormatDate = formatDate("2023-12-01 13:00:00");
@@ -377,7 +377,7 @@ public class ActualDataInitSessionBean {
         secondfaresForCabinClassList.put(CabinClassType.J, fareList5);
         secondfaresForCabinClassList.put(CabinClassType.Y, fareList6);
         long idsecond = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML511", secondDepartureDateList, Duration.ofSeconds(3 * 60 * 60), null, 0, secondfaresForCabinClassList, false, -1, null);
-        scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML512", secondDepartureDateList, Duration.ofSeconds(3 * 60 * 60), null, 0, secondfaresForCabinClassList, true, idsecond, Duration.ofSeconds(2 * 60 * 60));
+        scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML511", secondDepartureDateList, Duration.ofSeconds(3 * 60 * 60), null, 0, secondfaresForCabinClassList, true, idsecond, Duration.ofSeconds(2 * 60 * 60));
         
     }
 }

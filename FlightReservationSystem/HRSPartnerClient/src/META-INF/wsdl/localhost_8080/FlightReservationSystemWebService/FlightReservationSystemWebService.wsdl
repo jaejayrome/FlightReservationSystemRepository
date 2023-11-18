@@ -4,18 +4,6 @@
 <xsd:import namespace="http://ws.session.ejb/" schemaLocation="http://localhost:8080/FlightReservationSystemWebService/FlightReservationSystemWebService?xsd=1"/>
 </xsd:schema>
 </types>
-<message name="retrieveFaresForFlightSchedule">
-<part name="parameters" element="tns:retrieveFaresForFlightSchedule"/>
-</message>
-<message name="retrieveFaresForFlightScheduleResponse">
-<part name="parameters" element="tns:retrieveFaresForFlightScheduleResponse"/>
-</message>
-<message name="partnerSearchConnectingFlightLeg1">
-<part name="parameters" element="tns:partnerSearchConnectingFlightLeg1"/>
-</message>
-<message name="partnerSearchConnectingFlightLeg1Response">
-<part name="parameters" element="tns:partnerSearchConnectingFlightLeg1Response"/>
-</message>
 <message name="partnerLogin">
 <part name="parameters" element="tns:partnerLogin"/>
 </message>
@@ -34,15 +22,31 @@
 <message name="partnerSearchFlightResponse">
 <part name="parameters" element="tns:partnerSearchFlightResponse"/>
 </message>
+<message name="retrieveFlights">
+<part name="parameters" element="tns:retrieveFlights"/>
+</message>
+<message name="retrieveFlightsResponse">
+<part name="parameters" element="tns:retrieveFlightsResponse"/>
+</message>
+<message name="retrieveFlightRoute">
+<part name="parameters" element="tns:retrieveFlightRoute"/>
+</message>
+<message name="retrieveFlightRouteResponse">
+<part name="parameters" element="tns:retrieveFlightRouteResponse"/>
+</message>
+<message name="partnerSearchConnectingFlightLeg1">
+<part name="parameters" element="tns:partnerSearchConnectingFlightLeg1"/>
+</message>
+<message name="partnerSearchConnectingFlightLeg1Response">
+<part name="parameters" element="tns:partnerSearchConnectingFlightLeg1Response"/>
+</message>
+<message name="retrieveFaresForFlightSchedule">
+<part name="parameters" element="tns:retrieveFaresForFlightSchedule"/>
+</message>
+<message name="retrieveFaresForFlightScheduleResponse">
+<part name="parameters" element="tns:retrieveFaresForFlightScheduleResponse"/>
+</message>
 <portType name="FlightReservationSystemWebService">
-<operation name="retrieveFaresForFlightSchedule">
-<input wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/retrieveFaresForFlightScheduleRequest" message="tns:retrieveFaresForFlightSchedule"/>
-<output wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/retrieveFaresForFlightScheduleResponse" message="tns:retrieveFaresForFlightScheduleResponse"/>
-</operation>
-<operation name="partnerSearchConnectingFlightLeg1">
-<input wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/partnerSearchConnectingFlightLeg1Request" message="tns:partnerSearchConnectingFlightLeg1"/>
-<output wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/partnerSearchConnectingFlightLeg1Response" message="tns:partnerSearchConnectingFlightLeg1Response"/>
-</operation>
 <operation name="partnerLogin">
 <input wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/partnerLoginRequest" message="tns:partnerLogin"/>
 <output wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/partnerLoginResponse" message="tns:partnerLoginResponse"/>
@@ -55,27 +59,25 @@
 <input wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/partnerSearchFlightRequest" message="tns:partnerSearchFlight"/>
 <output wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/partnerSearchFlightResponse" message="tns:partnerSearchFlightResponse"/>
 </operation>
+<operation name="retrieveFlights">
+<input wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/retrieveFlightsRequest" message="tns:retrieveFlights"/>
+<output wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/retrieveFlightsResponse" message="tns:retrieveFlightsResponse"/>
+</operation>
+<operation name="retrieveFlightRoute">
+<input wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/retrieveFlightRouteRequest" message="tns:retrieveFlightRoute"/>
+<output wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/retrieveFlightRouteResponse" message="tns:retrieveFlightRouteResponse"/>
+</operation>
+<operation name="partnerSearchConnectingFlightLeg1">
+<input wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/partnerSearchConnectingFlightLeg1Request" message="tns:partnerSearchConnectingFlightLeg1"/>
+<output wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/partnerSearchConnectingFlightLeg1Response" message="tns:partnerSearchConnectingFlightLeg1Response"/>
+</operation>
+<operation name="retrieveFaresForFlightSchedule">
+<input wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/retrieveFaresForFlightScheduleRequest" message="tns:retrieveFaresForFlightSchedule"/>
+<output wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/retrieveFaresForFlightScheduleResponse" message="tns:retrieveFaresForFlightScheduleResponse"/>
+</operation>
 </portType>
 <binding name="FlightReservationSystemWebServicePortBinding" type="tns:FlightReservationSystemWebService">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
-<operation name="retrieveFaresForFlightSchedule">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="partnerSearchConnectingFlightLeg1">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
 <operation name="partnerLogin">
 <soap:operation soapAction=""/>
 <input>
@@ -95,6 +97,42 @@
 </output>
 </operation>
 <operation name="partnerSearchFlight">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="retrieveFlights">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="retrieveFlightRoute">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="partnerSearchConnectingFlightLeg1">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="retrieveFaresForFlightSchedule">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

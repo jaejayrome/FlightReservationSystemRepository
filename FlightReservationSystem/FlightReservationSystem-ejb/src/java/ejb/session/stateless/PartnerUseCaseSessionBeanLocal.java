@@ -5,6 +5,7 @@
 package ejb.session.stateless;
 
 import entity.Fare;
+import entity.Flight;
 import entity.FlightSchedule;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,10 +23,12 @@ import util.util.Pair;
 public interface PartnerUseCaseSessionBeanLocal {
     public long partnerLogin(String username, String password);
     public void partnerLogout(long id);
-   public List<FlightSchedule> partnerSearchForFlightRoutes(
+    public List<FlightSchedule> partnerSearchForFlightRoutes(
         String departureAirport, String departureDateS, String destinationAirport);
    public List<FlightSchedule> partnerSearchForFlightRoutesConnecting(String departureAirport, String departureDateS, String destinationAirport, boolean isFirst);
     public List<Fare> retreiveFares(long id, String cabinClass);
+    public Flight retrieveFlight(long fspID);
+    public List<String> retrieveFlightRoute(long flightID);
     
             
 }
