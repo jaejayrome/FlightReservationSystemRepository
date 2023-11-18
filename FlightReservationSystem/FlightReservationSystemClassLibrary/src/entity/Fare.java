@@ -38,8 +38,8 @@ public class Fare implements Serializable {
    @JoinColumn(nullable = false)
    private CabinClass cabinClass;
    
-    @ManyToOne (optional = false)
-    @JoinColumn (nullable = false)
+    @ManyToOne (optional = true)
+    @JoinColumn (nullable = true)
     FlightSchedulePlan flightSchedulePlan;
    
    // constructors
@@ -52,13 +52,13 @@ public class Fare implements Serializable {
         this.cabinClass = cabinClass;
     }
     
-        public Fare(String fareBasicCode, BigDecimal fareAmount, CabinClass cabinClass, FlightSchedulePlan fsp) {
-        this.fareBasicCode = fareBasicCode;
-        this.fareAmount = fareAmount;
-        this.cabinClass = cabinClass;
-        this.flightSchedulePlan = fsp;
-    }
-    
+//        public Fare(String fareBasicCode, BigDecimal fareAmount, CabinClass cabinClass, FlightSchedulePlan fsp) {
+//        this.fareBasicCode = fareBasicCode;
+//        this.fareAmount = fareAmount;
+//        this.cabinClass = cabinClass;
+//        this.flightSchedulePlan = fsp;
+//    }
+//    
     // getters and setters
 
     public FlightSchedulePlan getFlightSchedulePlan() {

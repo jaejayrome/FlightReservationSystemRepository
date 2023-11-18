@@ -626,7 +626,8 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
             fareListForThisCabinClass.stream().forEach(x -> {
                 // persist fare
                 // associate fare to fsp
-                Fare f = new Fare(x.getFareBasicCode(), x.getFareAmount(), x.getCabinClass(), flightSchedulePlan); 
+                Fare f = new Fare(x.getFareBasicCode(), x.getFareAmount(), x.getCabinClass()); 
+                f.setFlightSchedulePlan(flightSchedulePlan);
                 // association between fare -> cabinClass done 
                 fareEntitySessionBean.createFare(f);
 

@@ -328,7 +328,6 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
         myFRList.stream().forEach(x -> x.getPassengerList().size());
         myFRList.stream().forEach(x -> x.getFlightBookingList().stream().forEach(y -> y.getReservedSeats().size()));
         myFRList.stream().forEach(x -> x.getFlightBookingList().stream().forEach(y -> y.getFlightSchedule().getFccList().size()));
-        
         return myFRList;
     }
     
