@@ -6,6 +6,7 @@ package ejb.session.stateless;
 
 import entity.Fare;
 import entity.Flight;
+import entity.FlightRoute;
 import entity.FlightSchedule;
 import entity.FlightSchedulePlan;
 import entity.Partner;
@@ -34,6 +35,9 @@ import javafx.util.Pair;
  */
 @Stateless
 public class PartnerUseCaseSessionBean implements PartnerUseCaseSessionBeanLocal {
+
+    @EJB
+    private FlightEntitySessionBeanLocal flightEntitySessionBean;
     
     
     
@@ -54,6 +58,8 @@ public class PartnerUseCaseSessionBean implements PartnerUseCaseSessionBeanLocal
 
     @EJB
     private PassengerEntitySessionBeanLocal passengerEntitySessionBean;
+    
+    
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager em;
     
@@ -79,6 +85,31 @@ public class PartnerUseCaseSessionBean implements PartnerUseCaseSessionBeanLocal
     public void partnerLogout(long id) {
         partnerEntitySessionBean.updateLogInStatus(false, id);
         System.out.println("Logout Successful");
+    }
+    
+    // this is not fsp id this is FS id
+    @Override
+    public Flight retrieveFlight(long fspID) {
+        FlightSchedule fs = flightScheduleEntitySessionBean.getFlightScheduleById(fspID);
+        Flight f = fs.getFlightSchedulePlan().getFlight();
+        
+        // manual detach
+        em.detach(f.getAircraftConfiguration());
+        f.getFlightSchedulePlanList().stream().forEach(x -> em.detach(x));
+        em.detach(f.getFlightRoute());
+        
+        return f;
+    }
+    
+    @Override
+    public List<String> retrieveFlightRoute(long fspID) {
+        FlightSchedule fs = flightScheduleEntitySessionBean.getFlightScheduleById(fspID);
+        Flight f = fs.getFlightSchedulePlan().getFlight();
+        FlightRoute fr = f.getFlightRoute();
+        List<String> airports = new ArrayList<String>();
+        airports.add(fr.getOrigin().getIataAirportCode());
+        airports.add(fr.getDestination().getIataAirportCode());
+        return airports;
     }
     
     @Override 
@@ -151,6 +182,7 @@ public class PartnerUseCaseSessionBean implements PartnerUseCaseSessionBeanLocal
             .setParameter("departureAirport", departureAirport)
             .setParameter("destinationAirport", destinationAirport)
             .getResultList();
+        System.out.println("WEB SERVICE SIZE " + flightScheduleList1.size());
         flightScheduleList1.stream().forEach(x -> {
             int init = x.getFccList().size();
             x.getFccList().stream().forEach(y -> y.getSeatList().size());
@@ -172,6 +204,8 @@ public class PartnerUseCaseSessionBean implements PartnerUseCaseSessionBeanLocal
             em.detach(y.getFlightSchedulePlan());
             em.detach(y);
         });
+        
+        System.out.println("WEB SERVICE SIZE " + flightScheduleList1.size());
         
         return flightScheduleList1;
     }

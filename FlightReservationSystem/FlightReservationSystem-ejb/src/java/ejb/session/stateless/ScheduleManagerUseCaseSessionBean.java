@@ -617,7 +617,7 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
         return flightSchedules;
     }
     
-    public FlightSchedulePlan updateAndPersistFare( HashMap<CabinClassType, List<Fare>> fareForEveryCabinClass, FlightSchedulePlan flightSchedulePlan) {
+    public FlightSchedulePlan updateAndPersistFare(HashMap<CabinClassType, List<Fare>> fareForEveryCabinClass, FlightSchedulePlan flightSchedulePlan) {
         int numberOfCabinClass = flightSchedulePlan.getFlight().getAircraftConfiguration().getCabinClassList().size();
         List<CabinClass> cabinClassList = flightSchedulePlan.getFlight().getAircraftConfiguration().getCabinClassList();
         for (CabinClass cabinClass : cabinClassList) {

@@ -10,6 +10,7 @@ import entity.Fare;
 import entity.Flight;
 import entity.FlightBooking;
 import entity.FlightCabinClass;
+import entity.FlightRoute;
 import entity.FlightSchedule;
 import entity.FlightSchedulePlan;
 import java.util.ArrayList;
@@ -45,6 +46,26 @@ public class FlightReservationSystemWebService {
         partnerUseCaseSessionBeanLocal.partnerLogout(id);
     }
     
+    @WebMethod(operationName = "retrieveFlights")
+    public Flight retrieveFlightDetails(
+        @WebParam(name = "fspID") long fspID) {
+       
+        Flight f = partnerUseCaseSessionBeanLocal.retrieveFlight(fspID);
+        
+        // manual nullification
+        f.setFlightSchedulePlanList(Collections.EMPTY_LIST);
+        f.setAircraftConfiguration(null);
+        f.setFlightRoute(null);
+        return f;
+    }
+    
+    @WebMethod(operationName = "retrieveFlightRoute")
+    public List<String> retrieveFlightRouteDetails(
+        @WebParam(name = "fspID") long fspId) {
+        System.out.println(fspId);
+        return partnerUseCaseSessionBeanLocal.retrieveFlightRoute(fspId);
+    }
+    
     @WebMethod(operationName = "partnerSearchConnectingFlightLeg1") 
     public List<FlightSchedule> partnerSearchConnectingFlight(
         @WebParam(name = "departureAirport") String departureAirport, 
@@ -52,8 +73,58 @@ public class FlightReservationSystemWebService {
         @WebParam(name = "destinationAirport") String destinationAirport,
         @WebParam(name = "isFirst") boolean isFirst) {
         List<FlightSchedule> flightScheduleList = partnerUseCaseSessionBeanLocal.partnerSearchForFlightRoutesConnecting(departureAirport, depatureDate, destinationAirport, isFirst);
-//        manualNullificationFlightSchedules(flightScheduleList);
-        return flightScheduleList;
+        try {
+                flightScheduleList.forEach(fs -> {
+                    if (!fs.getFccList().isEmpty()) {
+                        fs.getFccList().forEach(fcc -> {
+                            if (fcc != null) {
+                                fcc.setFlightSchedule(null);
+                                fcc.getSeatList().size();
+                                fcc.getSeatList().forEach(y -> y.setFlightCabinClass(null));
+                                fcc.setCabinClass(null);
+                            }
+                        });
+                    }
+
+                    fs.setFlightBookingList(Collections.emptyList());
+
+                    if (!fs.getFlightBookingList().isEmpty()) {
+                        fs.getFlightBookingList().forEach(fb -> {
+                            if (fb != null) {
+                                fb.setFlightSchedule(null);
+                            }
+                        });
+                    }
+
+                    fs.setFccList(Collections.emptyList());
+
+                    FlightSchedulePlan fsp = fs.getFlightSchedulePlan();
+                    if (fsp != null) {
+                        Flight flight = fsp.getFlight();
+
+                        if (flight != null) {
+                            // Nullify fields to break circular references
+                            if (flight.getAircraftConfiguration() != null) {
+                                // Break the cycle by setting AircraftType to null
+                                if (flight.getAircraftConfiguration().getAircraftType() != null) {
+                                    flight.getAircraftConfiguration().getAircraftType().setAircraftConfigurations(Collections.emptyList());
+                                }
+                                flight.getAircraftConfiguration().setAircraftType(null);
+                            }
+                            flight.setAircraftConfiguration(null);
+                        }
+                        fsp.setFlightScheduleList(Collections.emptyList());
+                    }
+
+                    fs.setFlightSchedulePlan(null);
+                });
+
+                return flightScheduleList;
+            } catch (Exception ex) {
+                // Handle exceptions or log them as needed
+                ex.printStackTrace(); 
+                return Collections.emptyList(); 
+            }
     }
     
     @WebMethod(operationName = "partnerSearchFlight")
