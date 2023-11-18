@@ -27,7 +27,6 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
     public Long createNewCustomer(String firstName, String lastName, String email, String phoneNumber, String address, String password) {
         Customer customer = new Customer(firstName, lastName, email, phoneNumber, address, password);
         
-        System.out.println("New Customer created: ");
         em.persist(customer);
         em.flush();
         return customer.getId();

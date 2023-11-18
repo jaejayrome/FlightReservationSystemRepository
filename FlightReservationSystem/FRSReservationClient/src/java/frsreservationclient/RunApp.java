@@ -100,6 +100,7 @@ public class RunApp {
                             createNewCustomerAccount(sc);
                             this.customerIsLoggedIn = true;
                             System.out.println("You account has been created and you are logged in");
+                            mainMenuCustomer(sc);
                         } else {
                             userAuthPrompt(sc);
                         }
@@ -113,12 +114,14 @@ public class RunApp {
             case 2:
             System.out.println("Registering your account");
                 createNewCustomerAccount(sc);
-                userAuthPrompt(sc);
+                this.customerIsLoggedIn = true;
+                mainMenuCustomer(sc);
                 break;
             default: 
                 invalidOption();
                 break;
         }
+//        userAuthPrompt(sc);
     }
     
     public void mainMenuGuest(Scanner scanner) {
@@ -130,7 +133,8 @@ public class RunApp {
         
         switch (choice) {
             case 0: 
-                System.exit(1);
+//                System.exit(1);
+                userAuthPrompt(scanner);
                 break;
             case 1: 
                 searchForFlightRoutes(scanner, false);
@@ -205,10 +209,17 @@ public class RunApp {
         int directFlight;
         int numPassengers = 0;
         
-        System.out.println("Please enter the number of passengers");
-        System.out.print("> ");
-        numPassengers = sc.nextInt();
-        sc.nextLine();
+        while (numPassengers <= 0) {
+            System.out.println("Please enter the number of passengers");
+            System.out.print("> ");
+            numPassengers = sc.nextInt();
+            sc.nextLine();
+            
+            if (numPassengers <= 0) {
+                System.out.println("Invalid number of passengers. Try again");
+            }
+        }
+        
         
         System.out.println("Please enter your Flight details to check for available flights");
         System.out.println("Trip Type: Press 1 for One-Way, 2 for Return");
@@ -226,21 +237,34 @@ public class RunApp {
         destinationAirport = sc.next();
         sc.nextLine();
         
-        System.out.println("Enter the Departure Date (yyyy-MM-dd):");
-        System.out.print("> ");
-        String startDateInput = sc.next();
-        sc.nextLine();
-        System.out.println("Enter the Departure Time (HH:mm:ss):");
-        System.out.print("> ");
-        String timeInput = sc.next();
-        String dateTimeInput = startDateInput + " " + timeInput;
+        while (departureDate == null) {
+
+            System.out.println("Enter the Departure Date (yyyy-MM-dd):");
+            System.out.print("> ");
+            String startDateInput = sc.next();
+            sc.nextLine();
+
+            System.out.println("Enter the Departure Time (HH:mm:ss):");
+            System.out.print("> ");
+            String timeInput = sc.next();
+            String dateTimeInput = startDateInput + " " + timeInput;
             try {
-                departureDate = formatDate(dateTimeInput);
+                departureDate = formatDate(dateTimeInput);    
+                
+                System.out.println("Valid DepartDate: " + departureDate);
+                
+                
+                
             } catch (Exception e) {
+                System.out.println("DepartDate: " + departureDate);
                 System.out.println("Departure Date: " + returnDate);
+                System.out.println(dateTimeInput);
+
 
                 System.out.println("Invalid Date format. Please try again");
-            }
+            }    
+        }
+        
         
         if (roundTrip == 2) { //only collect return date if is return flight
             //roundtrip
@@ -270,6 +294,11 @@ public class RunApp {
             List<List<FlightSchedule>> flightScheduleList = customerUseCaseSessionBean.searchForFlightRoutes(
             departureAirport, departureDate, destinationAirport,
             returnDate, directFlight);
+            
+            
+            System.out.println("check if empty flightScheduleList: " + flightScheduleList);
+            
+            
             boolean needReturn = returnDate != null;
             // there is only one size nothing is being added at all 
             double directTo = callDirectTo(flightScheduleList, departureAirport, destinationAirport, numPassengers);
@@ -481,13 +510,28 @@ public class RunApp {
         System.out.println("STEP 1b: SELECT CABIN CLASS");
         System.out.println("");
         FlightCabinClass chosenFlightCabinClass = chooseFCC(flightSchedule, sc);
-        long chosenFCCId = chosenFlightCabinClass.getId();
-//        System.out.println("cabin class id is " + chosenFCCId);
-        finalFlightCabinClassIdList.add(chosenFCCId);
+        
+        //comparator
         Comparator<Fare> lowestFareComparator = Comparator.comparingDouble(fare -> fare.getFareAmount().doubleValue());
-        // choses the lowest fare for this flight cbin class
-        List<Fare> faresForThisCabinClass = chosenFlightCabinClass.getFlightSchedule().getFlightSchedulePlan().getFares().stream().filter(x -> x.getCabinClass().getCabinClassName().equals(chosenFlightCabinClass.getCabinClass().getCabinClassName())).collect(Collectors.toList());
-        Fare fare = faresForThisCabinClass.stream().min(lowestFareComparator).get();
+        
+         Fare fare;
+        
+        if (chosenFlightCabinClass == null ) {
+            //no preference
+            List<Fare> faresForThisCabinClass = flightSchedule.getFlightSchedulePlan().getFares().stream()
+                    .collect(Collectors.toList());
+            fare = faresForThisCabinClass.stream().min(lowestFareComparator).get();
+            
+            
+        } else {
+            long chosenFCCId = chosenFlightCabinClass.getId();
+    //        System.out.println("cabin class id is " + chosenFCCId);
+            finalFlightCabinClassIdList.add(chosenFCCId);
+            // choses the lowest fare for this flight cbin class
+            List<Fare> faresForThisCabinClass = chosenFlightCabinClass.getFlightSchedule().getFlightSchedulePlan().getFares().stream()
+                    .filter(x -> x.getCabinClass().getCabinClassName().equals(chosenFlightCabinClass.getCabinClass().getCabinClassName())).collect(Collectors.toList());
+            fare = faresForThisCabinClass.stream().min(lowestFareComparator).get();
+        }
 
         // this would be the total amount of money for one leg of the flight itnerary
         double amountForOnePassenger = fare.getFareAmount().doubleValue();
@@ -495,8 +539,25 @@ public class RunApp {
         System.out.println("STEP 1c: SELECT SEAT FOR PASSENGERS");
         System.out.println();
         // add the list of seats chosen for one flight schedule
-        List<String> seatsChosen = printSeatLayout(chosenFlightCabinClass, numPassengers, sc, passengerDetails);
+        
+        if (chosenFlightCabinClass == null) {
+            //iterate through all cabin clases
+            List<FlightCabinClass> allFCCinFlight = flightSchedule.getFccList();
+            
+            for (FlightCabinClass fcc : allFCCinFlight) {
+                printSeatLayout(flightSchedule, fcc, numPassengers, sc, passengerDetails);    
+            }
+        } else {
+            printSeatLayout(flightSchedule, chosenFlightCabinClass, numPassengers, sc, passengerDetails);    
+        }
+        
+        List<String> seatsChosen = chooseSeats(numPassengers, passengerDetails, sc);
+        
+        
+        
+//        List<String> seatsChosen = printSeatLayout( chosenFlightCabinClass, numPassengers, sc, passengerDetails);
         finalSeatsChoice.add(seatsChosen);
+
         return amountForOnePassenger;
     }
     
@@ -508,10 +569,17 @@ public class RunApp {
             System.out.println("");
             counter += 1;
         }
-        
+        System.out.println("Press -1 to choose NO PREFERENCE");
+
         System.out.println("Enter Your Option:");
         System.out.print("> ");
-        FlightCabinClass chosenFlightCabinclass = fs.getFccList().get(scanner.nextInt() - 1);
+        int chosenOption = scanner.nextInt() - 1;
+        
+        FlightCabinClass chosenFlightCabinclass = null;
+        
+        if (chosenOption > -1) { // if have pref
+            chosenFlightCabinclass = fs.getFccList().get(chosenOption);    
+        }
         return chosenFlightCabinclass;
     }
     
@@ -626,7 +694,7 @@ public class RunApp {
         return totalCostForThisSingleFlight;
     }
     
-        public static double printConnectingFlightsSingle(List<FlightSchedule> fsList, int numPassengers) {
+    public static double printConnectingFlightsSingle(List<FlightSchedule> fsList, int numPassengers) {
         System.out.println();
         int counter = 1;
         double totalCostForThisSingleFlight = 0.0;
@@ -656,7 +724,7 @@ public class RunApp {
         return totalCostForThisSingleFlight;
     }
     
-     public static double printConnectingFlights(List<FlightSchedule> fs1List, List<FlightSchedule> fs2List, String start, String end, int numPassengers) {
+    public static double printConnectingFlights(List<FlightSchedule> fs1List, List<FlightSchedule> fs2List, String start, String end, int numPassengers) {
          double totalLowestFare = 0;
          for (int i = 0; i < fs1List.size(); i++) {
              // assuming that since they are return flights they can only be of the same aircraft configuration
@@ -712,8 +780,7 @@ public class RunApp {
         }
         return (lowestFare.getFareAmount().doubleValue());
     }
-    
-    
+        
     public static double printFlightConnectingCabinClass(FlightCabinClass fcc, boolean isConnecting) {
         System.out.println("");
         System.out.println("Cabin Class Type: " + fcc.getCabinClass().getCabinClassName());
@@ -736,12 +803,14 @@ public class RunApp {
         return date;
     }
     
-    public List<String> printSeatLayout(FlightCabinClass chosenFlightCabinClass, int numPassengers, Scanner sc, List<HashMap<Integer, String>> passengerDetails) {
+    public List<String> printSeatLayout(FlightSchedule fs, FlightCabinClass chosenFlightCabinClass, 
+        int numPassengers, Scanner sc, List<HashMap<Integer, String>> passengerDetails) {
+        
         int numRows = chosenFlightCabinClass.getCabinClass().getNumRows().intValue();
         int numColumns = chosenFlightCabinClass.getCabinClass().getNumAisles().intValue() + chosenFlightCabinClass.getCabinClass().getNumSeatsAbreast().intValue();
-        HashSet<String> reservedSeatsSet = new HashSet<String>();
+//        HashSet<String> reservedSeatsSet = new HashSet<String>();
         // need to initalise this
-        List<String> seatChosen = new ArrayList<String>();
+//        List<String> seatChosen = new ArrayList<String>();
         List<Seat> seatList = chosenFlightCabinClass.getSeatList();
         
         // make a seat array
@@ -758,6 +827,8 @@ public class RunApp {
         // Sort the list using the custom comparator
         Collections.sort(seatList, customComparator);
         int counter = 0;
+        System.out.println("Printing for Flight Cabin Class: " + chosenFlightCabinClass.getCabinClass());
+        
         // initalise all the aisles
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numColumns; j++) {
@@ -784,9 +855,20 @@ public class RunApp {
             System.out.println(); 
         }
         
+        return chooseSeats(numPassengers, 
+            passengerDetails, sc);
+        
+//        return seatChosen;
+    }
+    
+    public static List<String> chooseSeats(int numPassengers, List<HashMap<Integer, String>> passengerDetails, Scanner sc) {
+       
+        HashSet<String> reservedSeatsSet = new HashSet<String>();
+        List<String> seatChosen = new ArrayList<String>();
 
-       // choosing of seats for all passengers
-       HashSet<String> chosenSeats = new HashSet<String>();
+        
+        // choosing of seats for all passengers
+        HashSet<String> chosenSeats = new HashSet<String>();
         for (int i = 0; i < numPassengers; i++) {
             boolean validSeatChosen = false;
             while (!validSeatChosen) {

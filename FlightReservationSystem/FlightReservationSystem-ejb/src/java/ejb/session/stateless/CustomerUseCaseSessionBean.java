@@ -34,7 +34,6 @@ import javax.persistence.PersistenceContext;
 import util.enumerations.FlightSchedulePlanStatus;
 import util.enumerations.SeatStatus;
 import util.exception.CustomerAuthenticationFailedException;
-import util.exception.CustomerNotRegisteredException;
 import util.util.Pair;
 
 /**

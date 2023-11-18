@@ -101,7 +101,7 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanLocal
         Employee e = (Employee)em.createQuery("SELECT e FROM Employee e WHERE e.loginUsername = :username")
                 .setParameter("username", username)
                 .getSingleResult();
-        return e;
+                return e;
         } catch (NoResultException e) {
             throw new InitialDatabaseException("Database Not Initalised");
         }

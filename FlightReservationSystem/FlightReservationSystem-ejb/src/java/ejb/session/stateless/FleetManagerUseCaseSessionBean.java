@@ -7,7 +7,6 @@ package ejb.session.stateless;
 import entity.AircraftConfiguration;
 import entity.AircraftType;
 import entity.CabinClass;
-import entity.Seat;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +19,9 @@ import javax.ejb.TransactionAttributeType;
 import util.enumerations.AircraftTypeName;
 import util.enumerations.CabinClassType;
 import util.enumerations.JobTitle;
-import util.enumerations.SeatStatus;
 import util.exception.InvalidStringLengthException;
 import util.exception.SeatLimitExceedException;
+import util.exception.WrongRoleException;
 
 /**
  *
@@ -49,7 +48,8 @@ public class FleetManagerUseCaseSessionBean implements FleetManagerUseCaseSessio
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public long createAircraftConfigurationForFleetManager(JobTitle jobTitle, AircraftTypeName aircraftTypeName, String configurationName, List<CabinClassType> cabinClassNameList, List<Integer> numAislesList, List<Integer> numRowsList, List<Integer> numSeatsAbreastList, List<String> seatingConfigurationList) throws InvalidStringLengthException{
+    public long createAircraftConfigurationForFleetManager(JobTitle jobTitle, AircraftTypeName aircraftTypeName, String configurationName, List<CabinClassType> cabinClassNameList, List<Integer> numAislesList, List<Integer> numRowsList, List<Integer> numSeatsAbreastList, List<String> seatingConfigurationList) 
+            throws InvalidStringLengthException, WrongRoleException {
         try {
             if (jobTitle == JobTitle.FLEET_MANAGER) {
                 AircraftType aircraftType = aircraftTypeEntitySessionBean.getAircraftTypeFromName(aircraftTypeName);
@@ -75,13 +75,17 @@ public class FleetManagerUseCaseSessionBean implements FleetManagerUseCaseSessio
                     // Throw a custom exceptionF
                     ejbContext.setRollbackOnly();
                     throw new SeatLimitExceedException("Total seats exceed the aircraft limit.");
+                    
                 } else {
                     // Create and persist the aircraft configuration
                     long configurationId = aircraftConfigurationEntitySessionBean.createNewAircraftConfiguration(aircraftType, configurationName, cabinClassList);
                     // If everything is successful, return the configurationId
                     return configurationId;
                 }
-            } 
+            } else {
+                throw new WrongRoleException("Wrong role, login as Fleet Manager");
+            }
+            
         } catch (SeatLimitExceedException e) {
             // Handle the exception if needed
             System.out.println(e.getMessage());
@@ -143,6 +147,4 @@ public class FleetManagerUseCaseSessionBean implements FleetManagerUseCaseSessio
     public AircraftConfiguration viewAircraftConfigurationDetails(String configurationName) {
         return aircraftConfigurationEntitySessionBean.getAircraftConfigurationPerConfigurationName(configurationName);
     }
-    
-    
 }

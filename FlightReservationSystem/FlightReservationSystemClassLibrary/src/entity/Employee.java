@@ -49,8 +49,9 @@ public class Employee implements Serializable {
 //    @NotNull
     private GenderType gender;
     
-    // @Column(nullable = false)
+    @Column(nullable = false)
     @Size(min = 1, max = 64)
+    @NotNull
     private String email; 
     
     @Column (nullable = false, length = 64)
@@ -89,7 +90,10 @@ public class Employee implements Serializable {
     public Employee() {
     }
     
-    public Employee(String firstName, String lastName, GenderType gender, String email, String phoneNumber, JobTitle jobTitle, EmploymentType employmentType, String loginUsername, String loginPassword) {
+    public Employee(String firstName, String lastName, GenderType gender, String email, 
+        String phoneNumber, JobTitle jobTitle, EmploymentType employmentType, 
+        String loginUsername, String loginPassword) {
+        
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;
