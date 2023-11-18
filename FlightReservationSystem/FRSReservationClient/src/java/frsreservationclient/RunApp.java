@@ -286,7 +286,7 @@ public class RunApp {
             
             try {
                 returnDate = formatDate(endDateTimeInput);
-//                System.out.println("Return Date: " + returnDate.toString());
+
             } catch (Exception e) {
                 System.out.println("Invalid Date format. Please try again");
             }
@@ -787,10 +787,15 @@ public class RunApp {
         System.out.println("");
         System.out.println("Cabin Class Type: " + fcc.getCabinClass().getCabinClassName());
         Comparator<Fare> fareLowest = (x, y) -> (int)(x.getFareAmount().doubleValue() - y.getFareAmount().doubleValue());
-        List<Fare> faresForThisCabinClass = fcc.getFlightSchedule().getFlightSchedulePlan().getFares().stream().filter(x -> x.getCabinClass().getCabinClassName().equals(fcc.getCabinClass().getCabinClassName())).collect(Collectors.toList());
+        System.out.println("FCC ID IS " + fcc.getId());
+        System.out.println("FS ID IS " + fcc.getFlightSchedule().getId());
+        System.out.println("FSP ID IS " + fcc.getFlightSchedule().getFlightSchedulePlan().getId());
+         System.out.println("FS ID IS " + fcc.getFlightSchedule().getFlightSchedulePlan());
+        System.out.println("FSP FARE SIZE IS " + fcc.getFlightSchedule().getFlightSchedulePlan().getFares().size());
+        List<Fare> faresForThisCabinClass = fcc.getFlightSchedule().getFlightSchedulePlan().getFares().stream().filter(x -> x.getCabinClass().getCabinClassName().equals(fcc.getCabinClass().getCabinClassName())).collect(Collectors.toList());       
         Fare lowestFare = faresForThisCabinClass.stream().min(fareLowest).get();
         if (!isConnecting){
-            System.out.println("Fare Basis Code is " + lowestFare.getFareBasicCode());
+            // System.out.println("Fare Basis Code is " + lowestFare.getFareBasicCode());
             System.out.println("Price per passenger: $" + lowestFare.getFareAmount().doubleValue());
             System.out.println("Total Price for all passengers: $" + (lowestFare.getFareAmount().doubleValue() * numPassengers));
         }
@@ -852,13 +857,15 @@ public class RunApp {
                 if (breakpointSet.contains(j)) {
                     seatLayout[i][j] = "<=>";
                 } else {
-                    if (seatList.get(counter).getSeatStatus() == SeatStatus.RESERVED) {
-                        String xxx = seatList.get(counter).getSeatNumber().length() == 3 ? "XXX" : "XX";
-                        seatLayout[i][j] = xxx;
-                    } else {
-                        seatLayout[i][j] = seatList.get(counter).getSeatNumber();
+                    if (counter < seatList.size()) {
+                        if (seatList.get(counter).getSeatStatus() == SeatStatus.RESERVED) {
+                            String xxx = seatList.get(counter).getSeatNumber().length() == 3 ? "XXX" : "XX";
+                            seatLayout[i][j] = xxx;
+                        } else {
+                            seatLayout[i][j] = seatList.get(counter).getSeatNumber();
+                        }
+                        counter += 1;
                     }
-                    counter += 1;
                 }
             }
         }

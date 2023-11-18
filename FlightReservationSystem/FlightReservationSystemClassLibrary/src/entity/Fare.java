@@ -60,6 +60,13 @@ public class Fare implements Serializable {
         this.cabinClass = cabinClass;
     }
     
+//        public Fare(String fareBasicCode, BigDecimal fareAmount, CabinClass cabinClass, FlightSchedulePlan fsp) {
+//        this.fareBasicCode = fareBasicCode;
+//        this.fareAmount = fareAmount;
+//        this.cabinClass = cabinClass;
+//        this.flightSchedulePlan = fsp;
+//    }
+    
     // getters and setters
 
     public FlightSchedulePlan getFlightSchedulePlan() {
