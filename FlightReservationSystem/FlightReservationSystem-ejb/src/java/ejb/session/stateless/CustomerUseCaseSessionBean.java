@@ -147,6 +147,8 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
             x.getFlightSchedulePlan().getFares().size();
         });
         
+        
+        
         if (flightScheduleList1.size() == 0) {
                throw new NoFlightFoundException("No Flight has been found!");
         }
@@ -198,11 +200,15 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
                 connectingFlightPair.getFirst().getFccList().size();
                 connectingFlightPair.getFirst().getFlightSchedulePlan().getFares().size();
                 connectingFlightPair.getFirst().getFccList().stream().forEach(x -> x.getSeatList().size());
+                System.out.println("LEG 1");
+                System.out.println(connectingFlightPair.getFirst().getFlightSchedulePlan().getFlight().getFlightNumber());
                 leg1.add(connectingFlightPair.getFirst());
                 
                 connectingFlightPair.getSecond().getFccList().size();
                 connectingFlightPair.getSecond().getFlightSchedulePlan().getFares().size();
                 connectingFlightPair.getSecond().getFccList().stream().forEach(x -> x.getSeatList().size());
+                System.out.println("LEG 2");
+                System.out.println(connectingFlightPair.getSecond().getFlightSchedulePlan().getFlight().getFlightNumber());
                 leg2.add(connectingFlightPair.getSecond());
             }
            toReturn.add(leg1);
@@ -213,21 +219,26 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
                 List<FlightSchedule> leg4 = new ArrayList<FlightSchedule>();
                 List<Pair<FlightSchedule>> listOfAllCombinationsS = getConnectingFlightsOneWay(destinationAirport, departureAirport);
                 Calendar cal4 = Calendar.getInstance();
-                cal4.setTime(departureDate);
+                cal4.setTime(returnDate);
                 cal4.add(Calendar.DAY_OF_YEAR, -3);
                 Date startDate4 = cal4.getTime();
                 cal4.add(Calendar.DAY_OF_YEAR, 6);
                 Date endDate4 = cal4.getTime();
-                listOfAllCombinations = listOfAllCombinations.stream().filter(x -> x.getFirst().getDepartureTime().after(startDate4) && x.getFirst().getDepartureTime().before(endDate4)).collect(Collectors.toList());
-                for (Pair<FlightSchedule> connectingFlightPair : listOfAllCombinationsS) {
+                
+                listOfAllCombinations = listOfAllCombinationsS.stream().filter(x -> x.getFirst().getDepartureTime().after(startDate4) && x.getFirst().getDepartureTime().before(endDate4)).collect(Collectors.toList());
+                for (Pair<FlightSchedule> connectingFlightPair : listOfAllCombinations) {
                     connectingFlightPair.getFirst().getFccList().size();
                     connectingFlightPair.getFirst().getFlightSchedulePlan().getFares().size();
                     connectingFlightPair.getFirst().getFccList().stream().forEach(x -> x.getSeatList().size());
+                    System.out.println("LEG 1");
+                    System.out.println(connectingFlightPair.getFirst().getDepartureTime());
                     leg3.add(connectingFlightPair.getFirst());
                     
                     connectingFlightPair.getSecond().getFccList().size();
                     connectingFlightPair.getSecond().getFlightSchedulePlan().getFares().size();
                     connectingFlightPair.getSecond().getFccList().stream().forEach(x -> x.getSeatList().size());
+                    System.out.println("LEG 2");
+                    System.out.println(connectingFlightPair.getSecond().getDepartureTime());
                     leg4.add(connectingFlightPair.getSecond());
                 }
                 toReturn.add(leg3);

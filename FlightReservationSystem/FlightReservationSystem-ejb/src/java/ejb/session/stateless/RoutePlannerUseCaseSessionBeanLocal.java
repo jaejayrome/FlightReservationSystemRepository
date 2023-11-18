@@ -9,6 +9,7 @@ import entity.Flight;
 import entity.FlightRoute;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.DuplicateFlightRouteException;
 import util.util.Pair;
 
 /**
@@ -17,7 +18,7 @@ import util.util.Pair;
  */
 @Local
 public interface RoutePlannerUseCaseSessionBeanLocal {
-    public long createNewFlightRoute(Airport originAirport, Airport destinationAirport, FlightRoute flightRoute, boolean makeReturnFlightRoute);
+    public long createNewFlightRoute(Airport originAirport, Airport destinationAirport, FlightRoute flightRoute, boolean makeReturnFlightRoute) throws DuplicateFlightRouteException;
     public List<FlightRoute> viewAllFlightRoute();
     public List<Airport> getAllAirport();
     public boolean deleteFlightRoute(String originAirport, String destinationAirport);

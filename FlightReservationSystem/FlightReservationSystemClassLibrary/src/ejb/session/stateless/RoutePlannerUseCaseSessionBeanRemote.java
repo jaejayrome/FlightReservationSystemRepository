@@ -8,6 +8,7 @@ import entity.Airport;
 import entity.FlightRoute;
 import java.util.List;
 import javax.ejb.Remote;
+import util.exception.DuplicateFlightRouteException;
 
 /**
  *
@@ -15,7 +16,7 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface RoutePlannerUseCaseSessionBeanRemote {
-    public long createNewFlightRoute(Airport originAirport, Airport destinationAirport, FlightRoute flightRoute, boolean makeReturnFlightRoute);
+    public long createNewFlightRoute(Airport originAirport, Airport destinationAirport, FlightRoute flightRoute, boolean makeReturnFlightRoute) throws DuplicateFlightRouteException;
     public List<FlightRoute> viewAllFlightRoute();
     public List<Airport> getAllAirport();
     public boolean deleteFlightRoute(String originAirport, String destinationAirport);
