@@ -82,9 +82,9 @@ public class PartnerUseCaseSessionBean implements PartnerUseCaseSessionBeanLocal
     }
     
     @Override 
-    public List<Pair<FlightSchedule, FlightSchedule>> partnerSearchForFlightRoutesConnecting(String departureAirport, String departureDateS, String destinationAirport, String returnDateS) {
+    public List<FlightSchedule> partnerSearchForFlightRoutesConnecting(String departureAirport, String departureDateS, String destinationAirport, boolean isFirst) {
         Date departureDate = formatDate(departureDateS);
-        Date returnDate = formatDate(returnDateS);
+       
         Calendar cal = Calendar.getInstance();
         cal.setTime(departureDate);
         cal.add(Calendar.DAY_OF_YEAR, -3); // Subtract 3 days for the start date
@@ -92,7 +92,7 @@ public class PartnerUseCaseSessionBean implements PartnerUseCaseSessionBeanLocal
         cal.add(Calendar.DAY_OF_YEAR, 6); // Add 6 days to the start date to get the end date (3 days after)
         Date endDate = cal.getTime();
         
-        ArrayList<Pair<FlightSchedule, FlightSchedule>> leg1 = new ArrayList<Pair<FlightSchedule, FlightSchedule>>();
+        ArrayList<FlightSchedule> toReturn = new ArrayList<>();
 
         List<Pair<FlightSchedule, FlightSchedule>> listOfAllCombinations = getConnectingFlightsOneWay(departureAirport, destinationAirport);
         Calendar cal3 = Calendar.getInstance();
@@ -104,36 +104,38 @@ public class PartnerUseCaseSessionBean implements PartnerUseCaseSessionBeanLocal
 
         listOfAllCombinations = listOfAllCombinations.stream().filter(x -> x.getKey().getDepartureTime().after(startDate3) && x.getKey().getDepartureTime().before(endDate3)).collect(Collectors.toList());
         for (Pair<FlightSchedule, FlightSchedule> connectingFlightPair : listOfAllCombinations) {
-            connectingFlightPair.getKey().getFccList().size();
-            connectingFlightPair.getKey().getFlightSchedulePlan().getFares().size();
-            connectingFlightPair.getKey().getFccList().stream().forEach(x -> x.getSeatList().size());
-
-            connectingFlightPair.getValue().getFccList().size();
-            connectingFlightPair.getValue().getFlightSchedulePlan().getFares().size();
-            connectingFlightPair.getValue().getFccList().stream().forEach(x -> x.getSeatList().size());
-
-            leg1.add(connectingFlightPair);
-
+            if (isFirst) {
+                toReturn.add(connectingFlightPair.getKey());
+            } else {
+                toReturn.add(connectingFlightPair.getValue());
+            }
         }
-        return leg1;
+        toReturn.stream().forEach(y -> {
+            em.detach(y.getFlightSchedulePlan().getFlight().getAircraftConfiguration().getAircraftType());
+            em.detach(y.getFlightSchedulePlan().getFlight().getAircraftConfiguration());
+            em.detach(y.getFlightSchedulePlan().getFlight());
+            y.getFlightBookingList().stream().forEach(z -> z.getReservedSeats().stream().forEach(b -> em.detach(b)));
+            y.getFlightBookingList().stream().forEach(z -> em.detach(z));
+            y.getFccList().stream().forEach(z -> {
+                z.getCabinClass().getAircraftConfigurationList().stream().forEach(a -> em.detach(a.getAircraftType()));
+                z.getCabinClass().getAircraftConfigurationList().stream().forEach(a -> em.detach(a));
+                em.detach(z.getCabinClass());
+                em.detach(z);
+            });
+            em.detach(y.getFlightSchedulePlan());
+            em.detach(y);
+        });
+        return toReturn;
     }
     
     
     
     @Override 
     public List<FlightSchedule> partnerSearchForFlightRoutes(
-        String departureAirport, String departureDateS, String destinationAirport, String returnDateS, int directFlight) {
-        
-       List<FlightSchedule> toReturn = new ArrayList<FlightSchedule>();
-        //if directFlight == 1, mean prefer directlight 
-        //if directFlight == 2, means no pref
+        String departureAirport, String departureDateS, String destinationAirport) {
         
         Date departureDate = formatDate(departureDateS);
-        Date returnDate = null;
-        if (!returnDateS.isEmpty()) {
-            returnDate = formatDate(returnDateS);    
-        }
-        
+
         Calendar cal = Calendar.getInstance();
         cal.setTime(departureDate);
         cal.add(Calendar.DAY_OF_YEAR, -3); // Subtract 3 days for the start date
@@ -154,10 +156,6 @@ public class PartnerUseCaseSessionBean implements PartnerUseCaseSessionBeanLocal
             x.getFccList().stream().forEach(y -> y.getSeatList().size());
             x.getFlightSchedulePlan().getFares().size();
         });
-        
-        if (flightScheduleList1.size() == 0) {
-              // throw new NoFlightFoundException("No Flight has been found!");
-        }
         
         flightScheduleList1.stream().forEach(y -> {
             em.detach(y.getFlightSchedulePlan().getFlight().getAircraftConfiguration().getAircraftType());

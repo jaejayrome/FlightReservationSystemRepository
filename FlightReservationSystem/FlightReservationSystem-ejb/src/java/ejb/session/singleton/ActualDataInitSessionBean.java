@@ -265,15 +265,15 @@ public class ActualDataInitSessionBean {
         
         Fare f2 = new Fare("ABW1234", new BigDecimal(3000), a2.getCabinClassList().stream().filter(x -> x.getCabinClassName() == CabinClassType.F).findFirst().get());
         List<Fare> fareList13 = new ArrayList<Fare>();
-        fareList10.add(f2);
+        fareList13.add(f2);
         
         Fare j2 = new Fare("ABX1234", new BigDecimal(1500), a2.getCabinClassList().stream().filter(x -> x.getCabinClassName() == CabinClassType.J).findFirst().get());
         List<Fare> fareList14 = new ArrayList<Fare>();
-        fareList11.add(j2);
+        fareList14.add(j2);
         
         Fare y2 = new Fare("ABY1234", new BigDecimal(500), a2.getCabinClassList().stream().filter(x -> x.getCabinClassName() == CabinClassType.Y).findFirst().get());
         List<Fare> fareList15 = new ArrayList<Fare>();
-        fareList12.add(y2);
+        fareList15.add(y2);
         
         secondRWfaresForCabinClassList.put(CabinClassType.F, fareList13);
         secondRWfaresForCabinClassList.put(CabinClassType.J, fareList14);
@@ -363,7 +363,7 @@ public class ActualDataInitSessionBean {
         
         Fare toAdd4 = new Fare("ABC1234", new BigDecimal(2900), b.getCabinClassList().stream().filter(x -> x.getCabinClassName() == CabinClassType.F).findFirst().get());
         List<Fare> fareList4 = new ArrayList<Fare>();
-        fareList1.add(toAdd4);
+        fareList4.add(toAdd4);
         
         Fare toAdd5 = new Fare("BCD2345", new BigDecimal(1400), b.getCabinClassList().stream().filter(x -> x.getCabinClassName() == CabinClassType.J).findFirst().get());
         List<Fare> fareList5 = new ArrayList<Fare>();
@@ -373,9 +373,9 @@ public class ActualDataInitSessionBean {
         List<Fare> fareList6 = new ArrayList<Fare>();
         fareList6.add(toAdd6);
         
-        secondfaresForCabinClassList.put(CabinClassType.F, fareList1);
-        secondfaresForCabinClassList.put(CabinClassType.J, fareList2);
-        secondfaresForCabinClassList.put(CabinClassType.Y, fareList3);
+        secondfaresForCabinClassList.put(CabinClassType.F, fareList4);
+        secondfaresForCabinClassList.put(CabinClassType.J, fareList5);
+        secondfaresForCabinClassList.put(CabinClassType.Y, fareList6);
         long idsecond = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML511", secondDepartureDateList, Duration.ofSeconds(3 * 60 * 60), null, 0, secondfaresForCabinClassList, false, -1, null);
         scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML512", secondDepartureDateList, Duration.ofSeconds(3 * 60 * 60), null, 0, secondfaresForCabinClassList, true, idsecond, Duration.ofSeconds(2 * 60 * 60));
         

@@ -23,8 +23,9 @@ public interface PartnerUseCaseSessionBeanLocal {
     public long partnerLogin(String username, String password);
     public void partnerLogout(long id);
    public List<FlightSchedule> partnerSearchForFlightRoutes(
-        String departureAirport, String departureDateS, String destinationAirport, String returnDateS, int directFlight);
-    public List<javafx.util.Pair<FlightSchedule, FlightSchedule>> partnerSearchForFlightRoutesConnecting(String departureAirport, String departureDateS, String destinationAirport, String returnDateS);
+        String departureAirport, String departureDateS, String destinationAirport);
+   public List<FlightSchedule> partnerSearchForFlightRoutesConnecting(String departureAirport, String departureDateS, String destinationAirport, boolean isFirst);
     public List<Fare> retreiveFares(long id, String cabinClass);
+    
             
 }

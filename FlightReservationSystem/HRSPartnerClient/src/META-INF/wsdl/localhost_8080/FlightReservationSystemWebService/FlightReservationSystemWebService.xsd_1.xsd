@@ -8,6 +8,10 @@
 
 <xs:element name="partnerLogoutResponse" type="tns:partnerLogoutResponse"/>
 
+<xs:element name="partnerSearchConnectingFlightLeg1" type="tns:partnerSearchConnectingFlightLeg1"/>
+
+<xs:element name="partnerSearchConnectingFlightLeg1Response" type="tns:partnerSearchConnectingFlightLeg1Response"/>
+
 <xs:element name="partnerSearchFlight" type="tns:partnerSearchFlight"/>
 
 <xs:element name="partnerSearchFlightResponse" type="tns:partnerSearchFlightResponse"/>
@@ -31,14 +35,14 @@
 
 <xs:complexType name="retrieveFaresForFlightSchedule">
 <xs:sequence>
-<xs:element name="flightScheduleId" type="xs:long"/>
+<xs:element name="flightSchedulIed" type="xs:long"/>
 <xs:element name="cabinClassName" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="retrieveFaresForFlightScheduleResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:fare" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="return" type="tns:fare" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -212,13 +216,26 @@
 <xs:sequence/>
 </xs:complexType>
 
+<xs:complexType name="partnerSearchConnectingFlightLeg1">
+<xs:sequence>
+<xs:element name="departureAirport" type="xs:string" minOccurs="0"/>
+<xs:element name="departureDate" type="xs:string" minOccurs="0"/>
+<xs:element name="destinationAirport" type="xs:string" minOccurs="0"/>
+<xs:element name="isFirst" type="xs:boolean"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="partnerSearchConnectingFlightLeg1Response">
+<xs:sequence>
+<xs:element name="return" type="tns:flightSchedule" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="partnerSearchFlight">
 <xs:sequence>
 <xs:element name="departureAirport" type="xs:string" minOccurs="0"/>
 <xs:element name="departureDate" type="xs:string" minOccurs="0"/>
 <xs:element name="destinationAirport" type="xs:string" minOccurs="0"/>
-<xs:element name="returnDate" type="xs:string" minOccurs="0"/>
-<xs:element name="directFlight" type="xs:int"/>
 </xs:sequence>
 </xs:complexType>
 
