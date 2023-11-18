@@ -356,6 +356,7 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
         WeeklyFlightSchedulePlan flightSchedulePlan = new WeeklyFlightSchedulePlan(FlightSchedulePlanStatus.ACTIVE, endDate, flight);
         flightSchedulePlanEntitySessionBean.createFlightSchedulePlan(flightSchedulePlan);
 
+        System.out.println();
         // generate the flight schedules for this flight schedule plan
         List<FlightSchedule> collatedFlightSchedules = generateFlightSchedulePlan(departureDateList.get(0), endDate, duration, 7, flightSchedulePlan); 
 

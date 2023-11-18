@@ -11,6 +11,8 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import util.enumerations.FlightRouteStatus;
+import util.exception.DuplicateFlightRouteException;
+import util.exception.NoFlightFoundException;
 import util.exception.NoFlightRouteFoundException;
 
 /**
@@ -36,21 +38,39 @@ public class RoutePlannerUseCaseSessionBean implements RoutePlannerUseCaseSessio
     }
     
     @Override
-    public long createNewFlightRoute(Airport originAirport, Airport destinationAirport, FlightRoute flightRoute, boolean makeReturnFlightRoute) {
-        
-        FlightRoute persistedFlightRoute = flightRouteEntitySessionBean.createFlightRoute(flightRoute);
-        flightRoute.setOrigin(originAirport);
-        flightRoute.setDestination(destinationAirport);
-        flightRoute.setFlightGroup(flightRoute.getId());
-        
-        if (makeReturnFlightRoute) {
-            FlightRoute returnFlightRoute = new FlightRoute(FlightRouteStatus.DISABLED);
-            FlightRoute returnPersistedFlightRoute = flightRouteEntitySessionBean.createFlightRoute(returnFlightRoute);
-            returnPersistedFlightRoute.setOrigin(destinationAirport);
-            returnPersistedFlightRoute.setDestination(originAirport);
-            returnPersistedFlightRoute.setFlightGroup(flightRoute.getId());
+    public long createNewFlightRoute(Airport originAirport, Airport destinationAirport, FlightRoute flightRoute, boolean makeReturnFlightRoute) throws DuplicateFlightRouteException {
+        // check for duplicates
+        try {
+            FlightRoute complementaryFlightRoute = flightRouteEntitySessionBean.getFlightRouteByCityName(originAirport.getIataAirportCode(), destinationAirport.getIataAirportCode());
+            throw new DuplicateFlightRouteException("Duplicated Flight Route");
+        } catch (NoFlightRouteFoundException e) {
+            FlightRoute persistedFlightRoute = flightRouteEntitySessionBean.createFlightRoute(flightRoute);
+            flightRoute.setOrigin(originAirport);
+            flightRoute.setDestination(destinationAirport);
+            flightRoute.setFlightGroup(flightRoute.getId());
+
+            if (makeReturnFlightRoute) {
+                FlightRoute returnFlightRoute = new FlightRoute(FlightRouteStatus.DISABLED);
+                FlightRoute returnPersistedFlightRoute = flightRouteEntitySessionBean.createFlightRoute(returnFlightRoute);
+                returnPersistedFlightRoute.setOrigin(destinationAirport);
+                returnPersistedFlightRoute.setDestination(originAirport);
+                returnPersistedFlightRoute.setFlightGroup(flightRoute.getId());
+            } else {
+                // check whether is there any flight route for it  
+                // airportEntitySessionBean
+                try {
+                FlightRoute complementaryFlightRoute = flightRouteEntitySessionBean.getFlightRouteByCityName(destinationAirport.getIataAirportCode(), originAirport.getIataAirportCode());
+                // if there is flight route that is being found 
+                long flightRouteGroup = complementaryFlightRoute.getId();
+                persistedFlightRoute.setFlightGroup(flightRouteGroup);
+                } catch (NoFlightRouteFoundException ee) {
+                    System.out.println(ee.toString());
+                }
+
+            }
+            return persistedFlightRoute.getId();
         }
-        return persistedFlightRoute.getId();
+        
     }
     
     @Override

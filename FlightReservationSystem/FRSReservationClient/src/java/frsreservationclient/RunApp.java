@@ -12,6 +12,7 @@ import entity.FlightCabinClass;
 import entity.FlightReservation;
 import entity.FlightSchedule;
 import entity.Seat;
+import static java.lang.System.out;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import util.enumerations.CabinClassType;
 import util.enumerations.SeatStatus;
 import util.exception.CustomerAuthenticationFailedException;
 import util.exception.NoFlightFoundException;
@@ -474,7 +476,6 @@ public class RunApp {
         FlightSchedule flightSchedule = flightScheduleList.get(choice).get(sc.nextInt() -1);
         long chosenFlightScheduleId = flightSchedule.getId();
         sc.nextLine();
-//        System.out.println("flight schedule is " + flightSchedule.getId());
         finalFlightScheduleIdList.add(chosenFlightScheduleId);
 
         // fare should be computed here 
@@ -482,7 +483,6 @@ public class RunApp {
         System.out.println("");
         FlightCabinClass chosenFlightCabinClass = chooseFCC(flightSchedule, sc);
         long chosenFCCId = chosenFlightCabinClass.getId();
-//        System.out.println("cabin class id is " + chosenFCCId);
         finalFlightCabinClassIdList.add(chosenFCCId);
         Comparator<Fare> lowestFareComparator = Comparator.comparingDouble(fare -> fare.getFareAmount().doubleValue());
         // choses the lowest fare for this flight cbin class
@@ -615,7 +615,7 @@ public class RunApp {
             System.out.println("");
             boolean isAdded = false;
             for (FlightCabinClass fcc : fs.getFccList()) {
-                double pricePerPassengerPerCCPerFS = printFlightCabinClass(fcc, numPassengers, false);
+                double pricePerPassengerPerCCPerFS = printFareInformation(fcc, numPassengers);
                 if (!isAdded) {
                     totalCostForThisSingleFlight += pricePerPassengerPerCCPerFS;
                     isAdded = true;
@@ -641,10 +641,9 @@ public class RunApp {
             System.out.println("");
             System.out.println("Cabin Class Availability");
             System.out.println("Cabin Class Options: " + fs.getFccList().size());
-//            System.out.println("");
             boolean isAdded = false;
             for (FlightCabinClass fcc : fs.getFccList()) {
-                double returnVal = printFlightCabinClass(fcc, numPassengers, true);
+                double returnVal = printFareInformation(fcc, numPassengers);
                 if (!isAdded) {
                     totalCostForThisSingleFlight += returnVal;
                     isAdded = true;
@@ -680,43 +679,45 @@ public class RunApp {
             System.out.println("Cabin Class Options: " + connectingPair.getSecond().getFccList().size());
             System.out.println("");
             // find the cheapest fare for a cabin class
-            for (int k = 0; k < connectingPair.getFirst().getFccList().size(); k++){
-                System.out.println("DO NOTE THAT THIS IS FOR THE SAME CABIN CLASS TYPE");
-                System.out.println("");
-                System.out.println("Cabin Class Information for 1st leg");
-                double lowestFare1 = printFlightConnectingCabinClass(connectingPair.getFirst().getFccList().get(k), true);
-                System.out.println();
-                System.out.println("Cabin Class Information for 2nd leg");
-                double lowestFare2 = printFlightConnectingCabinClass(connectingPair.getSecond().getFccList().get(k), true);
-                System.out.println();
-                // System.out.println("Lowest Fare Offered!");
-                System.out.println("Price per passenger: $" + (lowestFare1 + lowestFare2)) ;
-                System.out.println("Total Price for all passengers: $" + ((lowestFare1 + lowestFare2) * numPassengers));
-                totalLowestFare = ((lowestFare1 + lowestFare2) * numPassengers);
-            }
+//            for (int k = 0; k < connectingPair.getFirst().getFccList().size(); k++){
+//                System.out.println("DO NOTE THAT THIS IS FOR THE SAME CABIN CLASS TYPE");
+//                System.out.println("");
+//                System.out.println("Cabin Class Information for 1st leg");
+//                double lowestFare1 = printFlightConnectingCabinClass(connectingPair.getFirst().getFccList().get(k), true);
+//                System.out.println();
+//                System.out.println("Cabin Class Information for 2nd leg");
+//                double lowestFare2 = printFlightConnectingCabinClass(connectingPair.getSecond().getFccList().get(k), true);
+//                System.out.println();
+//                System.out.println("Price per passenger: $" + (lowestFare1 + lowestFare2)) ;
+//                System.out.println("Total Price for all passengers: $" + ((lowestFare1 + lowestFare2) * numPassengers));
+//                totalLowestFare = ((lowestFare1 + lowestFare2) * numPassengers);
+//            }
          }
         return totalLowestFare;
      }
+     
+     public static double printFareInformation(FlightCabinClass fcc, int numPassengers) {
+         CabinClassType name = fcc.getCabinClass().getCabinClassName();
+         double fccPrice = fcc.getFlightSchedule().getFlightSchedulePlan().getFares().stream().filter(x -> x.getCabinClass().getCabinClassName().equals(name)).findAny().get().getFareAmount().doubleValue();
+         System.out.println(name + " " + fccPrice);
+         System.out.println("Price per passenger: $" + fccPrice);
+            System.out.println("Total Price for all passengers: $" + (fccPrice * numPassengers));
+         return fccPrice;
+     }
          
             
-    public static double printFlightCabinClass(FlightCabinClass fcc, int numPassengers, boolean isConnecting) {
-        System.out.println("");
-        System.out.println("Cabin Class Type: " + fcc.getCabinClass().getCabinClassName());
-        Comparator<Fare> fareLowest = (x, y) -> (int)(x.getFareAmount().doubleValue() - y.getFareAmount().doubleValue());
-        System.out.println("FCC ID IS " + fcc.getId());
-        System.out.println("FS ID IS " + fcc.getFlightSchedule().getId());
-        System.out.println("FSP ID IS " + fcc.getFlightSchedule().getFlightSchedulePlan().getId());
-         System.out.println("FS ID IS " + fcc.getFlightSchedule().getFlightSchedulePlan());
-        System.out.println("FSP FARE SIZE IS " + fcc.getFlightSchedule().getFlightSchedulePlan().getFares().size());
-        List<Fare> faresForThisCabinClass = fcc.getFlightSchedule().getFlightSchedulePlan().getFares().stream().filter(x -> x.getCabinClass().getCabinClassName().equals(fcc.getCabinClass().getCabinClassName())).collect(Collectors.toList());       
-        Fare lowestFare = faresForThisCabinClass.stream().min(fareLowest).get();
-        if (!isConnecting){
-            // System.out.println("Fare Basis Code is " + lowestFare.getFareBasicCode());
-            System.out.println("Price per passenger: $" + lowestFare.getFareAmount().doubleValue());
-            System.out.println("Total Price for all passengers: $" + (lowestFare.getFareAmount().doubleValue() * numPassengers));
-        }
-        return (lowestFare.getFareAmount().doubleValue());
-    }
+//    public static double printFlightCabinClass(FlightCabinClass fcc, int numPassengers, boolean isConnecting) {
+//        System.out.println("");
+//        System.out.println("Cabin Class Type: " + fcc.getCabinClass().getCabinClassName());
+//        Comparator<Fare> fareLowest = (x, y) -> (int)(x.getFareAmount().doubleValue() - y.getFareAmount().doubleValue());
+//        List<Fare> faresForThisCabinClass = fcc.getFlightSchedule().getFlightSchedulePlan().getFares().stream().filter(x -> x.getCabinClass().getCabinClassName().equals(fcc.getCabinClass().getCabinClassName())).collect(Collectors.toList());       
+////        Fare lowestFare = faresForThisCabinClass.stream().min(fareLowest).get();
+//        if (!isConnecting){
+//            System.out.println("Price per passenger: $" + faresForThisCabinClass.get(0).getFareAmount().doubleValue());
+//            System.out.println("Total Price for all passengers: $" + (faresForThisCabinClass.get(0).getFareAmount().doubleValue() * numPassengers));
+//        }
+//        return (faresForThisCabinClass.get(0).getFareAmount().doubleValue());
+//    }
     
     
     public static double printFlightConnectingCabinClass(FlightCabinClass fcc, boolean isConnecting) {
