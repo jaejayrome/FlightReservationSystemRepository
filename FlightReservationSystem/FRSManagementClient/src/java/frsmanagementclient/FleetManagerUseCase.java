@@ -49,14 +49,14 @@ public class FleetManagerUseCase {
     He would choose 
     Then ask for the configuration name
     */
-    public void createAircraftConfiguration() {
-           if (aircraftTypeList.size() > 0) {
+    public int createAircraftConfiguration() {
+        if (aircraftTypeList.size() > 0) {
                iniitalise();
                printAircraftType();
                printAircraftTypeChoices();
                AircraftTypeName aircraftTypeName = typeMap.get(this.scanner.nextInt());
                scanner.nextLine();
-               if(aircraftTypeName != null) {
+            if(aircraftTypeName != null) {
                 System.out.print("Enter the name of the configuration: ");
                 String configurationName = this.scanner.nextLine();
                 
@@ -70,13 +70,15 @@ public class FleetManagerUseCase {
                 promptUserForCabinClass(cabinClassNameList, numAislesList, numRowsList, numSeatsAbreastList, seatingConfigurationList);
                 
                 try {
-                fleetManagerUseCaseSessionBeanRemote.createAircraftConfigurationForFleetManager(JobTitle.FLEET_MANAGER, aircraftTypeName, configurationName
+                    fleetManagerUseCaseSessionBeanRemote.createAircraftConfigurationForFleetManager(JobTitle.FLEET_MANAGER, aircraftTypeName, configurationName
                     , cabinClassNameList, numAislesList, numRowsList, numSeatsAbreastList, seatingConfigurationList);
+                    return 1;
                 } catch (InvalidStringLengthException exception) {
                     System.out.println(exception.getMessage());
                 }
-               }
-           }
+            }
+        }
+        return -11;
     }
     
     public void viewAllAircraftConfiguration() {

@@ -57,6 +57,8 @@ public class RoutePlannerUseCase {
             // intiialised as disabled until a flight has been added
             FlightRoute flightRoute = new FlightRoute(FlightRouteStatus.DISABLED);
             routePlannerUseCaseSessionBeanRemote.createNewFlightRoute(originAirport, destinationAirport, flightRoute, makeReturnFlightRoute);
+            
+            
         }
     }
     
