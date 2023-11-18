@@ -8,11 +8,11 @@ import entity.Employee;
 import ejb.session.stateless.RoutePlannerUseCaseSessionBeanRemote;
 import entity.Airport;
 import entity.FlightRoute;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import util.enumerations.FlightRouteStatus;
-import util.util.Pair;
+import util.exception.DuplicateFlightRouteException;
+import util.exception.NoExistingAirportException;
 
 /**
  *
@@ -56,9 +56,11 @@ public class RoutePlannerUseCase {
             boolean makeReturnFlightRoute = choice == 1 ? true : false;
             // intiialised as disabled until a flight has been added
             FlightRoute flightRoute = new FlightRoute(FlightRouteStatus.DISABLED);
-            routePlannerUseCaseSessionBeanRemote.createNewFlightRoute(originAirport, destinationAirport, flightRoute, makeReturnFlightRoute);
-            
-            
+            try {
+                routePlannerUseCaseSessionBeanRemote.createNewFlightRoute(originAirport, destinationAirport, flightRoute, makeReturnFlightRoute);
+            } catch (DuplicateFlightRouteException e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
     
@@ -66,7 +68,7 @@ public class RoutePlannerUseCase {
         List<FlightRoute> flightRoutes = routePlannerUseCaseSessionBeanRemote.viewAllFlightRoute();
          //Comparator<Pair<FlightRoute>> sortPairs = (x, y) -> x.getFirst().getOrigin().getAirportName().compareTo(y.getFirst().getOrigin().getAirportName());
   
-        if (flightRoutes.size() > 0){
+        if (flightRoutes.size() > 0) {
             flightRoutes.stream().forEach(flightRoutePair -> {
                 printSingleFlightRoute(flightRoutePair);
             });
@@ -97,12 +99,17 @@ public class RoutePlannerUseCase {
         int choice = scanner.nextInt();
         
         if (choice == 1) {
-            boolean deletedOrDisabled = routePlannerUseCaseSessionBeanRemote.deleteFlightRoute(originAirport, destinationAirport);
-            if (deletedOrDisabled) {
-                System.out.println("You have successfully disabled / deleted the flight route!");
-            } else {
+            try {
+                boolean deletedOrDisabled = routePlannerUseCaseSessionBeanRemote.deleteFlightRoute(originAirport, destinationAirport);
+                if (deletedOrDisabled) {
+                    System.out.println("You have successfully disabled / deleted the flight route!");
+                } else {
+                    System.out.println("You have entered an invalid flight route!");
+                }
+            } catch (NoExistingAirportException e) {
                 System.out.println("You have entered an invalid flight route!");
             }
+            
         } else {
             return;
         }
@@ -119,9 +126,15 @@ public class RoutePlannerUseCase {
     }
     
     public void printSingleFlightRoute(FlightRoute flightRoute) {
+        
+        
         System.out.println("");
         System.out.println("Flight Route Information");
-        System.out.println("Flight Route Origin: " + flightRoute.getOrigin().getAirportName());
+        if (flightRoute.getFlightRouteStatus() == FlightRouteStatus.ACTIVE) {
+            System.out.println("Flight Route Status: ACTIVE");
+        } else {
+            System.out.println("Flight Route Status: DISABLED");
+        }        System.out.println("Flight Route Origin: " + flightRoute.getOrigin().getAirportName());
         System.out.println("Flight Route Origin: " + flightRoute.getOrigin().getIataAirportCode());
         System.out.println("Flight Route Origin: " + flightRoute.getOrigin().getId());
         System.out.println("Flight Route Destination: " + flightRoute.getDestination().getAirportName());
