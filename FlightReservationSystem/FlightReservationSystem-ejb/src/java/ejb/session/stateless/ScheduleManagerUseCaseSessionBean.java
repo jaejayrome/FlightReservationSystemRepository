@@ -617,7 +617,7 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
         return flightSchedules;
     }
     
-    public FlightSchedulePlan updateAndPersistFare( HashMap<CabinClassType, List<Fare>> fareForEveryCabinClass, FlightSchedulePlan flightSchedulePlan) {
+    public FlightSchedulePlan updateAndPersistFare(HashMap<CabinClassType, List<Fare>> fareForEveryCabinClass, FlightSchedulePlan flightSchedulePlan) {
         int numberOfCabinClass = flightSchedulePlan.getFlight().getAircraftConfiguration().getCabinClassList().size();
         List<CabinClass> cabinClassList = flightSchedulePlan.getFlight().getAircraftConfiguration().getCabinClassList();
         for (CabinClass cabinClass : cabinClassList) {
@@ -626,7 +626,8 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
             fareListForThisCabinClass.stream().forEach(x -> {
                 // persist fare
                 // associate fare to fsp
-                Fare f = new Fare(x.getFareBasicCode(), x.getFareAmount(), x.getCabinClass(), flightSchedulePlan); 
+                Fare f = new Fare(x.getFareBasicCode(), x.getFareAmount(), x.getCabinClass()); 
+                f.setFlightSchedulePlan(flightSchedulePlan);
                 // association between fare -> cabinClass done 
                 fareEntitySessionBean.createFare(f);
 
