@@ -9,6 +9,7 @@ import entity.FlightReservation;
 import java.util.List;
 import javax.ejb.Local;
 import util.enumerations.RoleType;
+import util.exception.CustomerAuthenticationFailedException;
 
 
 /**
