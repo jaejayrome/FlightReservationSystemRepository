@@ -70,6 +70,8 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
         }
     }
     
+    
+    
     @Override
     public boolean disableFlightRoute(String originAirport, String destinationAirport) {
         // just label as disabled 
