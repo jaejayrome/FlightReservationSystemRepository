@@ -6,6 +6,7 @@ package frsreservationclient;
 
 import ejb.session.stateless.CustomerSessionBeanRemote;
 import ejb.session.stateless.CustomerUseCaseSessionBeanRemote;
+import entity.Customer;
 import entity.Fare;
 import entity.FlightBooking;
 import entity.FlightCabinClass;
@@ -97,18 +98,8 @@ public class RunApp {
                 } catch (CustomerAuthenticationFailedException e) {
                     if (e.getMessage().equals("noAccount")) {
                         System.out.println("Customer account has not been "
-                                + "created yet, would you like to create a new "
-                                + "account?\n");
-                        System.out.println("Enter Y to register new account");
-                        System.out.println("Enter N try logging in again");
-                        String tmpOption = sc.nextLine();
-                        if (tmpOption.equals("Y")) {
-                            createNewCustomerAccount(sc);
-                            this.customerIsLoggedIn = true;
-                            System.out.println("You account has been created and you are logged in");
-                        } else {
-                            userAuthPrompt(sc);
-                        }
+                                + "created yet, please try again\n");
+                        userAuthPrompt(sc);
                     } else {
                         System.out.println("Invalid Password, please try again");
                         userAuthPrompt(sc);
@@ -145,6 +136,13 @@ public class RunApp {
         }
     }
     
+    public void logout(Customer customer) {
+        System.out.println("Thank you for using Merlion Airlines");
+        System.out.println("You have been logged out");
+        customerIsLoggedIn = false;
+
+    }
+    
     public void mainMenuCustomer(Scanner scanner) {
         System.out.println("Press 0 to logout");
         System.out.println("Press 1 to search flights and make reservations");
@@ -178,7 +176,7 @@ public class RunApp {
         System.out.println("You have selected an invalid option!");
      }
      
-    public void createNewCustomerAccount(Scanner sc) {
+    public int createNewCustomerAccount(Scanner sc) {
          System.out.println("Enter Your First Name");
             System.out.print("> ");
             String firstName = sc.nextLine();
@@ -199,7 +197,13 @@ public class RunApp {
             String password = sc.nextLine();
             
             // need check whether a customer has been created already or not
-            customerSessionBean.createNewCustomer(firstName, lastName, email, phoneNumber, address, password);
+            
+            
+            if (customerSessionBean.createNewCustomer(firstName, lastName, email, phoneNumber, address, password) == null){
+                System.out.println("Duplicate enail detected, please try again.");
+                return -1;
+            }
+            return 1;
      }
     
     public void searchForFlightRoutes(Scanner sc, boolean isCustomer) {
@@ -232,38 +236,43 @@ public class RunApp {
         destinationAirport = sc.next();
         sc.nextLine();
         
-        System.out.println("Enter the Departure Date (yyyy-MM-dd):");
-        System.out.print("> ");
-        String startDateInput = sc.next();
-        sc.nextLine();
-        System.out.println("Enter the Departure Time (HH:mm:ss):");
-        System.out.print("> ");
-        String timeInput = sc.next();
-        String dateTimeInput = startDateInput + " " + timeInput;
+        while (departureDate == null) {
+            System.out.println("Enter the Departure Date (yyyy-MM-dd):");
+            System.out.print("> ");
+            String startDateInput = sc.next();
+            sc.nextLine();
+            System.out.println("Enter the Departure Time (HH:mm:ss):");
+            System.out.print("> ");
+            String timeInput = sc.next();
+            String dateTimeInput = startDateInput + " " + timeInput;
             try {
                 departureDate = formatDate(dateTimeInput);
             } catch (Exception e) {
                 System.out.println("Departure Date: " + returnDate);
-
                 System.out.println("Invalid Date format. Please try again");
             }
+        }
+        
+        
         
         if (roundTrip == 2) { //only collect return date if is return flight
-            //roundtrip
-            System.out.println("Enter the Return Departure Date (yyyy-MM-dd):");
-            System.out.print("> ");
-            String endDateInput = sc.next();
-            sc.nextLine();
-            System.out.println("Enter the Return Departure Time (HH:mm:ss):");
-            System.out.print("> ");
-            String endTimeInput = sc.next();
-            String endDateTimeInput = endDateInput + " " + endTimeInput;
-            
-            try {
-                returnDate = formatDate(endDateTimeInput);
+            while (returnDate == null) {
+                //roundtrip
+                System.out.println("Enter the Return Departure Date (yyyy-MM-dd):");
+                System.out.print("> ");
+                String endDateInput = sc.next();
+                sc.nextLine();
+                System.out.println("Enter the Return Departure Time (HH:mm:ss):");
+                System.out.print("> ");
+                String endTimeInput = sc.next();
+                String endDateTimeInput = endDateInput + " " + endTimeInput;
 
-            } catch (Exception e) {
-                System.out.println("Invalid Date format. Please try again");
+                try {
+                    returnDate = formatDate(endDateTimeInput);
+
+                } catch (Exception e) {
+                    System.out.println("Invalid Date format. Please try again");
+                }
             }
         }
         
@@ -410,6 +419,12 @@ public class RunApp {
     
     public void viewAllFlightReservations() {
         List<FlightReservation> myFRList = customerUseCaseSessionBean.viewAllFlightReservations(this.customerId);
+        if (myFRList.isEmpty()) {
+            System.out.println("No current reservations to display");
+            System.out.println();
+            return;
+        }
+        
         
         int counter = 1; 
         for (FlightReservation fr : myFRList) {
@@ -423,6 +438,11 @@ public class RunApp {
     
     public void viewFlightReservationDetails(Scanner scanner) {
         List<FlightReservation> myFRList = customerUseCaseSessionBean.viewAllFlightReservations(customerId);
+        if (myFRList.isEmpty()) {
+            System.out.println("No current reservations details to display");
+            System.out.println();
+            return;
+        }
         FlightReservation chosenFR = chooseFlightReservation(myFRList, scanner);
         printSpecificFlightReservation(chosenFR);
     }

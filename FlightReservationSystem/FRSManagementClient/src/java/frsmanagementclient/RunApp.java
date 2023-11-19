@@ -150,7 +150,10 @@ public class RunApp {
                         doLogout(scanner);
                         break;
                     case 1: 
-                        fleetManagerUseCase.createAircraftConfiguration();
+                        int tmp = fleetManagerUseCase.createAircraftConfiguration();
+                        if (tmp > 0) {
+                            System.out.println("Invalid Aircraft Configuration, please try again!");
+                        }
                         showUseCaseOptions(scanner, jobtitle);
                         break;
                     case 2: 

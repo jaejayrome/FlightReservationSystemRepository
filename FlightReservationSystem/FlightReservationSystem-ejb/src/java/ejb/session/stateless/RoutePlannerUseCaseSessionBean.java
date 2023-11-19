@@ -12,7 +12,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import util.enumerations.FlightRouteStatus;
 import util.exception.DuplicateFlightRouteException;
-import util.exception.NoFlightFoundException;
+import util.exception.NoExistingAirportException;
 import util.exception.NoFlightRouteFoundException;
 
 /**
@@ -42,7 +42,7 @@ public class RoutePlannerUseCaseSessionBean implements RoutePlannerUseCaseSessio
         // check for duplicates
         try {
             FlightRoute complementaryFlightRoute = flightRouteEntitySessionBean.getFlightRouteByCityName(originAirport.getIataAirportCode(), destinationAirport.getIataAirportCode());
-            throw new DuplicateFlightRouteException("Duplicated Flight Route");
+            throw new DuplicateFlightRouteException("Duplicated Flight Route, did not create a new route");
         } catch (NoFlightRouteFoundException e) {
             FlightRoute persistedFlightRoute = flightRouteEntitySessionBean.createFlightRoute(flightRoute);
             flightRoute.setOrigin(originAirport);
@@ -59,18 +59,23 @@ public class RoutePlannerUseCaseSessionBean implements RoutePlannerUseCaseSessio
                 // check whether is there any flight route for it  
                 // airportEntitySessionBean
                 try {
-                FlightRoute complementaryFlightRoute = flightRouteEntitySessionBean.getFlightRouteByCityName(destinationAirport.getIataAirportCode(), originAirport.getIataAirportCode());
+                    FlightRoute complementaryFlightRoute = flightRouteEntitySessionBean.getFlightRouteByCityName(destinationAirport.getIataAirportCode(), originAirport.getIataAirportCode());
                 // if there is flight route that is being found 
-                long flightRouteGroup = complementaryFlightRoute.getId();
-                persistedFlightRoute.setFlightGroup(flightRouteGroup);
+                    long flightRouteGroup = complementaryFlightRoute.getId();
+                    persistedFlightRoute.setFlightGroup(flightRouteGroup);
                 } catch (NoFlightRouteFoundException ee) {
                     System.out.println(ee.toString());
+                } catch (NoExistingAirportException exception) {
+                    System.out.println("Airport does not exits");
                 }
-
             }
             return persistedFlightRoute.getId();
+        } catch (NoExistingAirportException exception) {
+                System.out.println("Airport does not exits");
+                //dummy return method to get compiler to stop yelling @ me
+                long tmp = 1;
+                return tmp;
         }
-        
     }
     
     @Override
@@ -100,7 +105,10 @@ public class RoutePlannerUseCaseSessionBean implements RoutePlannerUseCaseSessio
                 persistedFlightRoute.setFlightGroup(flightRouteGroup);
             } catch (NoFlightRouteFoundException e) {
                 System.out.println(e.toString());
-            }
+            } catch (NoExistingAirportException exception) {
+                System.out.println("Airport does not exits");
+
+            }      
         }
         
         return persistedFlightRoute.getId();
@@ -117,16 +125,19 @@ public class RoutePlannerUseCaseSessionBean implements RoutePlannerUseCaseSessio
     }
     
     @Override
-    public boolean deleteFlightRoute(String originAirport, String destinationAirport) {
+    public boolean deleteFlightRoute(String originAirport, String destinationAirport) throws NoExistingAirportException {
         // checks whether is this flight route in use 
         List<Flight> flightsFound = flightEntitySessionBean.checkFlightRouteUsed(originAirport, destinationAirport);
         // if in use ,disable it 
-        if (!flightsFound.isEmpty()) {
-            return flightRouteEntitySessionBean.deleteFlightRoute(originAirport, destinationAirport);
-        } else {
-            return flightRouteEntitySessionBean.disableFlightRoute(originAirport, destinationAirport);
-        }
         
+        try {
+            if (!flightsFound.isEmpty()) {
+                return flightRouteEntitySessionBean.disableFlightRoute(originAirport, destinationAirport);
+            } else {
+                return flightRouteEntitySessionBean.deleteFlightRoute(originAirport, destinationAirport);
+            }    
+        } catch (NoExistingAirportException exception) {
+            return false;
+        }      
     }
-    
 }
