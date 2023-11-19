@@ -199,6 +199,8 @@ public class RunApp {
                 System.out.println("Duplicate enail detected, please try again.");
                 return -1;
             }
+            System.out.println("You have successfully registered your account!");
+
             return 1;
      }
     
@@ -272,7 +274,7 @@ public class RunApp {
             }
         }
         
-        System.out.println("Do you prefer a direct or connecting flight? Press 1 for direct, 2 for Connecting");
+        System.out.println("Do you prefer a direct flight? Press 1 for direct, 2 no preference");
         System.out.print("> ");
         directFlight = sc.nextInt(); 
         sc.nextLine();

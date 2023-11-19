@@ -137,7 +137,13 @@ public class FleetManagerUseCase {
         System.out.println("Enter Configuration Name: ");
         String configurationName = scanner.nextLine();
         AircraftConfiguration aircraftConfiguration = fleetManagerUseCaseSessionBeanRemote.viewAircraftConfigurationDetails(configurationName);
-        printSingleAircraftConfiguration(aircraftConfiguration, 1);
+        
+        if (aircraftConfiguration == null) {
+            //no aircraft, print out error msg 
+            System.out.println("Invalid Aircraft Configuration name, please try again");
+        } else {
+            printSingleAircraftConfiguration(aircraftConfiguration, 1);
+        }
     }
     
     public void printSingleAircraftConfiguration(AircraftConfiguration aircraftConfiguration, int counter) {
