@@ -89,7 +89,7 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
         String originAP = airportEntitySessionBean.findAirport(originAirport).getIataAirportCode();
         String destinationAP = airportEntitySessionBean.findAirport(destinationAirport).getIataAirportCode();
                 
-        if (id == null) {
+        if (id == -1) {
             // do not run, existing flight number
             return -1;
         } 
@@ -231,25 +231,29 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
     @Override
     public Flight viewSpecificFlightDetails(String flightNumber) {
         long FlightID = flightEntitySessionBean.getIdByFlightNumber(flightNumber);
-        Flight flight = flightEntitySessionBean.getFlightById(FlightID);
-        flight.getAircraftConfiguration().getCabinClassList().size();
-        flight.getFlightSchedulePlanList().size();
         
-        flight.getFlightSchedulePlanList().stream().forEach(x -> {
-            x.getFlightScheduleList().size();
-            x.getFares().size();
-            x.getFlightScheduleList().stream().forEach(y -> {
-                y.getFlightBookingList().size();
-                y.getFccList().size();
-                y.getFccList().stream().forEach(z -> {
-                    z.getSeatList().size();
+        if (FlightID == 9) { // no flight with that flightNumber
+            return null;
+        } else {
+            Flight flight = flightEntitySessionBean.getFlightById(FlightID);
+            flight.getAircraftConfiguration().getCabinClassList().size();
+            flight.getFlightSchedulePlanList().size();
+
+            flight.getFlightSchedulePlanList().stream().forEach(x -> {
+                x.getFlightScheduleList().size();
+                x.getFares().size();
+                x.getFlightScheduleList().stream().forEach(y -> {
+                    y.getFlightBookingList().size();
+                    y.getFccList().size();
+                    y.getFccList().stream().forEach(z -> {
+                        z.getSeatList().size();
+                    });
+                    y.getFlightBookingList().stream().forEach(a -> a.getReservedSeats().size());
                 });
-                y.getFlightBookingList().stream().forEach(a -> a.getReservedSeats().size());
+
             });
-            
-        });
-        
-        return flight;
+            return flight;
+        }
     }
     
     @Override

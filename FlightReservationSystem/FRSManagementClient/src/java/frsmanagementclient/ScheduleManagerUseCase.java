@@ -188,8 +188,11 @@ public class ScheduleManagerUseCase {
         System.out.print("> ");
         String flightNumber = scanner.next();
         Flight flight = scheduleManagerUseCaseSessionBeanRemote.viewSpecificFlightDetails(flightNumber);
-        printSpecificSingleFlight(flight);
-        
+        if (flight == null) {
+            System.out.println("Flight not found, unable to print details");
+        } else {
+            printSpecificSingleFlight(flight);
+        }   
     }
     
     // give them a few metrics to choose from 
