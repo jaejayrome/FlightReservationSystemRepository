@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import util.enumerations.FlightRouteStatus;
+import util.exception.DuplicateFlightRouteException;
 import util.util.Pair;
 
 /**
@@ -56,7 +57,11 @@ public class RoutePlannerUseCase {
             boolean makeReturnFlightRoute = choice == 1 ? true : false;
             // intiialised as disabled until a flight has been added
             FlightRoute flightRoute = new FlightRoute(FlightRouteStatus.DISABLED);
-            routePlannerUseCaseSessionBeanRemote.createNewFlightRoute(originAirport, destinationAirport, flightRoute, makeReturnFlightRoute);
+            try {
+                routePlannerUseCaseSessionBeanRemote.createNewFlightRoute(originAirport, destinationAirport, flightRoute, makeReturnFlightRoute);
+            } catch (DuplicateFlightRouteException e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
     

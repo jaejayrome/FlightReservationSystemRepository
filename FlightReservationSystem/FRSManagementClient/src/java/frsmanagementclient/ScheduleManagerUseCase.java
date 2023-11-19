@@ -90,19 +90,21 @@ public class ScheduleManagerUseCase {
         System.out.println("Step 1: Enter the Flight Number");
         System.out.print("> ");
         String flightNumber = scanner.next();
+        scanner.nextLine();
         // make the flight status disbaled until a flight schedule plan is attached to it 
         
         System.out.println("Step 2: Enter a name for an aircraft configuration for this flight");
         System.out.print("> ");
-        String configurationName = scanner.next();
+        String configurationName = scanner.nextLine();
+        
         
         System.out.println("Step 3: Enter the Origin IATA Airport Code for the flight");
         System.out.print("> ");
-        String originCity = scanner.next();
+        String originCity = scanner.nextLine();
         
         System.out.println("Step 4: Enter the Destination IATA Airport Code for the flight");
         System.out.print("> ");
-        String destinationCity = scanner.next();
+        String destinationCity = scanner.nextLine();
         
         System.out.println("origin IATA is " + originCity);
         System.out.println("destination IATA is " + destinationCity);
@@ -147,23 +149,7 @@ public class ScheduleManagerUseCase {
     // arranged if exact return flight is after it, it should be directly below it
     public void viewAllFlights() {
         List<Flight> flightList = scheduleManagerUseCaseSessionBeanRemote.viewAllFlights();
-        Comparator<Flight> flightComparator = (x, y) -> {
-            String routeIdX = x.getFlightRoute().getOrigin().getIataAirportCode() + "-" + x.getFlightRoute().getDestination().getIataAirportCode();
-            String routeIdY = y.getFlightRoute().getOrigin().getIataAirportCode() + "-" + y.getFlightRoute().getDestination().getIataAirportCode();
-
-            // Compare the route identifiers.
-            int routeComparison = routeIdX.compareTo(routeIdY);
-            
-            if (routeComparison == 0) {
-                // If the routes are the same, check if one is a complementary return flight.
-                boolean xIsReturnFlight = x.getFlightRoute().getOrigin().getIataAirportCode().equals(y.getFlightRoute().getDestination().getIataAirportCode()) &&
-                                          x.getFlightRoute().getDestination().getIataAirportCode().equals(y.getFlightRoute().getOrigin().getIataAirportCode());
-                return xIsReturnFlight ? -1 : 1;
-            }
-            return routeComparison;
-        };
-                
-       flightList.stream().forEach(x -> printSingleFlight(x));
+        flightList.stream().forEach(x -> printSingleFlight(x));
     }
     
     // everything down to the cabin class have been printed out
