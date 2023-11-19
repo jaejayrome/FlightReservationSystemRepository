@@ -43,13 +43,10 @@ public class FlightReservation implements Serializable {
     @OneToMany
     private List<Passenger> passengerList;
     
-    @ManyToOne (optional = true)
-    @JoinColumn (nullable = true)
+    @ManyToOne (optional = false)
+    @JoinColumn (nullable = false)
     private Customer customer;
-    
-    @ManyToOne  (optional = true)
-    @JoinColumn (nullable = true)
-    private Partner partner;
+
     public FlightReservation() {    
     }
 
@@ -59,22 +56,6 @@ public class FlightReservation implements Serializable {
         this.passengerList = new ArrayList<Passenger>();
         this.creditCardNumber = creditCardNumber;
         this.date = new Date();
-    }
-    
-    public FlightReservation(Partner partner, String creditCardNumber) {
-        this.customer = customer;
-        this.flightBookingList = new ArrayList<FlightBooking>();
-        this.passengerList = new ArrayList<Passenger>();
-        this.creditCardNumber = creditCardNumber;
-        this.date = new Date();
-    }
-
-    public Partner getPartner() {
-        return partner;
-    }
-
-    public void setPartner(Partner partner) {
-        this.partner = partner;
     }
 
     public Date getDate() {

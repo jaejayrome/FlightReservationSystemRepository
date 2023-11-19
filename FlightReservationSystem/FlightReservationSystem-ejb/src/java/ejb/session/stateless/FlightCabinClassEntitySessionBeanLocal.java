@@ -18,5 +18,4 @@ public interface FlightCabinClassEntitySessionBeanLocal {
     public FlightCabinClass createFlightCabinClass(FlightCabinClass fcc);
     public List<FlightCabinClass> findFccForParticularFS(String flightNumber, Date uniqueDate);
     public FlightCabinClass getFCCByID(long id);
-    public List<FlightCabinClass> findFccWithFSAndFCCType(long fsID, String cabinClassType);
 }

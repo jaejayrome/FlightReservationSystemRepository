@@ -46,9 +46,4 @@ public class PartnerEntitySessionBean implements PartnerEntitySessionBeanLocal {
         Partner p = em.find(Partner.class, id);
         p.setIsLoggedIn(newStatus);
     }
-    
-    @Override
-    public Partner findPartner(long id) {
-        return em.find(Partner.class, id);
-    }
 }

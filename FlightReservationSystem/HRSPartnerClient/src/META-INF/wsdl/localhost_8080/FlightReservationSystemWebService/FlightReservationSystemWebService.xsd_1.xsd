@@ -16,10 +16,6 @@
 
 <xs:element name="partnerSearchFlightResponse" type="tns:partnerSearchFlightResponse"/>
 
-<xs:element name="retrieveCabinClass" type="tns:retrieveCabinClass"/>
-
-<xs:element name="retrieveCabinClassResponse" type="tns:retrieveCabinClassResponse"/>
-
 <xs:element name="retrieveFaresForFlightSchedule" type="tns:retrieveFaresForFlightSchedule"/>
 
 <xs:element name="retrieveFaresForFlightScheduleResponse" type="tns:retrieveFaresForFlightScheduleResponse"/>
@@ -31,10 +27,6 @@
 <xs:element name="retrieveFlights" type="tns:retrieveFlights"/>
 
 <xs:element name="retrieveFlightsResponse" type="tns:retrieveFlightsResponse"/>
-
-<xs:element name="retrieveSeats" type="tns:retrieveSeats"/>
-
-<xs:element name="retrieveSeatsResponse" type="tns:retrieveSeatsResponse"/>
 
 <xs:complexType name="partnerLogin">
 <xs:sequence>
@@ -281,32 +273,6 @@
 
 <xs:complexType name="partnerLogoutResponse">
 <xs:sequence/>
-</xs:complexType>
-
-<xs:complexType name="retrieveSeats">
-<xs:sequence>
-<xs:element name="fspID" type="xs:long"/>
-<xs:element name="cabinClassName" type="tns:cabinClassType" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="retrieveSeatsResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:seat" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="retrieveCabinClass">
-<xs:sequence>
-<xs:element name="fspID" type="xs:long"/>
-<xs:element name="cabinClassName" type="tns:cabinClassType" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="retrieveCabinClassResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:cabinClass" minOccurs="0"/>
-</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="retrieveFlightRoute">

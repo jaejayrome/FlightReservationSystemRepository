@@ -98,8 +98,17 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanLocal {
     }
     
     @Override
-    public List<Flight> checkFlightRouteUsed(String originAirport, String destinationAirport) {
-        return em.createQuery("SELECT flight FROM Flight flight WHERE flight.flightRoute.origin.iataAirportCode = :originAirport AND flight.flightRoute.destination.iataAirportCode = :destinationAirport")
+    public List<Flight> checkFlightRouteUsed(String originAirport, String destinationAirport) throws NoExistingAirportException {
+        //get airport 
+        Airport tmpOriginAirport = airportEntitySessionBean.findAirport(originAirport);
+        Airport tmpDestinationAirport = airportEntitySessionBean.findAirport(destinationAirport);
+        
+        if (tmpOriginAirport == null || tmpDestinationAirport == null) {
+            throw new NoExistingAirportException("Airport does not exist in system, unable to delete flight route!");
+        }
+        
+        
+        return em.createQuery("SELECT fl FROM Flight fl WHERE fl.flightRoute.origin.iataAirportCode = :originAirport AND fl.flightRoute.destination.iataAirportCode = :destinationAirport")
                 .setParameter("originAirport", originAirport)
                 .setParameter("destinationAirport", destinationAirport)
                 .getResultList();

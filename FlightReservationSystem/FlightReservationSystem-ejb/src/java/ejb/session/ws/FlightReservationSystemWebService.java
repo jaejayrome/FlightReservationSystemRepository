@@ -6,17 +6,13 @@ package ejb.session.ws;
 
 import ejb.session.stateless.PartnerEntitySessionBeanLocal;
 import ejb.session.stateless.PartnerUseCaseSessionBeanLocal;
-import entity.CabinClass;
 import entity.Fare;
 import entity.Flight;
 import entity.FlightBooking;
 import entity.FlightCabinClass;
-import entity.FlightReservation;
 import entity.FlightRoute;
 import entity.FlightSchedule;
 import entity.FlightSchedulePlan;
-import entity.Passenger;
-import entity.Seat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,7 +24,6 @@ import javax.jws.WebService;
 import javax.ejb.Stateless;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
-import util.enumerations.CabinClassType;
 
 /**
  *
@@ -62,39 +57,6 @@ public class FlightReservationSystemWebService {
         f.setAircraftConfiguration(null);
         f.setFlightRoute(null);
         return f;
-    }
-    
-    @WebMethod(operationName = "retrieveCabinClass")
-    public CabinClass retrieveCabinClass(
-        @WebParam(name = "fspID") long fspID,
-        @WebParam(name = "cabinClassName") CabinClassType name 
-    ) {
-        CabinClass cc = partnerUseCaseSessionBeanLocal.retrieveCabinClass(fspID, name);
-        cc.setAircraftConfigurationList(Collections.EMPTY_LIST);
-        return cc;
-    }
-    
-    @WebMethod(operationName = "retrieveSeats")
-    public List<Seat> retrieveSeats(
-        @WebParam(name = "fspID") long fspID,
-        @WebParam(name = "cabinClassName") CabinClassType name 
-    ) {
-        List<Seat> seatList = partnerUseCaseSessionBeanLocal.retrieveSeats(fspID, name);
-        seatList.stream().forEach(x -> {
-            x.setFlightCabinClass(null);
-        });
-        return seatList;
-    }
-    
-    @WebMethod(operationName = "makeFlightBooking")
-    public void makeFlightBooking(
-        @WebParam(name = "flightScheduleId") long flightScheduleId,
-        @WebParam(name = "cabinClassName") String cabinClassName,
-        @WebParam(name = "seatNumber") List<String> seatNumber,
-        @WebParam(name = "flightReservation") FlightReservation flightReservation,
-        @WebParam(name = "ticketPricesForEachFlightSchedule") double ticketPricesForEachFlightSchedule,
-        @WebParam(name = "passengerList") List<Passenger> passengerList) {
-        partnerUseCaseSessionBeanLocal.makeFlightBooking(flightScheduleId, cabinClassName, seatNumber, flightReservation, ticketPricesForEachFlightSchedule, passengerList);
     }
     
     @WebMethod(operationName = "retrieveFlightRoute")

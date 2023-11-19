@@ -37,11 +37,6 @@ public class SalesManagerUseCaseSessionBean implements SalesManagerUseCaseSessio
    @Override
    public List<FlightSchedule> viewFlightSchedules(String flightNumber) {
        List<FlightSchedule> flightScheduleList =  flightScheduleEntitySessionBean.viewFlightSchedulesByFlightNumber(flightNumber);
-       flightScheduleList.stream().forEach(x -> {
-           x.getFlightBookingList().size();
-           x.getFlightBookingList().stream().forEach(y -> y.getReservedSeats().size());
-       });
-       flightScheduleList.stream().forEach(x -> x.getFccList().size());
        return flightScheduleList;
    }
 }
