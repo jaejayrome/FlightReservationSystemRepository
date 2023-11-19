@@ -22,8 +22,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javafx.util.Pair;
-import ws.entity.CabinClass;
-import ws.entity.CabinClassType;
 import ws.entity.Fare;
 import ws.entity.Flight;
 import ws.entity.FlightCabinClass;
@@ -41,12 +39,7 @@ public class HRSPartnerClient {
     
 
 
-  private static long sessionId;  
-  
-  public HRSPartnerClient() {
-      
-  }
-
+  private static long sessionId;
     
     
     public static void showMenuOptions(Scanner sc, FlightReservationSystemWebService port) {
@@ -169,6 +162,8 @@ public class HRSPartnerClient {
         startDateTimeInput = dateTimeInput;
         
             try {
+                // check date time input here
+                // System.out.println("start is " + startDateTimeInput);
             } catch (Exception e) {                    
                 System.out.println("Invalid Date format. Please try again");
             }
@@ -197,242 +192,46 @@ public class HRSPartnerClient {
         directFlight = sc.nextInt(); 
         sc.nextLine();
         
-        // ask for cabin class preference
-        System.out.println("Cabin Class Preference");
-        System.out.println("Would you like to have any preference?");
-        System.out.println("Press 0 if you have no preference.");
-        System.out.println("Press 1 if you want to make a preference");
-        System.out.print("> ");
-        int ccPreference = sc.nextInt();
-        sc.nextLine();
-        CabinClassType chosenType = null;
-        boolean haveCCPreference = ccPreference == 1;
         
-        if (haveCCPreference) {
-            printAllCabinClassTypes();
-            System.out.print("> ");
-            int choice = sc.nextInt();
-            sc.nextLine();
-           
-            switch (choice) {
-                case 1: 
-                    chosenType = CabinClassType.F;
-                    break;
-                case 2:
-                    chosenType = CabinClassType.J;
-                    break;
-                case 3:
-                    chosenType = CabinClassType.W;
-                    break;
-                case 4: 
-                    chosenType = CabinClassType.Y;
-                    break;
-            }
-        } 
-        
-            List<List<FlightSchedule>> masterList = new ArrayList<>();
             // DIRECT: TO
             System.out.println("DIRECT: TO");
             System.out.println("");
-//            System.out.println("sdssdd " + startDateTimeInput);
-            List<FlightSchedule> list1  =  printFlightScheduleInformation(departureAirport, startDateTimeInput, destinationAirport, sc, port, chosenType);
-            if (!list1.isEmpty()) masterList.add(list1);
-            
+            printFlightScheduleInformation(departureAirport, startDateTimeInput, destinationAirport, sc, port);
 
             // DIRECT: RETURN
+            
             if (!returnDateTimeInput.isEmpty()) {
                 System.out.println("DIRECT: RETURN");
                 System.out.println("");
-                List<FlightSchedule> list2  = printFlightScheduleInformation(destinationAirport, returnDateTimeInput, departureAirport, sc, port, chosenType);
-                if (!list2.isEmpty()) masterList.add(list2);
-
+                printFlightScheduleInformation(destinationAirport, returnDateTimeInput, departureAirport, sc, port);
             }
             if (directFlight == 2) {
                 // CONNECTING: TO : LEG 1
                 System.out.println("CONNECTING TO: LEG 1");
                 System.out.println("");
-                List<FlightSchedule> list3  = printFlightScheduleInformationConnecting(departureAirport, startDateTimeInput, destinationAirport, sc, port, true, chosenType);
-                if (!list3.isEmpty()) masterList.add(list3);
+                printFlightScheduleInformationConnecting(departureAirport, startDateTimeInput, destinationAirport, sc, port, true);
 
                 // CONNECTING TO : LEG 2
                 System.out.println("CONNECTING TO: LEG 2");
                 System.out.println("");
-                List<FlightSchedule> list4  = printFlightScheduleInformationConnecting(departureAirport, startDateTimeInput, destinationAirport, sc, port, false, chosenType);
-                if (!list4.isEmpty()) masterList.add(list4);
-
+                printFlightScheduleInformationConnecting(departureAirport, startDateTimeInput, destinationAirport, sc, port, false);
 
                 if (!returnDateTimeInput.isEmpty()) {
                     // CONNECTING BACK : LEG 1
                     System.out.println("CONNECTING RETURN: LEG 1");
                     System.out.println("");
-                    List<FlightSchedule> list5 = printFlightScheduleInformationConnecting(destinationAirport, returnDateTimeInput, departureAirport, sc, port, true, chosenType);
-                    if (!list5.isEmpty()) masterList.add(list5);
-
+                    printFlightScheduleInformationConnecting(destinationAirport, returnDateTimeInput, departureAirport, sc, port, true);
 
                     // CONNECTING BACK : LEG 2
                     System.out.println("CONNECTING RETURN: LEG 2");
                     System.out.println("");
-                    List<FlightSchedule> list6 = printFlightScheduleInformationConnecting(destinationAirport, returnDateTimeInput, departureAirport, sc, port, false, chosenType);
-                    if (!list6.isEmpty()) masterList.add(list6);
-                }
+                    printFlightScheduleInformationConnecting(destinationAirport, returnDateTimeInput, departureAirport, sc, port, false);
             }
-            
-            // at least one outcome would have 1 flight
-            if (masterList.size() > 1) {
-                System.out.println("Would you like to proceed to make reservations?");
-                System.out.println("Press 0 to head back to the main menu");
-                System.out.println("Press 1 to proceed");
-                System.out.print("> ");
-                int choiceOne = sc.nextInt();
-                if (choiceOne == 1) {
-                
-                List<Long> finalFlightScheduleIdList = new ArrayList<Long>();
-                    List<String> finalFlightCabinClassTypeList = new ArrayList<String>();
-                    List<List<String>> finalSeatsChoice = new ArrayList<List<String>>();
-                    List<Double> ticketPricesForEachFlightSchedulePerPerson = new ArrayList<Double>();
-                    // register the passengers
-                    System.out.println("Step 0: Input Passenger Details");
-                    System.out.println("");
-                    // return this too
-                    List<HashMap<Integer, String>> allPDetails = enterPassengerDetails(numPassengers, sc);
-                    
-                    boolean connectingFound = (!needReturn) ? (masterList.size() == 4) :  (masterList.size() == 6);
-                    double onePassengerFareDirect = 0.0;
-                    double onePassengerFareConnecting = 0.0;
-                    int choice2 = -1;
-                    if (connectingFound) {
-                        System.out.println("There is a choice between connecting and direct flights");
-                        System.out.println("Press 0 to choose connecting flights");
-                        System.out.println("Press 1 to choose direct flights");
-                        System.out.print("> ");
-                        choice2 = sc.nextInt();
-                        if (choice2 == 1) {
-                             // means direct flight is chosen
-                            double directToOnePassengerFare = enterDetailsForDirectTo(0, 0, false, false, masterList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassTypeList, finalSeatsChoice, allPDetails, chosenType, port);
-                            onePassengerFareDirect += directToOnePassengerFare;
-                            ticketPricesForEachFlightSchedulePerPerson.add(directToOnePassengerFare);
-                            // same procedure for return flight 
-                            if (needReturn) {
-                                double directReturnOnePassengerFare = enterDetailsForDirectTo(0, 1, true, false, masterList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassTypeList, finalSeatsChoice, allPDetails, chosenType, port);
-                                onePassengerFareDirect += directReturnOnePassengerFare;
-                                ticketPricesForEachFlightSchedulePerPerson.add(directReturnOnePassengerFare);
-                            }
-                            
-                        } else {
-                            // means connecting flights is chosen
-                            // connecting flight first leg
-                             double connectingTo1OnePerson = enterDetailsForDirectTo(1, 2, false, true, masterList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassTypeList, finalSeatsChoice, allPDetails, chosenType, port);
-                             onePassengerFareConnecting += connectingTo1OnePerson;
-                             ticketPricesForEachFlightSchedulePerPerson.add(connectingTo1OnePerson);
-                             double connectingTo2OnePerson = enterDetailsForDirectTo(2, 3, false, true, masterList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassTypeList, finalSeatsChoice, allPDetails, chosenType, port);
-                             onePassengerFareConnecting += connectingTo2OnePerson;
-                             ticketPricesForEachFlightSchedulePerPerson.add(connectingTo2OnePerson);
-                            
-                             if (needReturn) {
-                                 double connectingReturn1OnePerson =  enterDetailsForDirectTo(1, 4, true, true, masterList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassTypeList, finalSeatsChoice, allPDetails, chosenType, port);
-                                onePassengerFareConnecting += connectingReturn1OnePerson;
-                                ticketPricesForEachFlightSchedulePerPerson.add(connectingReturn1OnePerson);
-                                double connectingReturn2OnePerson = enterDetailsForDirectTo(2, 5, true, true, masterList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassTypeList, finalSeatsChoice, allPDetails, chosenType, port);
-                                onePassengerFareConnecting += connectingReturn2OnePerson;
-                                ticketPricesForEachFlightSchedulePerPerson.add(connectingReturn2OnePerson);
-                             }
-                        }
-                        
-                        double totalCostPerPerson = ticketPricesForEachFlightSchedulePerPerson.stream().reduce(0.0, (x, y) -> x + y);
-                        System.out.println("Total Cost for Your Trip would be: $" + (totalCostPerPerson * numPassengers));
-                        
-                        for (int i = 0; i < finalFlightScheduleIdList.size(); i++) {
-                            // do the booking here
-                            long fsID = finalFlightScheduleIdList.get(i);
-                            String ccName = finalFlightCabinClassTypeList.get(i);
-                            List<String> reservedSeats = finalSeatsChoice.get(i);
-                        }
-                    } 
-                    
-                } 
             }
-                    
-    }
-    
-    public static double enterDetailsForDirectTo(int leg, int choice, boolean isReturn, boolean isConnecting, List<List<FlightSchedule>> flightScheduleList, String departureAirport, String destinationAirport, int numPassengers, Scanner sc, 
-        List<Long> finalFlightScheduleIdList, List<String> finalFlightCabinClassTypeList, List<List<String>> finalSeatsChoice, 
-        List<HashMap<Integer, String>> passengerDetails, CabinClassType cabinClassPreference,
-        FlightReservationSystemWebService port) {
-        // make 
-        IntStream.rangeClosed(1, 10).boxed().forEach(x -> System.out.println());
-        String title = isReturn ? "RETURN" : "TO";
-        int step = isReturn ? 2 : 1;
-        String title2 = isConnecting ? "CONNECTING" : "DIRECT";
-        System.out.println("STEP " + step + "a: SELECT " + title2 + " FLIGHT -> " + title);
-        if (leg != 0) System.out.println("Connecting Flight Leg " + leg);
         
-        HashMap<String, Fare> fareListForEachCabinClass = new HashMap<>();
-        switch (choice) {
-            case 0: 
-                // direct flight TO
-                fareListForEachCabinClass = printFlightInformation(true, flightScheduleList.get(0), departureAirport, destinationAirport, numPassengers, cabinClassPreference, port);
-                break;
-            case 1: 
-                // direct flight BACK
-                fareListForEachCabinClass = printFlightInformation(true, flightScheduleList.get(1), destinationAirport, departureAirport, numPassengers, cabinClassPreference, port);
-                break;
-            case 2: 
-                // connecting TO : leg 1
-                fareListForEachCabinClass = printFlightInformation(false, flightScheduleList.get(2), departureAirport, destinationAirport, numPassengers, cabinClassPreference, port);
-                break;
-            case 3:
-                // connecting TO : leg 2
-                fareListForEachCabinClass = printFlightInformation(false, flightScheduleList.get(3), departureAirport, destinationAirport, numPassengers, cabinClassPreference, port);
-                break;
-            case 4: 
-                // connecting RETURN : leg 1
-                fareListForEachCabinClass = printFlightInformation(false, flightScheduleList.get(4), destinationAirport, departureAirport, numPassengers, cabinClassPreference, port);
-                break;
-            case 5:
-                // connecting RETURN : leg 2
-                fareListForEachCabinClass = printFlightInformation(false, flightScheduleList.get(5), destinationAirport, departureAirport, numPassengers, cabinClassPreference, port);
-                break;
-        }
-        
-        System.out.println();
-        System.out.println("Enter the option number to indicate the flight schedule that you intend to select");
-        System.out.print("> ");
-        FlightSchedule flightSchedule = flightScheduleList.get(choice).get(sc.nextInt() -1);
-        long chosenFlightScheduleId = flightSchedule.getId();
-        sc.nextLine();
-        finalFlightScheduleIdList.add(chosenFlightScheduleId);
-        
-        // fare should be computed here 
-        System.out.println("STEP 1b: SELECT CABIN CLASS");
-        System.out.println("");
-        Pair<String, Fare> chosenFCC = chooseFCC(fareListForEachCabinClass, sc);
-        finalFlightCabinClassTypeList.add(chosenFCC.getKey());
 
 
-        System.out.println("STEP 1c: SELECT SEAT FOR PASSENGERS");
-        List<String> reservedSeats = printSeatLayout(chosenFlightScheduleId, chosenFCC.getKey(), numPassengers, sc, passengerDetails, port);
-        finalSeatsChoice.add(reservedSeats);
-
-        return amountForOnePassenger;
-    }
-    
-    public static HashMap<String, Fare> printFlightInformation(boolean isDirect, List<FlightSchedule> fsList, String start, String end, int numPassengers, CabinClassType preference,
-            FlightReservationSystemWebService port) {
-        System.out.println();
-        String header = isDirect ? "DIRECT" : "CONNECTING";
-        System.out.println(header);
-        double totalCostForThisSingleFlight = 0.0;
-        int counter = 1;
         
-        if (fsList.isEmpty()) {
-            System.out.println();
-            System.out.println("NO FLIGHT SCHEDULES FOUND");
-
-        }
-        
-        // print all fare information
-        HashMap<String, Fare> fareListForEachCabinClass = new HashMap<>();
-
             
     }
     
@@ -698,147 +497,6 @@ public class HRSPartnerClient {
         String formattedDuration = String.format("%d:%02d", totalMinutes, seconds);
         
         return formattedDuration;
-    }
-    
-    
-    public static void printAllCabinClassTypes() {
-        System.out.println("Press 1 for First (F) Class");
-        System.out.println("Press 2 for Business (J) Class");
-        System.out.println("Press 3 for Premium Economy (W) Class");
-        System.out.println("Press 4 for Economy (Y) Class");
-    }
-    
-    public static void initialiseMap() {
-        hashMap.put(1, CabinClassType.F);
-        hashMap.put(2, CabinClassType.J);
-        hashMap.put(3, CabinClassType.W);
-        hashMap.put(4, CabinClassType.Y);
-    }
-    
-    
-    
-    public static List<String> printSeatLayout(long fspID, String chosen, int numPassengers, Scanner sc, 
-        List<HashMap<Integer, String>> passengerDetails, FlightReservationSystemWebService port) {
-        
-        CabinClassType chosenOne = null;
-        for (CabinClassType cct : hashMap.values()) {
-            if (cct.name().equals(chosen)) chosenOne = cct;
-        }
-        
-        // must get a list of seats
-        CabinClass chosenCabinClass = port.retrieveCabinClass(fspID, chosenOne);
-       
-        int numRows = chosenCabinClass.getNumRows().intValue();
-        int numColumns = chosenCabinClass.getNumAisles().intValue() + chosenCabinClass.getNumSeatsAbreast().intValue();
-        HashSet<String> reservedSeatsSet = new HashSet<String>();
-        // need to initalise this
-        List<String> seatChosen = new ArrayList<String>();
-        List<Seat> seatList = port.retrieveSeats(fspID, chosenOne);
-        
-        // make a seat array
-        String[][] seatLayout = new String[numRows][numColumns];
-        String convertedConfiguration = convertSeatingConfiguration(chosenCabinClass.getSeatingConfiguration());
-        int[] breakpoints = parseSeatingConfiguration(convertedConfiguration);
-        HashSet<Integer> breakpointSet = convertToHashSet(breakpoints);
-        
-        // sort the seatlist based on seat number
-         Comparator<Seat> customComparator = Comparator
-        .<Seat, Integer>comparing(seat -> Integer.parseInt(seat.getSeatNumber().substring(0, seat.getSeatNumber().length() - 1)))
-        .thenComparing(Comparator.comparing(Seat::getSeatNumber));
-
-        // Sort the list using the custom comparator
-        Collections.sort(seatList, customComparator);
-        int counter = 0;
-        // initalise all the aisles
-        for (int i = 0; i < numRows; i++) {
-            for (int j = 0; j < numColumns; j++) {
-                // this woud be A, B ,C ,D 
-                if (breakpointSet.contains(j)) {
-                    seatLayout[i][j] = "<=>";
-                } else {
-                    if (counter < seatList.size()) {
-                        if (seatList.get(counter).getSeatStatus() == SeatStatus.RESERVED) {
-                            String xxx = seatList.get(counter).getSeatNumber().length() == 3 ? "XXX" : "XX";
-                            seatLayout[i][j] = xxx;
-                        } else {
-                            seatLayout[i][j] = seatList.get(counter).getSeatNumber();
-                        }
-                        counter += 1;
-                    }
-                }
-            }
-        }
-        
-        // print array
-        for (int i = 0; i < seatLayout.length; i++) {
-            for (int j = 0; j < seatLayout[i].length; j++) {
-                System.out.print(seatLayout[i][j] + " ");
-            }
-            System.out.println(); 
-        }
-        
-
-       // choosing of seats for all passengers
-       HashSet<String> chosenSeats = new HashSet<String>();
-        for (int i = 0; i < numPassengers; i++) {
-            boolean validSeatChosen = false;
-            while (!validSeatChosen) {
-                String passengerName = passengerDetails.get(i).get(1) + " " + passengerDetails.get(i).get(2);
-                System.out.println("Choose Seat for Passenger #" + (i+1) + " : " + passengerName);
-                System.out.println("Enter Seat Number");
-                System.out.print("> ");
-                String seatNum = sc.next();
-                sc.nextLine();
-
-                // Check if the seat is not already chosen or reserved
-                if (!chosenSeats.contains(seatNum) && !reservedSeatsSet.contains(seatNum)) {
-                    chosenSeats.add(seatNum);
-                    seatChosen.add(seatNum);
-                    validSeatChosen = true;
-                } else {
-                    System.out.println("Seat " + seatNum + " is already chosen or reserved. Please choose another seat.");
-                }
-            }
-        }
-        return seatChosen;
-    }
-    
-    public static String convertSeatingConfiguration(String seatingConfiguration) {
-        StringBuilder convertedConfiguration = new StringBuilder();
-
-        String[] groups = seatingConfiguration.split("-");
-        for (String group : groups) {
-            int length = Integer.parseInt(group);
-            for (int i = 0; i < length; i++) {
-                convertedConfiguration.append("1");
-            }
-            convertedConfiguration.append('-');
-        }
-
-        convertedConfiguration.deleteCharAt(convertedConfiguration.length() - 1);
-
-        return convertedConfiguration.toString();
-    }
-    public static int[] parseSeatingConfiguration(String seatingConfiguration) {
-        List<Integer> xIndices = new ArrayList<>();
-
-        for (int i = 0; i < seatingConfiguration.length(); i++) {
-            if (seatingConfiguration.charAt(i) == '-') {
-                xIndices.add(i);
-            }
-        }
-
-        return xIndices.stream().mapToInt(Integer::intValue).toArray();
-    }
-    
-    public static HashSet<Integer> convertToHashSet(int[] array) {
-        HashSet<Integer> hashSet = new HashSet<>();
-
-        for (int element : array) {
-            hashSet.add(element);
-        }
-
-        return hashSet;
     }
     
     

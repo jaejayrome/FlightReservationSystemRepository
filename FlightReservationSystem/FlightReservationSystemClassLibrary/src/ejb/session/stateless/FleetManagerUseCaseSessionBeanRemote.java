@@ -12,7 +12,6 @@ import util.enumerations.AircraftTypeName;
 import util.enumerations.CabinClassType;
 import util.enumerations.JobTitle;
 import util.exception.InvalidStringLengthException;
-import util.exception.SeatLimitExceedException;
 
 /**
  *
@@ -24,7 +23,6 @@ public interface FleetManagerUseCaseSessionBeanRemote {
     // public long createAircraftConfigurationForFleetManager(JobTitle jobTitle, AircraftTypeName aircraftTypeName, String configurationName, List<CabinClassType> cabinClassNameList, List<Integer> numAislesList, List<Integer> numRowsList, List<Integer> numSeatsAbreastList, List<String> seatingConfigurationList);
     public List<AircraftConfiguration> viewAllAircraftConfiguration();
     public AircraftConfiguration viewAircraftConfigurationDetails(String configurationName);
-    public long createAircraftConfigurationForFleetManager(JobTitle jobTitle, AircraftTypeName aircraftTypeName, String configurationName, List<CabinClassType> cabinClassNameList, List<Integer> numAislesList, List<Integer> numRowsList, List<Integer> numSeatsAbreastList, List<String> seatingConfigurationList) 
-            throws InvalidStringLengthException, SeatLimitExceedException;
+    public long createAircraftConfigurationForFleetManager(JobTitle jobTitle, AircraftTypeName aircraftTypeName, String configurationName, List<CabinClassType> cabinClassNameList, List<Integer> numAislesList, List<Integer> numRowsList, List<Integer> numSeatsAbreastList, List<String> seatingConfigurationList) throws InvalidStringLengthException;
     public long createAircraftConfigurationForFleetManagerDatabaseInit(JobTitle jobTitle, AircraftTypeName aircraftTypeName, String configurationName, List<CabinClassType> cabinClassNameList, List<Integer> numAislesList, List<Integer> numRowsList, List<Integer> numSeatsAbreastList, List<String> seatingConfigurationList);
 }

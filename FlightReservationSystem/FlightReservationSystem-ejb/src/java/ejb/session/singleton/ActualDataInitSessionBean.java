@@ -31,6 +31,7 @@ import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
 import javax.ejb.Startup;
+import javax.persistence.NoResultException;
 import util.enumerations.AircraftTypeName;
 import util.enumerations.CabinClassType;
 import util.enumerations.EmploymentType;
@@ -38,7 +39,8 @@ import util.enumerations.FlightRouteStatus;
 import util.enumerations.GenderType;
 import util.enumerations.JobTitle;
 import util.exception.InitialDatabaseException;
-
+import util.exception.InitialFlightNotInstantiatedException;
+import util.exception.InvalidStringLengthException;
 
 /**
  *

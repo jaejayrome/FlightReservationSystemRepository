@@ -5,14 +5,11 @@
 package entity;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 /**
  *
@@ -35,10 +32,6 @@ public class Partner implements Serializable {
     
     @Column(nullable = false)
     private boolean isLoggedIn;
-    
-   // relationship
-    @OneToMany (mappedBy = "partner")
-    private List<FlightReservation> reservations;
 
     public Partner() {
     }
@@ -49,15 +42,6 @@ public class Partner implements Serializable {
         this.loginUsername = loginUsername;
         this.loginPassword = loginPassword;
         this.isLoggedIn = false;
-        this.reservations = new ArrayList<FlightReservation>();
-    }
-
-    public List<FlightReservation> getReservations() {
-        return reservations;
-    }
-
-    public void setReservations(List<FlightReservation> reservations) {
-        this.reservations = reservations;
     }
     
     // getters and setters

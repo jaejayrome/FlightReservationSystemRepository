@@ -4,6 +4,18 @@
 <xsd:import namespace="http://ws.session.ejb/" schemaLocation="http://localhost:8080/FlightReservationSystemWebService/FlightReservationSystemWebService?xsd=1"/>
 </xsd:schema>
 </types>
+<message name="partnerLogin">
+<part name="parameters" element="tns:partnerLogin"/>
+</message>
+<message name="partnerLoginResponse">
+<part name="parameters" element="tns:partnerLoginResponse"/>
+</message>
+<message name="partnerLogout">
+<part name="parameters" element="tns:partnerLogout"/>
+</message>
+<message name="partnerLogoutResponse">
+<part name="parameters" element="tns:partnerLogoutResponse"/>
+</message>
 <message name="partnerSearchFlight">
 <part name="parameters" element="tns:partnerSearchFlight"/>
 </message>
@@ -15,30 +27,6 @@
 </message>
 <message name="retrieveFlightsResponse">
 <part name="parameters" element="tns:retrieveFlightsResponse"/>
-</message>
-<message name="retrieveSeats">
-<part name="parameters" element="tns:retrieveSeats"/>
-</message>
-<message name="retrieveSeatsResponse">
-<part name="parameters" element="tns:retrieveSeatsResponse"/>
-</message>
-<message name="retrieveCabinClass">
-<part name="parameters" element="tns:retrieveCabinClass"/>
-</message>
-<message name="retrieveCabinClassResponse">
-<part name="parameters" element="tns:retrieveCabinClassResponse"/>
-</message>
-<message name="partnerLogout">
-<part name="parameters" element="tns:partnerLogout"/>
-</message>
-<message name="partnerLogoutResponse">
-<part name="parameters" element="tns:partnerLogoutResponse"/>
-</message>
-<message name="partnerLogin">
-<part name="parameters" element="tns:partnerLogin"/>
-</message>
-<message name="partnerLoginResponse">
-<part name="parameters" element="tns:partnerLoginResponse"/>
 </message>
 <message name="retrieveFlightRoute">
 <part name="parameters" element="tns:retrieveFlightRoute"/>
@@ -59,6 +47,14 @@
 <part name="parameters" element="tns:retrieveFaresForFlightScheduleResponse"/>
 </message>
 <portType name="FlightReservationSystemWebService">
+<operation name="partnerLogin">
+<input wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/partnerLoginRequest" message="tns:partnerLogin"/>
+<output wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/partnerLoginResponse" message="tns:partnerLoginResponse"/>
+</operation>
+<operation name="partnerLogout">
+<input wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/partnerLogoutRequest" message="tns:partnerLogout"/>
+<output wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/partnerLogoutResponse" message="tns:partnerLogoutResponse"/>
+</operation>
 <operation name="partnerSearchFlight">
 <input wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/partnerSearchFlightRequest" message="tns:partnerSearchFlight"/>
 <output wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/partnerSearchFlightResponse" message="tns:partnerSearchFlightResponse"/>
@@ -66,22 +62,6 @@
 <operation name="retrieveFlights">
 <input wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/retrieveFlightsRequest" message="tns:retrieveFlights"/>
 <output wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/retrieveFlightsResponse" message="tns:retrieveFlightsResponse"/>
-</operation>
-<operation name="retrieveSeats">
-<input wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/retrieveSeatsRequest" message="tns:retrieveSeats"/>
-<output wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/retrieveSeatsResponse" message="tns:retrieveSeatsResponse"/>
-</operation>
-<operation name="retrieveCabinClass">
-<input wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/retrieveCabinClassRequest" message="tns:retrieveCabinClass"/>
-<output wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/retrieveCabinClassResponse" message="tns:retrieveCabinClassResponse"/>
-</operation>
-<operation name="partnerLogout">
-<input wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/partnerLogoutRequest" message="tns:partnerLogout"/>
-<output wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/partnerLogoutResponse" message="tns:partnerLogoutResponse"/>
-</operation>
-<operation name="partnerLogin">
-<input wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/partnerLoginRequest" message="tns:partnerLogin"/>
-<output wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/partnerLoginResponse" message="tns:partnerLoginResponse"/>
 </operation>
 <operation name="retrieveFlightRoute">
 <input wsam:Action="http://ws.session.ejb/FlightReservationSystemWebService/retrieveFlightRouteRequest" message="tns:retrieveFlightRoute"/>
@@ -98,34 +78,7 @@
 </portType>
 <binding name="FlightReservationSystemWebServicePortBinding" type="tns:FlightReservationSystemWebService">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
-<operation name="partnerSearchFlight">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="retrieveFlights">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="retrieveSeats">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="retrieveCabinClass">
+<operation name="partnerLogin">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -143,7 +96,16 @@
 <soap:body use="literal"/>
 </output>
 </operation>
-<operation name="partnerLogin">
+<operation name="partnerSearchFlight">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="retrieveFlights">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
