@@ -49,8 +49,9 @@ public class FleetManagerUseCaseSessionBean implements FleetManagerUseCaseSessio
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public long createAircraftConfigurationForFleetManager(JobTitle jobTitle, AircraftTypeName aircraftTypeName, String configurationName, List<CabinClassType> cabinClassNameList, List<Integer> numAislesList, List<Integer> numRowsList, List<Integer> numSeatsAbreastList, List<String> seatingConfigurationList) throws InvalidStringLengthException{
-        try {
+    public long createAircraftConfigurationForFleetManager(JobTitle jobTitle, AircraftTypeName aircraftTypeName, String configurationName, List<CabinClassType> cabinClassNameList, List<Integer> numAislesList, List<Integer> numRowsList, List<Integer> numSeatsAbreastList, List<String> seatingConfigurationList) 
+            throws InvalidStringLengthException, SeatLimitExceedException {
+        
             if (jobTitle == JobTitle.FLEET_MANAGER) {
                 AircraftType aircraftType = aircraftTypeEntitySessionBean.getAircraftTypeFromName(aircraftTypeName);
 
@@ -69,12 +70,16 @@ public class FleetManagerUseCaseSessionBean implements FleetManagerUseCaseSessio
                     cabinClassList.add(cabinClass);
                     totalSeats += (numRows.intValue() * numSeatsAbreast.intValue());
                 }
+                
+                System.out.println(aircraftType.getPassengerSeatCapacity().intValue());
+                System.out.println(totalSeats);
 
                 // Verify if totalSeats exceeds the aircraft limit
                 if (totalSeats > aircraftType.getPassengerSeatCapacity().intValue()) {
                     // Throw a custom exceptionF
-                    ejbContext.setRollbackOnly();
                     throw new SeatLimitExceedException("Total seats exceed the aircraft limit.");
+//                    ejbContext.setRollbackOnly();
+                    
                 } else {
                     // Create and persist the aircraft configuration
                     long configurationId = aircraftConfigurationEntitySessionBean.createNewAircraftConfiguration(aircraftType, configurationName, cabinClassList);
@@ -82,11 +87,8 @@ public class FleetManagerUseCaseSessionBean implements FleetManagerUseCaseSessio
                     return configurationId;
                 }
             } 
-        } catch (SeatLimitExceedException e) {
-            // Handle the exception if needed
-            System.out.println(e.getMessage());
-        }
-        return 0L;
+            return 0L;
+        
     }
     
     

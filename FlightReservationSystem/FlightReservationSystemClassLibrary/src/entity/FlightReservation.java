@@ -46,7 +46,8 @@ public class FlightReservation implements Serializable {
     @ManyToOne (optional = false)
     @JoinColumn (nullable = false)
     private Customer customer;
-
+    
+   
     public FlightReservation() {    
     }
 

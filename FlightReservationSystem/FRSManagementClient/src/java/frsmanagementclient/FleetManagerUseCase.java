@@ -18,6 +18,7 @@ import util.enumerations.AircraftTypeName;
 import util.enumerations.CabinClassType;
 import util.enumerations.JobTitle;
 import util.exception.InvalidStringLengthException;
+import util.exception.SeatLimitExceedException;
 
 /**
  *
@@ -72,10 +73,12 @@ public class FleetManagerUseCase {
                 try {
                 fleetManagerUseCaseSessionBeanRemote.createAircraftConfigurationForFleetManager(JobTitle.FLEET_MANAGER, aircraftTypeName, configurationName
                     , cabinClassNameList, numAislesList, numRowsList, numSeatsAbreastList, seatingConfigurationList);
+                } catch (SeatLimitExceedException exception) {
+                    System.out.println("TRANSACTION ABORTED: MAXIMUM CAPACITY HAS BEEN REACHED");
                 } catch (InvalidStringLengthException exception) {
-                    System.out.println(exception.getMessage());
-                }
+                    
                }
+            }
            }
     }
     

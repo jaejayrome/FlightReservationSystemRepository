@@ -36,6 +36,7 @@ import util.enumerations.FlightRouteStatus;
 import util.enumerations.FlightSchedulePlanStatus;
 import util.enumerations.FlightStatus;
 import util.enumerations.SeatStatus;
+import util.exception.AirportNotFoundException;
 import util.exception.InitialFlightNotInstantiatedException;
 import util.exception.NoFlightRouteFoundException;
 import util.exception.UpdateFlightSchedulePlanException;
@@ -117,6 +118,8 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
             } else {
                 flight.setFlightGroup(flight.getId());
             }
+        } catch (AirportNotFoundException e) {
+            return -1;
         } catch (NoFlightRouteFoundException e) {
             // exception is thrown if initial flight cannot be created in the first place
             throw new InitialFlightNotInstantiatedException("Invalid Flight Route Entered!");
@@ -128,6 +131,8 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
             FlightRoute returnFlightRoute = flightRouteEntitySessionBean.getFlightRouteByCityName(destinationAirport, originAirport);
             return flight.getId();
             
+        } catch (AirportNotFoundException e) {
+            return -1;
         } catch (NoFlightRouteFoundException e) {
             // if flight route cannot be created
             return -1;
@@ -177,6 +182,8 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
             } else {
                 flight.setFlightGroup(flight.getId());
             }
+        } catch (AirportNotFoundException e) {
+            return -1;
         } catch (NoFlightRouteFoundException e) {
             // exception is thrown if initial flight cannot be created in the first place
         }
@@ -187,7 +194,10 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
             FlightRoute returnFlightRoute = flightRouteEntitySessionBean.getFlightRouteByCityName(destinationAirport, originAirport);
             return flight.getId();
             
-        } catch (NoFlightRouteFoundException e) {
+        }  catch (AirportNotFoundException e) {
+            return -1;
+        }
+        catch (NoFlightRouteFoundException e) {
             // if flight route cannot be created
             return -1;
         }

@@ -6,10 +6,16 @@ package frsmanagementclient;
 
 import ejb.session.stateless.SalesManagerUseCaseSessionBeanRemote;
 import entity.Employee;
+import entity.FlightBooking;
 import entity.FlightCabinClass;
 import entity.FlightSchedule;
+import entity.Seat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import util.enumerations.CabinClassType;
 
 /**
  *
@@ -78,7 +84,58 @@ public class SalesManagerUseCase {
     }
     
     public void viewFlightReservations() {
-        
+        System.out.println("Enter flight number: ");
+        System.out.print("> ");
+        String flightNumber = scanner.next();
+        List<FlightSchedule> flightScheduleList = salesManagerUseCaseSessionBeanRemote.viewFlightSchedules(flightNumber);
+        if (flightScheduleList.size() > 0) {
+            int counter = 1;
+            for (FlightSchedule x : flightScheduleList) {
+                System.out.println("");
+                System.out.println("Flight Schedule Information");
+                System.out.println("Departure Time: " + x.getDepartureTime());
+                System.out.println("Arrival Time: " + x.getArrivalTime());
+                System.out.println("Press " + counter + " to select this flight schedule");
+                counter += 1;
+            }
+
+            System.out.println("Enter Your Choice Here");
+            System.out.print("> ");
+            int choice = scanner.nextInt();
+            FlightSchedule fs = flightScheduleList.get((choice - 1));
+            System.out.println("Flight Reservation Information");
+            
+            HashMap<CabinClassType, List<Seat>> seatMap = new HashMap<>();
+            for (int i = 0; i < fs.getFccList().size(); i++) {
+                seatMap.put(fs.getFccList().get(i).getCabinClass().getCabinClassName(), new ArrayList<Seat>());
+            }
+            
+            for (FlightBooking fb : fs.getFlightBookingList()) {
+                // find the cabin class type of this flight booking
+               CabinClassType cct = fb.getReservedSeats().get(0).getFlightCabinClass().getCabinClass().getCabinClassName();
+               List<Seat> fbList = seatMap.get(cct);
+               // add this to the list 
+               fbList.addAll(fb.getReservedSeats());
+               // replace the list with this new one
+               seatMap.put(cct, fbList);
+            }
+            
+            // once done print out in ascending order within each flight cabin class
+            for (CabinClassType cct : seatMap.keySet()) {
+                List<Seat> seatList = seatMap.get(cct);
+                Comparator<Seat> seatComparator = Comparator.comparing(Seat::getSeatNumber);
+                seatList.sort(seatComparator);
+                System.out.println("Cabin Class Type:C" + cct);
+                System.out.println();
+                if (seatList.size() == 0) System.out.println("There are currently no ongoing flight reservations for this cabin class!");
+                seatList.stream().forEach(x -> {
+                    System.out.println("Seat Number: " + x.getSeatNumber());
+                    System.out.println("Passenger name: " + x.getPassenger().getFirstName() + " " + x.getPassenger().getLastName());
+                });
+            }
+            
+            
+        }
     }
     
 }

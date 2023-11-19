@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import util.enumerations.FlightRouteStatus;
+import util.exception.AirportNotFoundException;
 import util.exception.DuplicateFlightRouteException;
 import util.util.Pair;
 
@@ -37,30 +38,32 @@ public class RoutePlannerUseCase {
     public void createFlightRoute() {
         // print out the list of airports for the user to choose m
         if (airports.size() > 0) {
-            airports.stream().forEach(airport -> printSingleAirport(airport));
+//            airports.stream().forEach(airport -> printSingleAirport(airport));
             System.out.println("");
             System.out.println("Please Enter the IATA Code of the Origin Airport: ");
             System.out.print("> ");
             String origin = scanner.next();
+            scanner.nextLine();
             System.out.println("");
             System.out.println("Please Enter the IATA Code of the Destination Airport"); 
             System.out.print("> ");
             String destination = scanner.next();
-            // filter out the airports of chocie
-            Airport originAirport = airports.stream().filter(x -> x.getIataAirportCode().equals(origin)).findFirst().get();
-            Airport destinationAirport = airports.stream().filter(x -> x.getIataAirportCode().equals(destination)).findFirst().get();
-            
+            scanner.nextLine();
+            System.out.println("Would you like to make a complementary flight route for this?");
             System.out.println("Press 0 to skip.");
             System.out.println("Press 1 to create a return flight route.");
             System.out.print("> ");
             int choice = scanner.nextInt();
+            scanner.nextLine();
             boolean makeReturnFlightRoute = choice == 1 ? true : false;
             // intiialised as disabled until a flight has been added
             FlightRoute flightRoute = new FlightRoute(FlightRouteStatus.DISABLED);
             try {
-                routePlannerUseCaseSessionBeanRemote.createNewFlightRoute(originAirport, destinationAirport, flightRoute, makeReturnFlightRoute);
+                routePlannerUseCaseSessionBeanRemote.createNewFlightRoute(origin, destination, flightRoute, makeReturnFlightRoute);
             } catch (DuplicateFlightRouteException e) {
                 System.out.println(e.getMessage());
+            } catch (AirportNotFoundException ee) {
+                System.out.println(ee.getMessage());
             }
         }
     }

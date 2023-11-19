@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javafx.util.Pair;
+import ws.entity.CabinClass;
 import ws.entity.CabinClassType;
 import ws.entity.Fare;
 import ws.entity.Flight;
@@ -44,7 +45,7 @@ public class HRSPartnerClient {
   
   
   public HRSPartnerClient() {
-      initialiseMap();
+      
   }
     
     
@@ -169,8 +170,6 @@ public class HRSPartnerClient {
         startDateTimeInput = dateTimeInput;
         
             try {
-                // check date time input here
-                // System.out.println("start is " + startDateTimeInput);
             } catch (Exception e) {                    
                 System.out.println("Invalid Date format. Please try again");
             }
@@ -216,58 +215,63 @@ public class HRSPartnerClient {
             System.out.print("> ");
             int choice = sc.nextInt();
             sc.nextLine();
-            chosenType = hashMap.get(choice);
+           
+            switch (choice) {
+                case 1: 
+                    chosenType = CabinClassType.F;
+                    break;
+                case 2:
+                    chosenType = CabinClassType.J;
+                    break;
+                case 3:
+                    chosenType = CabinClassType.W;
+                    break;
+                case 4: 
+                    chosenType = CabinClassType.Y;
+                    break;
+            }
         } 
-        
-            boolean haveFlight1 = false;
-            boolean haveFlight2 = false;
-            boolean haveFlight3 = false;
-            boolean haveFlight4 = false;
-            boolean haveFlight5 = false;
-            boolean haveFlight6 = false;
-                    
         
             List<List<FlightSchedule>> masterList = new ArrayList<>();
             // DIRECT: TO
             System.out.println("DIRECT: TO");
             System.out.println("");
-            System.out.println("sdssdd " + startDateTimeInput);
+//            System.out.println("sdssdd " + startDateTimeInput);
             List<FlightSchedule> list1  =  printFlightScheduleInformation(departureAirport, startDateTimeInput, destinationAirport, sc, port, chosenType);
-            if (!list1.isEmpty()) masterList.add(0, list1);
+            if (!list1.isEmpty()) masterList.add(list1);
             
             // DIRECT: RETURN
-            
             if (!returnDateTimeInput.isEmpty()) {
                 System.out.println("DIRECT: RETURN");
                 System.out.println("");
                 List<FlightSchedule> list2  = printFlightScheduleInformation(destinationAirport, returnDateTimeInput, departureAirport, sc, port, chosenType);
-                if (!list2.isEmpty()) masterList.add(1, list2);
+                if (!list2.isEmpty()) masterList.add(list2);
             }
             if (directFlight == 2) {
                 // CONNECTING: TO : LEG 1
                 System.out.println("CONNECTING TO: LEG 1");
                 System.out.println("");
                 List<FlightSchedule> list3  = printFlightScheduleInformationConnecting(departureAirport, startDateTimeInput, destinationAirport, sc, port, true, chosenType);
-                if (!list3.isEmpty()) masterList.add(2, list3);
+                if (!list3.isEmpty()) masterList.add(list3);
 
                 // CONNECTING TO : LEG 2
                 System.out.println("CONNECTING TO: LEG 2");
                 System.out.println("");
                 List<FlightSchedule> list4  = printFlightScheduleInformationConnecting(departureAirport, startDateTimeInput, destinationAirport, sc, port, false, chosenType);
-                if (!list4.isEmpty()) masterList.add(3, list4);
+                if (!list4.isEmpty()) masterList.add(list4);
 
                 if (!returnDateTimeInput.isEmpty()) {
                     // CONNECTING BACK : LEG 1
                     System.out.println("CONNECTING RETURN: LEG 1");
                     System.out.println("");
                     List<FlightSchedule> list5 = printFlightScheduleInformationConnecting(destinationAirport, returnDateTimeInput, departureAirport, sc, port, true, chosenType);
-                    if (!list5.isEmpty()) masterList.add(4, list5);
+                    if (!list5.isEmpty()) masterList.add(list5);
 
                     // CONNECTING BACK : LEG 2
                     System.out.println("CONNECTING RETURN: LEG 2");
                     System.out.println("");
                     List<FlightSchedule> list6 = printFlightScheduleInformationConnecting(destinationAirport, returnDateTimeInput, departureAirport, sc, port, false, chosenType);
-                    if (!list6.isEmpty()) masterList.add(5, list6);
+                    if (!list6.isEmpty()) masterList.add(list6);
                 }
             }
             
@@ -281,7 +285,7 @@ public class HRSPartnerClient {
                 if (choiceOne == 1) {
                 
                 List<Long> finalFlightScheduleIdList = new ArrayList<Long>();
-                    List<Long> finalFlightCabinClassIdList = new ArrayList<Long>();
+                    List<String> finalFlightCabinClassTypeList = new ArrayList<String>();
                     List<List<String>> finalSeatsChoice = new ArrayList<List<String>>();
                     List<Double> ticketPricesForEachFlightSchedulePerPerson = new ArrayList<Double>();
                     // register the passengers
@@ -290,7 +294,7 @@ public class HRSPartnerClient {
                     // return this too
                     List<HashMap<Integer, String>> allPDetails = enterPassengerDetails(numPassengers, sc);
                     
-                    boolean connectingFound = (!needReturn) ? (masterList.get(2) != null && masterList.get(3) != null) :  (masterList.get(2) != null && masterList.get(3) != null &&  masterList.get(4) != null && masterList.get(5) != null);
+                    boolean connectingFound = (!needReturn) ? (masterList.size() == 4) :  (masterList.size() == 6);
                     double onePassengerFareDirect = 0.0;
                     double onePassengerFareConnecting = 0.0;
                     int choice2 = -1;
@@ -302,33 +306,44 @@ public class HRSPartnerClient {
                         choice2 = sc.nextInt();
                         if (choice2 == 1) {
                              // means direct flight is chosen
-                            double directToOnePassengerFare = enterDetailsForDirectTo(0, 0, false, false, masterList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails, chosenType, port);
+                            double directToOnePassengerFare = enterDetailsForDirectTo(0, 0, false, false, masterList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassTypeList, finalSeatsChoice, allPDetails, chosenType, port);
                             onePassengerFareDirect += directToOnePassengerFare;
                             ticketPricesForEachFlightSchedulePerPerson.add(directToOnePassengerFare);
                             // same procedure for return flight 
                             if (needReturn) {
-                                double directReturnOnePassengerFare = enterDetailsForDirectTo(0, 1, true, false, masterList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails, chosenType, port);
+                                double directReturnOnePassengerFare = enterDetailsForDirectTo(0, 1, true, false, masterList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassTypeList, finalSeatsChoice, allPDetails, chosenType, port);
                                 onePassengerFareDirect += directReturnOnePassengerFare;
                                 ticketPricesForEachFlightSchedulePerPerson.add(directReturnOnePassengerFare);
                             }
+                            
                         } else {
                             // means connecting flights is chosen
                             // connecting flight first leg
-                             double connectingTo1OnePerson = enterDetailsForDirectTo(1, 2, false, true, masterList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails, chosenType, port);
+                             double connectingTo1OnePerson = enterDetailsForDirectTo(1, 2, false, true, masterList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassTypeList, finalSeatsChoice, allPDetails, chosenType, port);
                              onePassengerFareConnecting += connectingTo1OnePerson;
                              ticketPricesForEachFlightSchedulePerPerson.add(connectingTo1OnePerson);
-                             double connectingTo2OnePerson = enterDetailsForDirectTo(2, 3, false, true, masterList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails, chosenType, port);
+                             double connectingTo2OnePerson = enterDetailsForDirectTo(2, 3, false, true, masterList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassTypeList, finalSeatsChoice, allPDetails, chosenType, port);
                              onePassengerFareConnecting += connectingTo2OnePerson;
                              ticketPricesForEachFlightSchedulePerPerson.add(connectingTo2OnePerson);
                             
                              if (needReturn) {
-                                 double connectingReturn1OnePerson =  enterDetailsForDirectTo(1, 4, true, true, masterList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails, chosenType, port);
+                                 double connectingReturn1OnePerson =  enterDetailsForDirectTo(1, 4, true, true, masterList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassTypeList, finalSeatsChoice, allPDetails, chosenType, port);
                                 onePassengerFareConnecting += connectingReturn1OnePerson;
                                 ticketPricesForEachFlightSchedulePerPerson.add(connectingReturn1OnePerson);
-                                double connectingReturn2OnePerson = enterDetailsForDirectTo(2, 5, true, true, masterList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails, chosenType, port);
+                                double connectingReturn2OnePerson = enterDetailsForDirectTo(2, 5, true, true, masterList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassTypeList, finalSeatsChoice, allPDetails, chosenType, port);
                                 onePassengerFareConnecting += connectingReturn2OnePerson;
                                 ticketPricesForEachFlightSchedulePerPerson.add(connectingReturn2OnePerson);
                              }
+                        }
+                        
+                        double totalCostPerPerson = ticketPricesForEachFlightSchedulePerPerson.stream().reduce(0.0, (x, y) -> x + y);
+                        System.out.println("Total Cost for Your Trip would be: $" + (totalCostPerPerson * numPassengers));
+                        
+                        for (int i = 0; i < finalFlightScheduleIdList.size(); i++) {
+                            // do the booking here
+                            long fsID = finalFlightScheduleIdList.get(i);
+                            String ccName = finalFlightCabinClassTypeList.get(i);
+                            List<String> reservedSeats = finalSeatsChoice.get(i);
                         }
                     } 
                     
@@ -337,7 +352,8 @@ public class HRSPartnerClient {
                     
     }
     
-    public static double enterDetailsForDirectTo(int leg, int choice, boolean isReturn, boolean isConnecting, List<List<FlightSchedule>> flightScheduleList, String departureAirport, String destinationAirport, int numPassengers, Scanner sc, List<Long> finalFlightScheduleIdList, List<Long> finalFlightCabinClassIdList, List<List<String>> finalSeatsChoice, 
+    public static double enterDetailsForDirectTo(int leg, int choice, boolean isReturn, boolean isConnecting, List<List<FlightSchedule>> flightScheduleList, String departureAirport, String destinationAirport, int numPassengers, Scanner sc, 
+        List<Long> finalFlightScheduleIdList, List<String> finalFlightCabinClassTypeList, List<List<String>> finalSeatsChoice, 
         List<HashMap<Integer, String>> passengerDetails, CabinClassType cabinClassPreference,
         FlightReservationSystemWebService port) {
         // make 
@@ -388,13 +404,14 @@ public class HRSPartnerClient {
         System.out.println("STEP 1b: SELECT CABIN CLASS");
         System.out.println("");
         Pair<String, Fare> chosenFCC = chooseFCC(fareListForEachCabinClass, sc);
+        finalFlightCabinClassTypeList.add(chosenFCC.getKey());
 
         // this would be the total amount of money for one leg of the flight itnerary
         double amountForOnePassenger = chosenFCC.getValue().getFareAmount().doubleValue();
 
         System.out.println("STEP 1c: SELECT SEAT FOR PASSENGERS");
-        System.out.println();
-
+        List<String> reservedSeats = printSeatLayout(chosenFlightScheduleId, chosenFCC.getKey(), numPassengers, sc, passengerDetails, port);
+        finalSeatsChoice.add(reservedSeats);
 
         return amountForOnePassenger;
     }
@@ -697,7 +714,7 @@ public class HRSPartnerClient {
         System.out.println("Press 4 for Economy (Y) Class");
     }
     
-    public void initialiseMap() {
+    public static void initialiseMap() {
         hashMap.put(1, CabinClassType.F);
         hashMap.put(2, CabinClassType.J);
         hashMap.put(3, CabinClassType.W);
@@ -706,18 +723,27 @@ public class HRSPartnerClient {
     
     
     
-    public List<String> printSeatLayout(FlightCabinClass chosenFlightCabinClass, int numPassengers, Scanner sc, List<HashMap<Integer, String>> passengerDetails) {
+    public static List<String> printSeatLayout(long fspID, String chosen, int numPassengers, Scanner sc, 
+        List<HashMap<Integer, String>> passengerDetails, FlightReservationSystemWebService port) {
+        
+        CabinClassType chosenOne = null;
+        for (CabinClassType cct : hashMap.values()) {
+            if (cct.name().equals(chosen)) chosenOne = cct;
+        }
+        
         // must get a list of seats
-        int numRows = chosenFlightCabinClass.getCabinClass().getNumRows().intValue();
-        int numColumns = chosenFlightCabinClass.getCabinClass().getNumAisles().intValue() + chosenFlightCabinClass.getCabinClass().getNumSeatsAbreast().intValue();
+        CabinClass chosenCabinClass = port.retrieveCabinClass(fspID, chosenOne);
+       
+        int numRows = chosenCabinClass.getNumRows().intValue();
+        int numColumns = chosenCabinClass.getNumAisles().intValue() + chosenCabinClass.getNumSeatsAbreast().intValue();
         HashSet<String> reservedSeatsSet = new HashSet<String>();
         // need to initalise this
         List<String> seatChosen = new ArrayList<String>();
-        List<Seat> seatList = chosenFlightCabinClass.getSeatList();
+        List<Seat> seatList = port.retrieveSeats(fspID, chosenOne);
         
         // make a seat array
         String[][] seatLayout = new String[numRows][numColumns];
-        String convertedConfiguration = convertSeatingConfiguration(chosenFlightCabinClass.getCabinClass().getSeatingConfiguration());
+        String convertedConfiguration = convertSeatingConfiguration(chosenCabinClass.getSeatingConfiguration());
         int[] breakpoints = parseSeatingConfiguration(convertedConfiguration);
         HashSet<Integer> breakpointSet = convertToHashSet(breakpoints);
         

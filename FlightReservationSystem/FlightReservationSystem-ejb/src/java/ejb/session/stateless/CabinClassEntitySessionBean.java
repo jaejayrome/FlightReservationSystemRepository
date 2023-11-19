@@ -27,10 +27,8 @@ public class CabinClassEntitySessionBean implements CabinClassEntitySessionBeanL
         em.persist(cabinClass);
         em.flush();
         return cabinClass.getId();
-        // associate cabinClass with aircraftConfiguration
-        // association done on the other side already
     }
-    // public CabinClass(CabinClassType cabinClassName, BigDecimal numAisles, BigDecimal numRows, BigDecimal numSeatsAbreast, String seatingConfiguration)
+    
     @Override
     public List<CabinClass> recreateCabinClass(List<CabinClass> list, AircraftConfiguration aircraftConfiguration) {
         List<CabinClass> newList = new ArrayList<CabinClass>();

@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import util.enumerations.CabinClassType;
 
 /**
  *
@@ -40,6 +41,29 @@ public class FlightCabinClassEntitySessionBean implements FlightCabinClassEntity
     @Override
     public FlightCabinClass getFCCByID(long id) {
         return em.find(FlightCabinClass.class, id);
+    }
+    
+    @Override
+    public List<FlightCabinClass> findFccWithFSAndFCCType(long fsID, String cabinClassType) {
+        CabinClassType realType = null;
+        switch (cabinClassType) {
+                case "F": 
+                    realType = CabinClassType.F;
+                    break;
+                case "J":
+                    realType = CabinClassType.J;
+                    break;
+                case "w":
+                    realType = CabinClassType.W;
+                    break;
+                case "Y": 
+                    realType = CabinClassType.W;
+                    break;
+        }
+        return em.createQuery("SELECT fcc FROM FlightCabinClass fcc WHERE fcc.flightSchedule.id = :date AND fcc.cabinClass.cabinClassName = :cabinClassType")
+                .setParameter("date", fsID)
+                .setParameter("cabinClassType", realType)
+                .getResultList();
     }
 
  

@@ -87,11 +87,10 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanLocal {
     
     @Override
     public List<Flight> checkFlightRouteUsed(String originAirport, String destinationAirport) {
-        return em.createQuery("SELECT flight FROM Flight flight WHERE flight.flightRoute.origin = :originAirport AND flight.flightRoute.destination = :destinationAirport")
+        return em.createQuery("SELECT flight FROM Flight flight WHERE flight.flightRoute.origin.iataAirportCode = :originAirport AND flight.flightRoute.destination.iataAirportCode = :destinationAirport")
                 .setParameter("originAirport", originAirport)
                 .setParameter("destinationAirport", destinationAirport)
                 .getResultList();
-                
     }
     
     @Override

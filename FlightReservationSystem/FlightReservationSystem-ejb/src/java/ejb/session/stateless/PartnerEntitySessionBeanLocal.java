@@ -17,4 +17,5 @@ public interface PartnerEntitySessionBeanLocal {
     public long createNewPartner(String companyName, String loginUsername, String loginPassword);
     public Partner authenticatePartner(String username, String password) throws InvalidLoginCredentialsException;
     public void updateLogInStatus(boolean newStatus, long id);
+    public Partner findPartner(long id);
 }
