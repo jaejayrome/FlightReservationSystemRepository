@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Scanner;
 import util.enumerations.FlightRouteStatus;
 import util.exception.DuplicateFlightRouteException;
-import util.util.Pair;
 import util.exception.NoExistingAirportException;
 
 /**
