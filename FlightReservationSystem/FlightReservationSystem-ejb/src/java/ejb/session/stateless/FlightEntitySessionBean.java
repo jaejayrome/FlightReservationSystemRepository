@@ -4,18 +4,16 @@
  */
 package ejb.session.stateless;
 
-import entity.AircraftConfiguration;
+import entity.Airport;
 import entity.Flight;
-import entity.FlightRoute;
-import java.math.BigDecimal;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import util.enumerations.AircraftTypeName;
 import util.enumerations.FlightStatus;
+import util.exception.NoExistingAirportException;
 
 /**
  *
@@ -29,6 +27,9 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanLocal {
 
     @EJB
     private AircraftConfigurationEntitySessionBeanLocal aircraftConfigurationEntitySessionBean;
+    
+    @EJB
+    private AirportEntitySessionBeanLocal airportEntitySessionBean;
 
     
     
@@ -59,8 +60,19 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanLocal {
     // remember to throw any exception if needed
     @Override
     public long getIdByFlightNumber(String flightNumber) {
-        Flight flight = (Flight)(em.createQuery("SELECT flight FROM Flight flight WHERE flight.flightNumber = :number").setParameter("number", flightNumber).getSingleResult());
-        return flight.getId();
+        List<Flight> flight = em.createQuery("SELECT flight FROM Flight flight WHERE flight.flightNumber = :number").setParameter("number", flightNumber)
+                .getResultList();
+        
+        if (flight.isEmpty() == true) {
+            return 9;
+        } else {
+            return -1;
+        }
+        
+        
+//        Flight flight = (Flight)(em.createQuery("SELECT flight FROM Flight flight WHERE flight.flightNumber = :number").setParameter("number", flightNumber)
+//                .getResultList().get(0));
+//        return flight.getId();
     }
     
     @Override
@@ -73,7 +85,7 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanLocal {
     @Override
     public Flight checkReturnFlight(String originAirport, String destinationAirport, long flightGroup) {
         try { 
-        Flight flight = (Flight)em.createQuery("SELECT flight FROM Flight flight WHERE flight.flightRoute.origin.iataAirportCode = :destinationAirport AND flight.flightRoute.destination.iataAirportCode = :originAirport AND flight.flightGroup = :flightGroup")
+        Flight flight = (Flight)em.createQuery("SELECT fl FROM Flight fl WHERE fl.flightRoute.origin.iataAirportCode = :destinationAirport AND fl.flightRoute.destination.iataAirportCode = :originAirport AND fl.flightGroup = :flightGroup")
                              .setParameter("originAirport", originAirport)
                              .setParameter("destinationAirport", destinationAirport)
                              .setParameter("flightGroup", flightGroup)

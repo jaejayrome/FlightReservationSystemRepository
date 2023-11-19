@@ -6,11 +6,13 @@ package ejb.session.stateless;
 
 import entity.Customer;
 import entity.FlightReservation;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import util.enumerations.RoleType;
+import util.exception.CustomerAuthenticationFailedException;
 
 /**
  *
@@ -27,9 +29,20 @@ public class CustomerSessionBean implements CustomerSessionBeanRemote, CustomerS
     public Long createNewCustomer(String firstName, String lastName, String email, String phoneNumber, String address, String password) {
         Customer customer = new Customer(firstName, lastName, email, phoneNumber, address, password);
         System.out.println("New Customer created: ");
-        em.persist(customer);
-        em.flush();
-        return customer.getId();
+         List<Customer> c = em.createQuery(
+                "SELECT cust FROM Customer cust "
+                    + "WHERE cust.email = :email", 
+                Customer.class)
+                .setParameter("email", email)
+                .getResultList();
+        if (c.isEmpty()) {
+            // this means the customer doesn't exist at all
+            em.persist(customer);
+            em.flush();
+            return customer.getId();        
+        } else {
+            return null;
+        }
     }
 
     @Override

@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Remote;
 import util.exception.AirportNotFoundException;
 import util.exception.DuplicateFlightRouteException;
+import util.exception.NoExistingAirportException;
 
 /**
  *
@@ -20,6 +21,6 @@ public interface RoutePlannerUseCaseSessionBeanRemote {
     public long createNewFlightRoute(String originAirport, String destinationAirport, FlightRoute flightRoute, boolean makeReturnFlightRoute) throws DuplicateFlightRouteException, AirportNotFoundException;
     public List<FlightRoute> viewAllFlightRoute();
     public List<Airport> getAllAirport();
-    public boolean deleteFlightRoute(String originAirport, String destinationAirport);
+    public boolean deleteFlightRoute(String originAirport, String destinationAirport) throws NoExistingAirportException;
     public long createNewFlightRouteDataInit(String originIATA, String destinationIATA, FlightRoute flightRoute, boolean makeReturnFlightRoute);
 }

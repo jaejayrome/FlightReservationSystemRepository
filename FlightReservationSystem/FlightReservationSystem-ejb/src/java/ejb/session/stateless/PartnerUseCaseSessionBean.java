@@ -256,6 +256,13 @@ public class PartnerUseCaseSessionBean implements PartnerUseCaseSessionBeanLocal
     @Override 
     public List<FlightSchedule> partnerSearchForFlightRoutesConnecting(String departureAirport, String departureDateS, String destinationAirport, boolean isFirst) {
         Date departureDate = formatDate(departureDateS);
+       
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(departureDate);
+        cal.add(Calendar.DAY_OF_YEAR, -3); // Subtract 3 days for the start date
+        Date startDate = cal.getTime();
+        cal.add(Calendar.DAY_OF_YEAR, 6); // Add 6 days to the start date to get the end date (3 days after)
+        Date endDate = cal.getTime();
         
         ArrayList<FlightSchedule> toReturn = new ArrayList<>();
 
@@ -308,11 +315,6 @@ public class PartnerUseCaseSessionBean implements PartnerUseCaseSessionBeanLocal
         cal.add(Calendar.DAY_OF_YEAR, 6); // Add 6 days to the start date to get the end date (3 days after)
         Date endDate = cal.getTime();
 
-        System.out.println("a" + departureAirport);
-        System.out.println("b" + departureDateS);
-        System.out.println("c" + destinationAirport);
-        
-        
         // Use the calculated dates in your JPQL query
         List<FlightSchedule> flightScheduleList1 = em.createQuery(
             "SELECT fs FROM FlightSchedule fs WHERE fs.departureTime >= :startDate AND fs.departureTime <= :endDate AND fs.flightSchedulePlan.flight.flightRoute.origin.iataAirportCode = :departureAirport AND fs.flightSchedulePlan.flight.flightRoute.destination.iataAirportCode = :destinationAirport")

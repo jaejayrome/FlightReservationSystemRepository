@@ -2,22 +2,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package hrspartnerclient.exception;
+package util.exception;
 
 /**
  *
- * @author jeromegoh
+ * @author geraldtan
  */
-public class NoFlightScheduleResultException extends Exception {
-
-    public NoFlightScheduleResultException() {
+public class WrongRoleException extends Exception {
+    public WrongRoleException() {
     }
 
-    public NoFlightScheduleResultException(String string) {
+    public WrongRoleException(String string) {
         super(string);
     }
-    
-    
-    
     
 }

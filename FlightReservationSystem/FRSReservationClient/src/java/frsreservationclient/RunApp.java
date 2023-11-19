@@ -6,11 +6,11 @@ package frsreservationclient;
 
 import ejb.session.stateless.CustomerSessionBeanRemote;
 import ejb.session.stateless.CustomerUseCaseSessionBeanRemote;
+import entity.Customer;
 import entity.Fare;
 import entity.FlightBooking;
 import entity.FlightCabinClass;
 import entity.FlightReservation;
-import entity.FlightRoute;
 import entity.FlightSchedule;
 import entity.Seat;
 import static java.lang.System.out;
@@ -44,7 +44,6 @@ public class RunApp {
     private CustomerUseCaseSessionBeanRemote customerUseCaseSessionBean;
     private boolean customerIsLoggedIn;
     private long customerId;
-    private HashMap<Integer, CabinClassType> hashMap;
 
     public RunApp() {}
     
@@ -52,8 +51,6 @@ public class RunApp {
         //expose runApp to remote SessionBean methods
         this.customerSessionBean = customerSessionBean; 
         this.customerUseCaseSessionBean = customerUseCaseSessionBean;
-        this.hashMap = new HashMap<Integer, CabinClassType>();
-        this.initialiseMap();
     }
     
     
@@ -97,18 +94,8 @@ public class RunApp {
                 } catch (CustomerAuthenticationFailedException e) {
                     if (e.getMessage().equals("noAccount")) {
                         System.out.println("Customer account has not been "
-                                + "created yet, would you like to create a new "
-                                + "account?\n");
-                        System.out.println("Enter Y to register new account");
-                        System.out.println("Enter N try logging in again");
-                        String tmpOption = sc.nextLine();
-                        if (tmpOption.equals("Y")) {
-                            createNewCustomerAccount(sc);
-                            this.customerIsLoggedIn = true;
-                            System.out.println("You account has been created and you are logged in");
-                        } else {
-                            userAuthPrompt(sc);
-                        }
+                                + "created yet, please try again\n");
+                        userAuthPrompt(sc);
                     } else {
                         System.out.println("Invalid Password, please try again");
                         userAuthPrompt(sc);
@@ -145,6 +132,13 @@ public class RunApp {
         }
     }
     
+    public void logout(Customer customer) {
+        System.out.println("Thank you for using Merlion Airlines");
+        System.out.println("You have been logged out");
+        customerIsLoggedIn = false;
+
+    }
+    
     public void mainMenuCustomer(Scanner scanner) {
         System.out.println("Press 0 to logout");
         System.out.println("Press 1 to search flights and make reservations");
@@ -178,7 +172,7 @@ public class RunApp {
         System.out.println("You have selected an invalid option!");
      }
      
-    public void createNewCustomerAccount(Scanner sc) {
+    public int createNewCustomerAccount(Scanner sc) {
          System.out.println("Enter Your First Name");
             System.out.print("> ");
             String firstName = sc.nextLine();
@@ -199,7 +193,13 @@ public class RunApp {
             String password = sc.nextLine();
             
             // need check whether a customer has been created already or not
-            customerSessionBean.createNewCustomer(firstName, lastName, email, phoneNumber, address, password);
+            
+            
+            if (customerSessionBean.createNewCustomer(firstName, lastName, email, phoneNumber, address, password) == null){
+                System.out.println("Duplicate enail detected, please try again.");
+                return -1;
+            }
+            return 1;
      }
     
     public void searchForFlightRoutes(Scanner sc, boolean isCustomer) {
@@ -232,38 +232,43 @@ public class RunApp {
         destinationAirport = sc.next();
         sc.nextLine();
         
-        System.out.println("Enter the Departure Date (yyyy-MM-dd):");
-        System.out.print("> ");
-        String startDateInput = sc.next();
-        sc.nextLine();
-        System.out.println("Enter the Departure Time (HH:mm:ss):");
-        System.out.print("> ");
-        String timeInput = sc.next();
-        String dateTimeInput = startDateInput + " " + timeInput;
+        while (departureDate == null) {
+            System.out.println("Enter the Departure Date (yyyy-MM-dd):");
+            System.out.print("> ");
+            String startDateInput = sc.next();
+            sc.nextLine();
+            System.out.println("Enter the Departure Time (HH:mm:ss):");
+            System.out.print("> ");
+            String timeInput = sc.next();
+            String dateTimeInput = startDateInput + " " + timeInput;
             try {
                 departureDate = formatDate(dateTimeInput);
             } catch (Exception e) {
                 System.out.println("Departure Date: " + returnDate);
-
                 System.out.println("Invalid Date format. Please try again");
             }
+        }
+        
+        
         
         if (roundTrip == 2) { //only collect return date if is return flight
-            //roundtrip
-            System.out.println("Enter the Return Departure Date (yyyy-MM-dd):");
-            System.out.print("> ");
-            String endDateInput = sc.next();
-            sc.nextLine();
-            System.out.println("Enter the Return Departure Time (HH:mm:ss):");
-            System.out.print("> ");
-            String endTimeInput = sc.next();
-            String endDateTimeInput = endDateInput + " " + endTimeInput;
-            
-            try {
-                returnDate = formatDate(endDateTimeInput);
+            while (returnDate == null) {
+                //roundtrip
+                System.out.println("Enter the Return Departure Date (yyyy-MM-dd):");
+                System.out.print("> ");
+                String endDateInput = sc.next();
+                sc.nextLine();
+                System.out.println("Enter the Return Departure Time (HH:mm:ss):");
+                System.out.print("> ");
+                String endTimeInput = sc.next();
+                String endDateTimeInput = endDateInput + " " + endTimeInput;
 
-            } catch (Exception e) {
-                System.out.println("Invalid Date format. Please try again");
+                try {
+                    returnDate = formatDate(endDateTimeInput);
+
+                } catch (Exception e) {
+                    System.out.println("Invalid Date format. Please try again");
+                }
             }
         }
         
@@ -272,43 +277,21 @@ public class RunApp {
         directFlight = sc.nextInt(); 
         sc.nextLine();
         
-        
-        // ask for cabin class preference
-        System.out.println("Cabin Class Preference");
-        System.out.println("Would you like to have any preference?");
-        System.out.println("Press 0 if you have no preference.");
-        System.out.println("Press 1 if you want to make a preference");
-        System.out.print("> ");
-        int ccPreference = sc.nextInt();
-        sc.nextLine();
-        CabinClassType chosenType = null;
-        boolean haveCCPreference = ccPreference == 1;
-        
-        if (haveCCPreference) {
-            printAllCabinClassTypes();
-            System.out.print("> ");
-            int choice = sc.nextInt();
-            sc.nextLine();
-            chosenType = this.hashMap.get(choice);
-        } 
-        
         try {
             List<List<FlightSchedule>> flightScheduleList = customerUseCaseSessionBean.searchForFlightRoutes(
             departureAirport, departureDate, destinationAirport,
             returnDate, directFlight);
             boolean needReturn = returnDate != null;
-            
-            printFlightInformation(true, flightScheduleList.get(0), departureAirport, destinationAirport, numPassengers, chosenType);
+            // there is only one size nothing is being added at all 
+            double directTo = callDirectTo(flightScheduleList, departureAirport, destinationAirport, numPassengers);
             if (needReturn) {
-                printFlightInformation(true, flightScheduleList.get(1), destinationAirport, departureAirport, numPassengers, chosenType);
+                double directReturn = callDirectBack(flightScheduleList, departureAirport, destinationAirport, numPassengers);
             }
             // for connecting airports
             if (directFlight == 2) {
-                printFlightInformation(false, flightScheduleList.get(2), departureAirport, destinationAirport, numPassengers, chosenType);
-                printFlightInformation(false, flightScheduleList.get(3), departureAirport, destinationAirport, numPassengers, chosenType);
+                double connectingTo =  callConnectingTo(flightScheduleList, departureAirport, destinationAirport, numPassengers);
                 if (needReturn) {
-                    printFlightInformation(false, flightScheduleList.get(4), destinationAirport, departureAirport, numPassengers, chosenType);
-                    printFlightInformation(false, flightScheduleList.get(5), destinationAirport, departureAirport, numPassengers, chosenType);
+                    double connectingReturn = callConnectingBack(flightScheduleList, departureAirport, destinationAirport, numPassengers);
                 }
             }
             
@@ -345,40 +328,40 @@ public class RunApp {
                         choice2 = sc.nextInt();
                         if (choice2 == 1) {
                              // means direct flight is chosen
-                            double directToOnePassengerFare = enterDetailsForDirectTo(0, 0, false, false, flightScheduleList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails, chosenType);
+                            double directToOnePassengerFare = enterDetailsForDirectTo(0, 0, false, false, flightScheduleList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails);
                             onePassengerFareDirect += directToOnePassengerFare;
                             ticketPricesForEachFlightSchedulePerPerson.add(directToOnePassengerFare);
                             // same procedure for return flight 
                             if (needReturn) {
-                                double directReturnOnePassengerFare = enterDetailsForDirectTo(0, 1, true, false, flightScheduleList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails, chosenType);
+                                double directReturnOnePassengerFare = enterDetailsForDirectTo(0, 1, true, false, flightScheduleList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails);
                                 onePassengerFareDirect += directReturnOnePassengerFare;
                                 ticketPricesForEachFlightSchedulePerPerson.add(directReturnOnePassengerFare);
                             }
                         } else {
                             // means connecting flights is chosen
                             // connecting flight first leg
-                             double connectingTo1OnePerson = enterDetailsForDirectTo(1, 2, false, true, flightScheduleList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails, chosenType);
+                             double connectingTo1OnePerson = enterDetailsForDirectTo(1, 2, false, true, flightScheduleList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails);
                              onePassengerFareConnecting += connectingTo1OnePerson;
                              ticketPricesForEachFlightSchedulePerPerson.add(connectingTo1OnePerson);
-                             double connectingTo2OnePerson = enterDetailsForDirectTo(2, 3, false, true, flightScheduleList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails, chosenType);
+                             double connectingTo2OnePerson = enterDetailsForDirectTo(2, 3, false, true, flightScheduleList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails);
                              onePassengerFareConnecting += connectingTo2OnePerson;
                              ticketPricesForEachFlightSchedulePerPerson.add(connectingTo2OnePerson);
                             
                              if (needReturn) {
-                                 double connectingReturn1OnePerson =  enterDetailsForDirectTo(1, 4, true, true, flightScheduleList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails, chosenType);
+                                 double connectingReturn1OnePerson =  enterDetailsForDirectTo(1, 4, true, true, flightScheduleList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails);
                                 onePassengerFareConnecting += connectingReturn1OnePerson;
                                 ticketPricesForEachFlightSchedulePerPerson.add(connectingReturn1OnePerson);
-                                double connectingReturn2OnePerson = enterDetailsForDirectTo(2, 5, true, true, flightScheduleList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails, chosenType);
+                                double connectingReturn2OnePerson = enterDetailsForDirectTo(2, 5, true, true, flightScheduleList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails);
                                 onePassengerFareConnecting += connectingReturn2OnePerson;
                                 ticketPricesForEachFlightSchedulePerPerson.add(connectingReturn2OnePerson);
                              }
                         }
                     } else {
-                        double directToOnePassengerFare = enterDetailsForDirectTo(0, 0, false, false, flightScheduleList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails, chosenType);
+                        double directToOnePassengerFare = enterDetailsForDirectTo(0, 0, false, false, flightScheduleList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails);
                         onePassengerFareDirect += directToOnePassengerFare;
                          ticketPricesForEachFlightSchedulePerPerson.add(directToOnePassengerFare);
                         if (needReturn) {
-                             double directReturnOnePassengerFare =  enterDetailsForDirectTo(0, 1, true, false, flightScheduleList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails, chosenType);
+                             double directReturnOnePassengerFare =  enterDetailsForDirectTo(0, 1, true, false, flightScheduleList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails);
                              onePassengerFareDirect += directReturnOnePassengerFare;
                              ticketPricesForEachFlightSchedulePerPerson.add(directReturnOnePassengerFare);
                         }
@@ -410,6 +393,12 @@ public class RunApp {
     
     public void viewAllFlightReservations() {
         List<FlightReservation> myFRList = customerUseCaseSessionBean.viewAllFlightReservations(this.customerId);
+        if (myFRList.isEmpty()) {
+            System.out.println("No current reservations to display");
+            System.out.println();
+            return;
+        }
+        
         
         int counter = 1; 
         for (FlightReservation fr : myFRList) {
@@ -423,6 +412,11 @@ public class RunApp {
     
     public void viewFlightReservationDetails(Scanner scanner) {
         List<FlightReservation> myFRList = customerUseCaseSessionBean.viewAllFlightReservations(customerId);
+        if (myFRList.isEmpty()) {
+            System.out.println("No current reservations details to display");
+            System.out.println();
+            return;
+        }
         FlightReservation chosenFR = chooseFlightReservation(myFRList, scanner);
         printSpecificFlightReservation(chosenFR);
     }
@@ -469,6 +463,7 @@ public class RunApp {
     
     public double enterDetailsForDirectTo(int leg, int choice, boolean isReturn, boolean isConnecting, List<List<FlightSchedule>> flightScheduleList, String departureAirport, String destinationAirport, int numPassengers, Scanner sc, 
             List<Long> finalFlightScheduleIdList, List<Long> finalFlightCabinClassIdList, List<List<String>> finalSeatsChoice, List<HashMap<Integer, String>> passengerDetails, CabinClassType cabinClassPreference) {
+
         // make 
         IntStream.rangeClosed(1, 10).boxed().forEach(x -> System.out.println());
         String title = isReturn ? "RETURN" : "TO";
@@ -478,28 +473,22 @@ public class RunApp {
         if (leg != 0) System.out.println("Connecting Flight Leg " + leg);
         switch (choice) {
             case 0: 
-                // direct flight TO
-                printFlightInformation(true, flightScheduleList.get(0), departureAirport, destinationAirport, numPassengers, cabinClassPreference);
+                callDirectTo(flightScheduleList, departureAirport, destinationAirport, numPassengers);
                 break;
             case 1: 
-                // direct flight BACK
-                printFlightInformation(true, flightScheduleList.get(1), destinationAirport, departureAirport, numPassengers, cabinClassPreference);
+                callDirectBack(flightScheduleList, departureAirport, destinationAirport, numPassengers);
                 break;
             case 2: 
-                // connecting TO : leg 1
-                printFlightInformation(false, flightScheduleList.get(2), departureAirport, destinationAirport, numPassengers, cabinClassPreference);
+                callConnectingSingle(2, flightScheduleList, numPassengers);
                 break;
             case 3:
-                // connecting TO : leg 2
-                printFlightInformation(false, flightScheduleList.get(3), departureAirport, destinationAirport, numPassengers, cabinClassPreference);
+                callConnectingSingle(3, flightScheduleList, numPassengers);
                 break;
             case 4: 
-                // connecting RETURN : leg 1
-                printFlightInformation(false, flightScheduleList.get(4), destinationAirport, departureAirport, numPassengers, cabinClassPreference);
+                callConnectingSingle(4, flightScheduleList, numPassengers);
                 break;
             case 5:
-                // connecting RETURN : leg 2
-                 printFlightInformation(false, flightScheduleList.get(5), destinationAirport, departureAirport, numPassengers, cabinClassPreference);
+                callConnectingSingle(5, flightScheduleList, numPassengers);
                 break;
         }
         
@@ -577,39 +566,77 @@ public class RunApp {
         return allDetails;
     }
     
-    public static double printFlightInformation(boolean isDirect, List<FlightSchedule> fsList, String start, String end, int numPassengers, CabinClassType preference) {
+    public double callDirectTo(List<List<FlightSchedule>> flightScheduleList, String departureAirport, String destinationAirport, int numPassengers) {
+        List<FlightSchedule> directTo = flightScheduleList.get(0);
+        return printDirectFlightsTo(directTo, departureAirport, destinationAirport, numPassengers);
+         
+    }
+    
+    public double callDirectBack(List<List<FlightSchedule>> flightScheduleList, String departureAirport, String destinationAirport, int numPassengers) {
         System.out.println();
-        String header = isDirect ? "DIRECT" : "CONNECTING";
-        System.out.println(header);
+        System.out.println("Return Flights");
+        List<FlightSchedule> returnTo = flightScheduleList.get(1);
+        return printDirectFlightsTo(returnTo, destinationAirport, departureAirport, numPassengers);
+    }
+      
+    public double callConnectingTo(List<List<FlightSchedule>> flightScheduleList, String departureAirport, String destinationAirport, int numPassengers) {
+        System.out.println();
+        System.out.println("Connecting Flights: TO");
+        List<FlightSchedule> directFirst= flightScheduleList.get(2);
+        List<FlightSchedule> directSecond= flightScheduleList.get(3);
+        
+        return printConnectingFlights(directFirst, directSecond, departureAirport, destinationAirport, numPassengers);
+    }
+    
+    public double callConnectingBack(List<List<FlightSchedule>> flightScheduleList, String departureAirport, String destinationAirport, int numPassengers) {
+        System.out.println();
+        System.out.println("Connecting Flights: RETURN");
+        List<FlightSchedule> returnFirst= flightScheduleList.get(4);
+        List<FlightSchedule> returnSecond= flightScheduleList.get(5);
+        return printConnectingFlights(returnFirst, returnSecond, destinationAirport, departureAirport, numPassengers);
+    }
+    
+    public void callConnectingSingle(int choice, List<List<FlightSchedule>> flightScheduleList, int numPassengers) {
+        if (choice == 2 || choice == 3) {
+            System.out.println("Connecting Flights: TO");
+            if (choice == 2) {
+                System.out.println("Leg 1 Details");
+                printConnectingFlightsSingle(flightScheduleList.get(choice), numPassengers);
+            } else {
+                System.out.println("Leg 2 Details");
+                printConnectingFlightsSingle(flightScheduleList.get(choice), numPassengers);
+            }
+        } else {
+            System.out.println("Connecting Flights: RETURN");
+            if (choice == 4) {
+                System.out.println("Leg 1 Details");
+                printConnectingFlightsSingle(flightScheduleList.get(choice), numPassengers);
+            } else {
+                System.out.println("Leg 2 Details");
+                printConnectingFlightsSingle(flightScheduleList.get(choice), numPassengers);
+            }
+        }
+    }
+    
+    public static double printDirectFlightsTo(List<FlightSchedule> fsList, String start, String end, int numPassengers) {
+        System.out.println();
+        System.out.println("Direct Flights: " + start + " -> " + end);
+        System.out.println();
         double totalCostForThisSingleFlight = 0.0;
         int counter = 1;
-        
-        if (fsList.isEmpty()) {
-            System.out.println();
-            System.out.println("NO FLIGHT SCHEDULES FOUND");
-            return 0.0;
-        }
         for (FlightSchedule fs : fsList) {
             System.out.println("");
             System.out.println("Option #" + counter);
-            FlightRoute fr = fs.getFlightSchedulePlan().getFlight().getFlightRoute();
-            System.out.println(fr.getOrigin().getIataAirportCode() + " -> " + fr.getDestination().getIataAirportCode());
             System.out.println("Departure Time " + fs.getDepartureTime());
             System.out.println("Arrival Time " + fs.getArrivalTime());
             System.out.println("Duration " + formatDuration(fs.getFlightDuration()));
             // display cabin class availability
             System.out.println("");
             System.out.println("Cabin Class Availability");
+            System.out.println("Cabin Class Options: " + fs.getFccList().size());
             System.out.println("");
             boolean isAdded = false;
-            List<FlightCabinClass> curatedList = fs.getFccList();
-            if (preference != null) {
-                curatedList = curatedList.stream().filter(x -> x.getCabinClass().getCabinClassName().equals(preference)).collect(Collectors.toList());
-            }
-            if (curatedList.isEmpty()) {
-                System.out.println("Oops, there are currently no cabin class that befits your requirements");
-            }
-            for (FlightCabinClass fcc : curatedList) {
+            for (FlightCabinClass fcc : fs.getFccList()) {
                 double pricePerPassengerPerCCPerFS = printFareInformation(fcc, numPassengers);
                 if (!isAdded) {
                     totalCostForThisSingleFlight += pricePerPassengerPerCCPerFS;
@@ -621,7 +648,76 @@ public class RunApp {
         return totalCostForThisSingleFlight;
     }
     
-
+        public static double printConnectingFlightsSingle(List<FlightSchedule> fsList, int numPassengers) {
+        System.out.println();
+        int counter = 1;
+        double totalCostForThisSingleFlight = 0.0;
+        for (FlightSchedule fs : fsList) {
+            System.out.println("");
+            System.out.println("Connecting Flight Information: " + fs.getFlightSchedulePlan().getFlight().getFlightRoute().getOrigin().getIataAirportCode() + " -> " + fs.getFlightSchedulePlan().getFlight().getFlightRoute().getDestination().getIataAirportCode());
+            System.out.println("Option #" + counter);
+            System.out.println("Departure Time " + fs.getDepartureTime());
+            System.out.println("Arrival Time " + fs.getArrivalTime());
+            System.out.println("Duration " + formatDuration(fs.getFlightDuration()));
+            // display cabin class availability
+            System.out.println("");
+            System.out.println("Cabin Class Availability");
+            System.out.println("Cabin Class Options: " + fs.getFccList().size());
+            boolean isAdded = false;
+            for (FlightCabinClass fcc : fs.getFccList()) {
+                double returnVal = printFareInformation(fcc, numPassengers);
+                if (!isAdded) {
+                    totalCostForThisSingleFlight += returnVal;
+                    isAdded = true;
+                }
+            }
+            counter += 1;
+        }
+        
+        return totalCostForThisSingleFlight;
+    }
+    
+     public static double printConnectingFlights(List<FlightSchedule> fs1List, List<FlightSchedule> fs2List, String start, String end, int numPassengers) {
+         double totalLowestFare = 0;
+         for (int i = 0; i < fs1List.size(); i++) {
+             // assuming that since they are return flights they can only be of the same aircraft configuration
+             // so this would mean the number of FCCs for both is the same
+            Pair<FlightSchedule> connectingPair = new Pair<FlightSchedule>(fs1List.get(i), fs2List.get(i));
+            System.out.println("");
+            System.out.println("Option #" + (i + 1));
+            System.out.println("Connecting Flight Leg 1: " + start + " -> " + connectingPair.getFirst().getFlightSchedulePlan().getFlight().getFlightRoute().getDestination().getIataAirportCode());
+            System.out.println("Departure Time " + connectingPair.getFirst().getDepartureTime());
+            System.out.println("Arrival Time " + connectingPair.getFirst().getArrivalTime());
+            System.out.println("Duration " + formatDuration(connectingPair.getFirst().getFlightDuration()));
+            System.out.println("");
+            System.out.println("Connecting Flight Leg 2: " + connectingPair.getSecond().getFlightSchedulePlan().getFlight().getFlightRoute().getOrigin().getIataAirportCode() + " -> " + end);
+            System.out.println("Departure Time " + connectingPair.getSecond().getDepartureTime());
+            System.out.println("Arrival Time " + connectingPair.getSecond().getArrivalTime());
+            System.out.println("Duration " + formatDuration(connectingPair.getSecond().getFlightDuration()));
+            System.out.println("");
+            System.out.println("Cabin Class Information");
+            // display cabin class availability
+            System.out.println("Cabin Class Availability");
+            System.out.println("Cabin Class Options: " + connectingPair.getSecond().getFccList().size());
+            System.out.println("");
+            // find the cheapest fare for a cabin class
+//            for (int k = 0; k < connectingPair.getFirst().getFccList().size(); k++){
+//                System.out.println("DO NOTE THAT THIS IS FOR THE SAME CABIN CLASS TYPE");
+//                System.out.println("");
+//                System.out.println("Cabin Class Information for 1st leg");
+//                double lowestFare1 = printFlightConnectingCabinClass(connectingPair.getFirst().getFccList().get(k), true);
+//                System.out.println();
+//                System.out.println("Cabin Class Information for 2nd leg");
+//                double lowestFare2 = printFlightConnectingCabinClass(connectingPair.getSecond().getFccList().get(k), true);
+//                System.out.println();
+//                System.out.println("Price per passenger: $" + (lowestFare1 + lowestFare2)) ;
+//                System.out.println("Total Price for all passengers: $" + ((lowestFare1 + lowestFare2) * numPassengers));
+//                totalLowestFare = ((lowestFare1 + lowestFare2) * numPassengers);
+//            }
+         }
+        return totalLowestFare;
+     }
+     
      public static double printFareInformation(FlightCabinClass fcc, int numPassengers) {
          CabinClassType name = fcc.getCabinClass().getCabinClassName();
          double fccPrice = fcc.getFlightSchedule().getFlightSchedulePlan().getFares().stream().filter(x -> x.getCabinClass().getCabinClassName().equals(name)).findAny().get().getFareAmount().doubleValue();
@@ -630,7 +726,35 @@ public class RunApp {
             System.out.println("Total Price for all passengers: $" + (fccPrice * numPassengers));
          return fccPrice;
      }
+         
+            
+//    public static double printFlightCabinClass(FlightCabinClass fcc, int numPassengers, boolean isConnecting) {
+//        System.out.println("");
+//        System.out.println("Cabin Class Type: " + fcc.getCabinClass().getCabinClassName());
+//        Comparator<Fare> fareLowest = (x, y) -> (int)(x.getFareAmount().doubleValue() - y.getFareAmount().doubleValue());
+//        List<Fare> faresForThisCabinClass = fcc.getFlightSchedule().getFlightSchedulePlan().getFares().stream().filter(x -> x.getCabinClass().getCabinClassName().equals(fcc.getCabinClass().getCabinClassName())).collect(Collectors.toList());       
+////        Fare lowestFare = faresForThisCabinClass.stream().min(fareLowest).get();
+//        if (!isConnecting){
+//            System.out.println("Price per passenger: $" + faresForThisCabinClass.get(0).getFareAmount().doubleValue());
+//            System.out.println("Total Price for all passengers: $" + (faresForThisCabinClass.get(0).getFareAmount().doubleValue() * numPassengers));
+//        }
+//        return (faresForThisCabinClass.get(0).getFareAmount().doubleValue());
+//    }
     
+    
+    public static double printFlightConnectingCabinClass(FlightCabinClass fcc, boolean isConnecting) {
+        System.out.println("");
+        System.out.println("Cabin Class Type: " + fcc.getCabinClass().getCabinClassName());
+//        System.out.println("No. of Fares: "  + fcc.getCabinClass().getFareList().size());
+        if (isConnecting) {
+            Comparator<Fare> fareLowest = (x, y) -> (int)(x.getFareAmount().doubleValue() - y.getFareAmount().doubleValue());
+            List<Fare> faresForThisCabinClass = fcc.getFlightSchedule().getFlightSchedulePlan().getFares().stream().filter(x -> x.getCabinClass().getCabinClassName().equals(fcc.getCabinClass().getCabinClassName())).collect(Collectors.toList());
+            Fare lowestFare = faresForThisCabinClass.stream().min(fareLowest).get();
+            return  (lowestFare.getFareAmount().doubleValue());
+        } else {
+            return 0.0;
+        }
+    }
    
     public Date formatDate(String dateTimeInput) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -762,21 +886,6 @@ public class RunApp {
 
         return hashSet;
     }
-    
-    public void printAllCabinClassTypes() {
-        System.out.println("Press 1 for First (F) Class");
-        System.out.println("Press 2 for Business (J) Class");
-        System.out.println("Press 3 for Premium Economy (W) Class");
-        System.out.println("Press 4 for Economy (Y) Class");
-    }
-    
-    public void initialiseMap() {
-        hashMap.put(1, CabinClassType.F);
-        hashMap.put(2, CabinClassType.J);
-        hashMap.put(3, CabinClassType.W);
-        hashMap.put(4, CabinClassType.Y);
-    }
-    
 
 
 }

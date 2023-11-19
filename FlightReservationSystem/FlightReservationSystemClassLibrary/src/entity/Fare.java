@@ -58,7 +58,7 @@ public class Fare implements Serializable {
 //        this.cabinClass = cabinClass;
 //        this.flightSchedulePlan = fsp;
 //    }
-    
+
     // getters and setters
 
     public FlightSchedulePlan getFlightSchedulePlan() {

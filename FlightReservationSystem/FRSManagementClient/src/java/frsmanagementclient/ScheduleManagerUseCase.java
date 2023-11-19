@@ -41,6 +41,7 @@ import util.enumerations.FlightSchedulePlanStatus;
 import util.enumerations.FlightStatus;
 import util.enumerations.ScheduleType;
 import util.exception.InitialFlightNotInstantiatedException;
+import util.exception.NoExistingAirportException;
 import util.exception.UpdateFlightSchedulePlanException;
 import util.util.Pair;
 import util.util.TwoPair;
@@ -89,14 +90,12 @@ public class ScheduleManagerUseCase {
     public void createFlight() {
         System.out.println("Step 1: Enter the Flight Number");
         System.out.print("> ");
-        String flightNumber = scanner.next();
-        scanner.nextLine();
+        String flightNumber = scanner.nextLine();
         // make the flight status disbaled until a flight schedule plan is attached to it 
         
         System.out.println("Step 2: Enter a name for an aircraft configuration for this flight");
         System.out.print("> ");
         String configurationName = scanner.nextLine();
-        
         
         System.out.println("Step 3: Enter the Origin IATA Airport Code for the flight");
         System.out.print("> ");
@@ -112,9 +111,18 @@ public class ScheduleManagerUseCase {
         // catch exception if there's for initial flight 
         try {
             long haveReturnFlight = scheduleManagerUseCaseSessionBeanRemote.createNewFlight(flightNumber, configurationName, originCity, destinationCity, false, -1);
+            
+            if (haveReturnFlight == -1) {
+                System.out.println("Flight number alrady exists, did not create new flight");
+                createFlight();
+            } else if (haveReturnFlight == -2) {
+                System.out.println("Invalid Airport, airport does not exist. Try again");
+                createFlight();
+            }
+            
             System.out.println("Flight has been successfully created!");
             
-            if (haveReturnFlight != -1) {
+            if (haveReturnFlight > 0) {
                 System.out.println("A Return Flight Route has been detected!");
                 System.out.println("Press '1' if you would like to create this return flight");
                 System.out.println("Press '0' if you do not wish to do so");
@@ -125,7 +133,7 @@ public class ScheduleManagerUseCase {
                 if (!createFlight) return; 
             }
                 
-        } catch (InitialFlightNotInstantiatedException e) {
+        } catch (InitialFlightNotInstantiatedException | NoExistingAirportException e) {
             System.out.println(e.getMessage());
         } 
     }
@@ -134,14 +142,20 @@ public class ScheduleManagerUseCase {
     public void createFlight(String configurationName, String originCity, String destinationCity, long id) {
         System.out.println("Enter the Flight Number For the Return Flight");
         System.out.print("> ");
-        String flightNumber = scanner.next();
+        String flightNumber = scanner.nextLine();
+        
+        //check if destination city exists
+        
         
         try {
             scheduleManagerUseCaseSessionBeanRemote.createNewFlight(flightNumber, configurationName, originCity, destinationCity, true, id);
             System.out.println("Flight has been successfully created!");
-        } catch (InitialFlightNotInstantiatedException e) {
+        } catch (InitialFlightNotInstantiatedException | NoExistingAirportException e) {
             System.out.println(e.getMessage());
-        } 
+        } catch (Exception e) {
+            System.out.println("Something went wrong. Please try again");
+        }
+                
     }
     
     // used to view all flights
@@ -149,7 +163,23 @@ public class ScheduleManagerUseCase {
     // arranged if exact return flight is after it, it should be directly below it
     public void viewAllFlights() {
         List<Flight> flightList = scheduleManagerUseCaseSessionBeanRemote.viewAllFlights();
-        flightList.stream().forEach(x -> printSingleFlight(x));
+        Comparator<Flight> flightComparator = (x, y) -> {
+            String routeIdX = x.getFlightRoute().getOrigin().getIataAirportCode() + "-" + x.getFlightRoute().getDestination().getIataAirportCode();
+            String routeIdY = y.getFlightRoute().getOrigin().getIataAirportCode() + "-" + y.getFlightRoute().getDestination().getIataAirportCode();
+
+            // Compare the route identifiers.
+            int routeComparison = routeIdX.compareTo(routeIdY);
+            
+            if (routeComparison == 0) {
+                // If the routes are the same, check if one is a complementary return flight.
+                boolean xIsReturnFlight = x.getFlightRoute().getOrigin().getIataAirportCode().equals(y.getFlightRoute().getDestination().getIataAirportCode()) &&
+                                          x.getFlightRoute().getDestination().getIataAirportCode().equals(y.getFlightRoute().getOrigin().getIataAirportCode());
+                return xIsReturnFlight ? -1 : 1;
+            }
+            return routeComparison;
+        };
+                
+       flightList.stream().forEach(x -> printSingleFlight(x));
     }
     
     // everything down to the cabin class have been printed out
@@ -158,8 +188,11 @@ public class ScheduleManagerUseCase {
         System.out.print("> ");
         String flightNumber = scanner.next();
         Flight flight = scheduleManagerUseCaseSessionBeanRemote.viewSpecificFlightDetails(flightNumber);
-        printSpecificSingleFlight(flight);
-        
+        if (flight == null) {
+            System.out.println("Flight not found, unable to print details");
+        } else {
+            printSpecificSingleFlight(flight);
+        }   
     }
     
     // give them a few metrics to choose from 

@@ -7,6 +7,7 @@ package ejb.session.stateless;
 import entity.Flight;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.NoExistingAirportException;
 
 /**
  *
@@ -22,5 +23,5 @@ public interface FlightEntitySessionBeanLocal {
     public Flight checkReturnFlight(String originAirport, String destinationAirport, long flightGroup);
     public boolean deleteFlight(Flight flight);
     public boolean disableFlight(Flight flight);
-    public List<Flight> checkFlightRouteUsed(String originAirport, String destinationAirport);
+    public List<Flight> checkFlightRouteUsed(String originAirport, String destinationAirport) throws NoExistingAirportException;
 }

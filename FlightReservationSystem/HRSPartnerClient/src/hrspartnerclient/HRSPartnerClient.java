@@ -4,15 +4,18 @@
  */
 package hrspartnerclient;
 
-import hrspartnerclient.exception.NoFlightScheduleResultException;
+import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.date;
+import static com.sun.org.apache.xerces.internal.util.PropertyState.is;
+import static java.lang.ProcessBuilder.Redirect.to;
+import static java.lang.System.out;
 import java.time.Duration;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
@@ -26,10 +29,7 @@ import ws.entity.Flight;
 import ws.entity.FlightCabinClass;
 import ws.entity.FlightReservationSystemWebService;
 import ws.entity.FlightReservationSystemWebService_Service;
-import ws.entity.FlightRoute;
 import ws.entity.FlightSchedule;
-import ws.entity.Seat;
-import ws.entity.SeatStatus;
 
 
 /**
@@ -40,13 +40,13 @@ public class HRSPartnerClient {
    
     
 
-  private static HashMap<Integer, CabinClassType> hashMap;
-  private static long sessionId;
-  
+
+  private static long sessionId;  
   
   public HRSPartnerClient() {
       
   }
+
     
     
     public static void showMenuOptions(Scanner sc, FlightReservationSystemWebService port) {
@@ -132,7 +132,6 @@ public class HRSPartnerClient {
         String destinationAirport;
         int directFlight;
         int numPassengers = 0;
-        boolean needReturn = false;
 
         String startDateTimeInput = "";
         String returnDateTimeInput = "";
@@ -176,7 +175,6 @@ public class HRSPartnerClient {
 
         if (roundTrip == 2) {
             // roundtrip
-            needReturn = true;
             System.out.println("Enter the Return Departure Date (yyyy-MM-dd):");
             System.out.print("> ");
             String endDateInput = sc.next();
@@ -240,12 +238,14 @@ public class HRSPartnerClient {
             List<FlightSchedule> list1  =  printFlightScheduleInformation(departureAirport, startDateTimeInput, destinationAirport, sc, port, chosenType);
             if (!list1.isEmpty()) masterList.add(list1);
             
+
             // DIRECT: RETURN
             if (!returnDateTimeInput.isEmpty()) {
                 System.out.println("DIRECT: RETURN");
                 System.out.println("");
                 List<FlightSchedule> list2  = printFlightScheduleInformation(destinationAirport, returnDateTimeInput, departureAirport, sc, port, chosenType);
                 if (!list2.isEmpty()) masterList.add(list2);
+
             }
             if (directFlight == 2) {
                 // CONNECTING: TO : LEG 1
@@ -260,12 +260,14 @@ public class HRSPartnerClient {
                 List<FlightSchedule> list4  = printFlightScheduleInformationConnecting(departureAirport, startDateTimeInput, destinationAirport, sc, port, false, chosenType);
                 if (!list4.isEmpty()) masterList.add(list4);
 
+
                 if (!returnDateTimeInput.isEmpty()) {
                     // CONNECTING BACK : LEG 1
                     System.out.println("CONNECTING RETURN: LEG 1");
                     System.out.println("");
                     List<FlightSchedule> list5 = printFlightScheduleInformationConnecting(destinationAirport, returnDateTimeInput, departureAirport, sc, port, true, chosenType);
                     if (!list5.isEmpty()) masterList.add(list5);
+
 
                     // CONNECTING BACK : LEG 2
                     System.out.println("CONNECTING RETURN: LEG 2");
@@ -406,8 +408,6 @@ public class HRSPartnerClient {
         Pair<String, Fare> chosenFCC = chooseFCC(fareListForEachCabinClass, sc);
         finalFlightCabinClassTypeList.add(chosenFCC.getKey());
 
-        // this would be the total amount of money for one leg of the flight itnerary
-        double amountForOnePassenger = chosenFCC.getValue().getFareAmount().doubleValue();
 
         System.out.println("STEP 1c: SELECT SEAT FOR PASSENGERS");
         List<String> reservedSeats = printSeatLayout(chosenFlightScheduleId, chosenFCC.getKey(), numPassengers, sc, passengerDetails, port);
@@ -432,75 +432,60 @@ public class HRSPartnerClient {
         
         // print all fare information
         HashMap<String, Fare> fareListForEachCabinClass = new HashMap<>();
-        
-        for (FlightSchedule fs : fsList) {
-            System.out.println("");
-            System.out.println("Option #" + counter);
-            
-            // print flight information
-            Flight flight = port.retrieveFlights(fs.getId());
-            System.out.println(flight.getFlightNumber());
-            
-            
-            long fspId = fs.getId();
-            fareListForEachCabinClass = getFaresFromBackend(port, fspId);
-            
-            if (preference != null) {
-                HashMap<String, Fare> newFares = new HashMap<>();
-                newFares.put(preference.name(), fareListForEachCabinClass.get(preference.name()));
-                fareListForEachCabinClass = newFares;
-            }
-            
-            // print all cabin class preferences
-            printNoPreferenceCabinClassFares(fareListForEachCabinClass);
 
-            // print all flight schedules 
-            printFlightSchedulesForNoPreference(fsList, fareListForEachCabinClass);
-            counter += 1;
-        }
-        
-        return fareListForEachCabinClass;
-        
+            
     }
     
-    
-    
-    public static List<FlightSchedule> printFlightScheduleInformationConnecting(String departureAirport, String startDateTimeInput, String destinationAirport, Scanner sc, FlightReservationSystemWebService port, boolean isFirst, CabinClassType chosenPreference) 
-//    throws NoFlightScheduleResultException {
-    {
+    public static void printFlightScheduleInformationConnecting(String departureAirport, String startDateTimeInput, String destinationAirport, Scanner sc, FlightReservationSystemWebService port, boolean isFirst) {
         List<FlightSchedule> flightScheduleList = port.partnerSearchConnectingFlightLeg1(departureAirport, startDateTimeInput, destinationAirport, isFirst);
         // print flight cabin class fares
-        HashMap<String, Fare> fareListForEachCabinClass = new HashMap<>();
-        if (!flightScheduleList.isEmpty()) {
-            // get the first flight schedule plan and cabin class configuration 
-            long fspId = flightScheduleList.get(0).getId();
-            // get all flight cabin classes
-            fareListForEachCabinClass = getFaresFromBackend(port, fspId);
-
-
-            if (chosenPreference != null) {
-                HashMap<String, Fare> newFares = new HashMap<>();
-                newFares.put(chosenPreference.name(), fareListForEachCabinClass.get(chosenPreference.name()));
-                fareListForEachCabinClass = newFares;
+            HashMap<String, Fare> fareListForEachCabinClass = new HashMap<>();
+            if (!flightScheduleList.isEmpty()) {
+                // get the first flight schedule plan and cabin class configuration 
+                long fspId = flightScheduleList.get(0).getId();
+                // get all flight cabin calsses
+                fareListForEachCabinClass = getFaresFromBackend(port, fspId);
+                
+                // allow user to customise their flight cabin class preferences
+                if (fareListForEachCabinClass.isEmpty()) {
+                    System.out.println("Nothing inside");
+                }
+                
+                // allow user to customise their flight cabin class preferences
+                System.out.println("Do you have any cabin class preferences?");
+                System.out.println("Press 0 if there isn't");
+                System.out.println("Press 1 if there is");
+                System.out.print("> ");
+                int choice = sc.nextInt();
+                
+                if (choice == 1) {
+                    Pair<String, Fare> chosenFareList = chooseFCC(fareListForEachCabinClass, sc);
+                    // print flight information
+                    Flight flight = port.retrieveFlights(fspId);
+                    System.out.println(flight.getFlightNumber());
+                    // print flight route information
+                    List<String> flightRouteAirports = port.retrieveFlightRoute(fspId);
+                    System.out.println(flightRouteAirports.get(0) + " -> " + flightRouteAirports.get(1));
+                    // print single cabin class preference
+                    printSingleCabinClassFares(chosenFareList);
+                    // print all flight schedules
+                    printFlightSchedulesForPreferredCabinClass(flightScheduleList, chosenFareList);
+                    
+                } else if (choice == 0) {
+                    // print all cabin class preferences
+                    printNoPreferenceCabinClassFares(fareListForEachCabinClass);
+                    // print all flight schedules 
+                    printFlightSchedulesForNoPreference(flightScheduleList, fareListForEachCabinClass);
+                } else {
+                    System.out.println("You have entered an invalid option");
+                    System.exit(1);
+                }                 
             }
-
-            // print flight information
-            Flight flight = port.retrieveFlights(fspId);
-            System.out.println(flight.getFlightNumber());
-
-            // print all cabin class preferences
-            printNoPreferenceCabinClassFares(fareListForEachCabinClass);
-
-            // print all flight schedules 
-            printFlightSchedulesForNoPreference(flightScheduleList, fareListForEachCabinClass);
-        }
-        return flightScheduleList;
-//        throw new NoFlightScheduleResultException("No Flight Schedules have been found!");
     }
     
     
     
-    public static List<FlightSchedule> printFlightScheduleInformation(String departureAirport, String startDateTimeInput, String destinationAirport, Scanner sc, FlightReservationSystemWebService port, CabinClassType chosenPreference) {
+    public static void printFlightScheduleInformation(String departureAirport, String startDateTimeInput, String destinationAirport, Scanner sc, FlightReservationSystemWebService port) {
         List<FlightSchedule> flightScheduleList = port.partnerSearchFlight(departureAirport, startDateTimeInput, destinationAirport);
        
         // print flight cabin class fares
@@ -511,50 +496,53 @@ public class HRSPartnerClient {
                 // get all flight cabin calsses
                 fareListForEachCabinClass = getFaresFromBackend(port, fspId);
                 
-                if (chosenPreference != null) {
-                    HashMap<String, Fare> newFares = new HashMap<>();
-                    newFares.put(chosenPreference.name(), fareListForEachCabinClass.get(chosenPreference.name()));
-                    fareListForEachCabinClass = newFares;
-                }
+                System.out.println("Do you have any cabin class preferences?");
+                System.out.println("Press 0 if there isn't");
+                System.out.println("Press 1 if there is");
+                System.out.print("> ");
+                int choice = sc.nextInt();
                 
-                // print flight information
-                Flight flight = port.retrieveFlights(fspId);
-                System.out.println(flight.getFlightNumber());
+                if (choice == 1) {
+                    Pair<String, Fare> chosenFareList = chooseFCC(fareListForEachCabinClass, sc);
+                    // print single cabin class preference
+                    printSingleCabinClassFares(chosenFareList);
+                    // print all flight schedules
+                    printFlightSchedulesForPreferredCabinClass(flightScheduleList, chosenFareList);
                     
-                // print all cabin class preferences
-                printNoPreferenceCabinClassFares(fareListForEachCabinClass);
-                
-                // print all flight schedules 
-                printFlightSchedulesForNoPreference(flightScheduleList, fareListForEachCabinClass);
+                } else if (choice == 0) {
+                    // print all cabin class preferences
+                    printNoPreferenceCabinClassFares(fareListForEachCabinClass);
+                    // print all flight schedules 
+                    printFlightSchedulesForNoPreference(flightScheduleList, fareListForEachCabinClass);
+                } else {
+                    System.out.println("You have entered an invalid option");
+                    System.exit(1);
+                }                 
             }
-            
-            return flightScheduleList;
     }
     
-   public static void printFlightSchedulesForNoPreference(List<FlightSchedule> flightScheduleList, HashMap<String, Fare> fareListForEachCabinClass) {
-        flightScheduleList.forEach(schedule -> {
-            ZonedDateTime departureTime = schedule.getDepartureTime().toGregorianCalendar().toZonedDateTime();
-            ZonedDateTime arrivalTime = schedule.getArrivalTime().toGregorianCalendar().toZonedDateTime();
-
-            // Format departure and arrival times
-            String formattedDepartureTime = departureTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            String formattedArrivalTime = arrivalTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-
-            // Calculate duration
-            Duration duration = Duration.between(departureTime, arrivalTime);
-
-            System.out.println("Departure Time: " + formattedDepartureTime);
-            System.out.println("Arrival Time: " + formattedArrivalTime);
-            System.out.println("Flight Duration: " + formatDuration(duration));
-
-            // Print fare information for each cabin class
-            for (String key : fareListForEachCabinClass.keySet()) {
-                System.out.println("Cabin Class Name: " + key);
-                System.out.println("Price Per Passenger: " + fareListForEachCabinClass.get(key).getFareAmount().doubleValue());
-            }
-
-            System.out.println();
-        });
+    public static void printFlightSchedulesForPreferredCabinClass(List<FlightSchedule> flightScheduleList, Pair<String, Fare> highestFare) {
+         flightScheduleList.stream().forEach(x -> {
+               System.out.println("Departure Time: " + x.getDepartureTime());
+               System.out.println("Arrival Time: " + x.getArrivalTime());
+               System.out.println("Flight Duration: " + x.getFlightDuration().toString());
+               System.out.println("Cabin Class Name: " + highestFare.getKey());
+               System.out.println("Price Per Passenger: " + highestFare.getValue().getFareAmount().doubleValue());
+               System.out.println();
+            });
+    }
+    
+    public static void printFlightSchedulesForNoPreference(List<FlightSchedule> flightScheduleList, HashMap<String, Fare> fareListForEachCabinClass) {
+         flightScheduleList.stream().forEach(x -> {
+               System.out.println("Departure Time: " + x.getDepartureTime());
+               System.out.println("Arrival Time: " + x.getArrivalTime());
+               System.out.println("Flight Duration: " + x.getFlightDuration().toString());
+               for (String key : fareListForEachCabinClass.keySet()) {
+                   System.out.println("Cabin Class Name: " + key);
+                   System.out.println("Price Per Passenger: " + fareListForEachCabinClass.get(key).getFareAmount().doubleValue());
+               }
+               System.out.println();
+            });
     }
     
     
@@ -569,6 +557,12 @@ public class HRSPartnerClient {
             }
         }
         return fareListForEachCabinClass;
+    }
+    
+    public static void printSingleCabinClassFares(Pair<String, Fare> cabinClassDetails) {
+        System.out.println("Fare Information");
+        System.out.println();
+        System.out.println(cabinClassDetails.getKey() + " : " + cabinClassDetails.getValue().getFareAmount().doubleValue());
     }
     
     public static void printNoPreferenceCabinClassFares(HashMap<String, Fare> cabinClassDetails) {

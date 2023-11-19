@@ -38,6 +38,7 @@ import util.enumerations.FlightStatus;
 import util.enumerations.SeatStatus;
 import util.exception.AirportNotFoundException;
 import util.exception.InitialFlightNotInstantiatedException;
+import util.exception.NoExistingAirportException;
 import util.exception.NoFlightRouteFoundException;
 import util.exception.UpdateFlightSchedulePlanException;
 
@@ -72,15 +73,34 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
     @EJB
     private FlightEntitySessionBeanLocal flightEntitySessionBean;
     
-    
-    
-    
-    
+    @EJB 
+    private AirportEntitySessionBeanLocal airportEntitySessionBean;
     
     @Override
-    public long createNewFlight(String flightNumber, String configurationName, String originAirport, String destinationAirport, boolean createReturn, long initialId) throws InitialFlightNotInstantiatedException {
-        
+    public long createNewFlight(String flightNumber, String configurationName, String originAirport, String destinationAirport, boolean createReturn, long initialId) throws InitialFlightNotInstantiatedException, NoExistingAirportException {
         Flight flight = null;
+        Long id = null;
+        
+        //check if flight number is used before 
+        id = flightEntitySessionBean.getIdByFlightNumber(flightNumber);
+        
+        
+        
+        //check if destination & origin airport exists
+        String originAP = airportEntitySessionBean.findAirport(originAirport).getIataAirportCode();
+        String destinationAP = airportEntitySessionBean.findAirport(destinationAirport).getIataAirportCode();
+                
+        if (id == -1) {
+            // do not run, existing flight number
+            return -1;
+        } 
+        
+        if (originAP == null || destinationAP == null) {
+            return -2;
+        }
+        
+        
+        
         try {
             // cannot use city because there an be a city with 2 airports
             AircraftConfiguration aircraftConfiguration = aircraftConfigurationEntitySessionBean.getAircraftConfigurationPerConfigurationName(configurationName);
@@ -123,6 +143,10 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
         } catch (NoFlightRouteFoundException e) {
             // exception is thrown if initial flight cannot be created in the first place
             throw new InitialFlightNotInstantiatedException("Invalid Flight Route Entered!");
+        } catch (NoExistingAirportException exception) {
+            throw new NoExistingAirportException("Airport does not exist, unable to delete Flight Route");
+        } catch (Exception e) {
+            System.out.println("Something went wrong. Please try again");
         }
         
         // would try to create return flight but would return true or false based on this
@@ -136,8 +160,12 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
         } catch (NoFlightRouteFoundException e) {
             // if flight route cannot be created
             return -1;
+        } catch (NoExistingAirportException exception) {
+            throw new NoExistingAirportException("Airport does not exist, unable to delete Flight Route");
+        } catch (Exception e) {
+            System.out.println("Something went wrong. Please try again");
+            return -1;
         }
-        
        
     }
     
@@ -182,9 +210,8 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
             } else {
                 flight.setFlightGroup(flight.getId());
             }
-        } catch (AirportNotFoundException e) {
+        } catch (AirportNotFoundException | NoFlightRouteFoundException e) {
             return -1;
-        } catch (NoFlightRouteFoundException e) {
             // exception is thrown if initial flight cannot be created in the first place
         }
         
@@ -213,25 +240,29 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
     @Override
     public Flight viewSpecificFlightDetails(String flightNumber) {
         long FlightID = flightEntitySessionBean.getIdByFlightNumber(flightNumber);
-        Flight flight = flightEntitySessionBean.getFlightById(FlightID);
-        flight.getAircraftConfiguration().getCabinClassList().size();
-        flight.getFlightSchedulePlanList().size();
         
-        flight.getFlightSchedulePlanList().stream().forEach(x -> {
-            x.getFlightScheduleList().size();
-            x.getFares().size();
-            x.getFlightScheduleList().stream().forEach(y -> {
-                y.getFlightBookingList().size();
-                y.getFccList().size();
-                y.getFccList().stream().forEach(z -> {
-                    z.getSeatList().size();
+        if (FlightID == 9) { // no flight with that flightNumber
+            return null;
+        } else {
+            Flight flight = flightEntitySessionBean.getFlightById(FlightID);
+            flight.getAircraftConfiguration().getCabinClassList().size();
+            flight.getFlightSchedulePlanList().size();
+
+            flight.getFlightSchedulePlanList().stream().forEach(x -> {
+                x.getFlightScheduleList().size();
+                x.getFares().size();
+                x.getFlightScheduleList().stream().forEach(y -> {
+                    y.getFlightBookingList().size();
+                    y.getFccList().size();
+                    y.getFccList().stream().forEach(z -> {
+                        z.getSeatList().size();
+                    });
+                    y.getFlightBookingList().stream().forEach(a -> a.getReservedSeats().size());
                 });
-                y.getFlightBookingList().stream().forEach(a -> a.getReservedSeats().size());
+
             });
-            
-        });
-        
-        return flight;
+            return flight;
+        }
     }
     
     @Override
