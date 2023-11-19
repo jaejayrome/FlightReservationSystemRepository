@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 import util.enumerations.CabinClassType;
 import util.enumerations.FlightRouteStatus;
 import util.enumerations.FlightSchedulePlanStatus;
@@ -251,7 +252,9 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
     @Override
     public boolean deleteFlight(String flightNumber) {
         // check whether is there any flight schedule plan that's associated with this flight 
+        try {
         long id = flightEntitySessionBean.getIdByFlightNumber(flightNumber);
+               
         Flight flight = flightEntitySessionBean.getFlightById(id);
         
         // check here 
@@ -264,6 +267,10 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
             return flightEntitySessionBean.deleteFlight(flight);
             
         }
+        } catch (NoResultException e) {
+            System.out.println(e.toString());
+        }
+        return false;
     }
     
  

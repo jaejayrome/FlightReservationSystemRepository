@@ -290,11 +290,11 @@ public class FlightReservationSystemWebService {
     @WebMethod(operationName = "getFlightBookingsForReservation")
     public List<FlightBooking> getFlightBookingsForReservation(
             @WebParam(name = "flightReservationId") long flightReservationId) {
-            List<FlightBooking> list = partnerUseCaseSessionBeanLocal.getFlightBookingsForReservation(flightReservationId);
-            list.stream().forEach(x -> x.setFlightReservation(null));
-            list.stream().forEach(x -> x.setFlightSchedule(null));
-            list.stream().forEach(x -> x.setReservedSeats(Collections.EMPTY_LIST));
-            return list;
+        List<FlightBooking> list = partnerUseCaseSessionBeanLocal.getFlightBookingsForReservation(flightReservationId);
+        list.stream().forEach(x -> x.setFlightReservation(null));
+        list.stream().forEach(x -> x.setFlightSchedule(null));
+        list.stream().forEach(x -> x.setReservedSeats(Collections.EMPTY_LIST));
+        return list;
     }
     
     

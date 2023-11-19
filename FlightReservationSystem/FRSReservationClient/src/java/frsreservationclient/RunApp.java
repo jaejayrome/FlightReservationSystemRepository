@@ -385,9 +385,9 @@ public class RunApp {
                     }
                     
                     // payment details 
-                    double showCase = onePassengerFareConnecting == 0.0 ? onePassengerFareDirect : choice2 == 1 ? onePassengerFareDirect : onePassengerFareConnecting;
                     System.out.println("Last Step: Checkout");
-                    System.out.println("Total Amount Payable: " + (showCase * numPassengers));
+                    double totalCostPerPerson = ticketPricesForEachFlightSchedulePerPerson.stream().reduce(0.0, (x, y) -> x + y);
+                    System.out.println("Total Cost for Your Trip would be: $" + (totalCostPerPerson * numPassengers));
                     System.out.println("Enter the Credit Card Number");
                     System.out.print("> ");
                     String creditCardNumber = sc.next();

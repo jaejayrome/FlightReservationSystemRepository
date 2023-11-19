@@ -96,10 +96,9 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanLocal {
     @Override
     public boolean deleteFlight(Flight flight) {
         if (flight == null) return false;
-        // set it to an empty instance
-        flight.setAircraftConfiguration(null);
-        
         // set it to an empty flight route
+        flight.getAircraftConfiguration().getFlightList().size();
+        flight.getAircraftConfiguration().getFlightList().remove(flight);
         flight.setFlightRoute(null);
         
         em.remove(flight);

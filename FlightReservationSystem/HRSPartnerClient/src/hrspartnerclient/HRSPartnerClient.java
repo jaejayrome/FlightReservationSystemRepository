@@ -115,6 +115,11 @@ public class HRSPartnerClient {
     
     public static void viewFlightReservations(FlightReservationSystemWebService port) {
         List<FlightReservation> frlist = port.viewFlightResevations(sessionId);
+        
+        if (!frlist.isEmpty()) {
+            System.out.println("There are currently no transactions ongoing!");
+        }
+        
         for (FlightReservation fr : frlist) {
             System.out.println("Credit Card Number Paid " + fr.getCreditCardNumber());
             System.out.println("Date of Transaction " + fr.getDate());

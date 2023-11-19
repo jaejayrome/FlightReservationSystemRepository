@@ -67,6 +67,7 @@ public class SalesManagerUseCase {
         
         for (FlightCabinClass x : fccList) {
            System.out.println(""); 
+           System.out.println("Cabin Class Type: " + x.getCabinClass().getCabinClassName());
            System.out.println("Number of available seats " + x.getNumAvailableSeats());
            System.out.println("Number of reserved seats " + x.getNumReservedSeats());
            System.out.println("Number of balance seats " + x.getNumBalanceSeats());
