@@ -4,12 +4,20 @@
  */
 package ejb.session.stateless;
 
+import entity.CabinClass;
+import entity.Customer;
 import entity.Fare;
 import entity.Flight;
+import entity.FlightBooking;
+import entity.FlightCabinClass;
+import entity.FlightReservation;
 import entity.FlightRoute;
 import entity.FlightSchedule;
 import entity.FlightSchedulePlan;
 import entity.Partner;
+import entity.Passenger;
+import entity.Seat;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -28,6 +36,11 @@ import javax.persistence.PersistenceContext;
 import util.exception.InvalidLoginCredentialsException;
 import util.exception.NoFlightFoundException;
 import javafx.util.Pair;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import util.enumerations.CabinClassType;
+import util.enumerations.FlightSchedulePlanStatus;
+import util.enumerations.SeatStatus;
 
 /**
  *
@@ -99,6 +112,134 @@ public class PartnerUseCaseSessionBean implements PartnerUseCaseSessionBeanLocal
         em.detach(f.getFlightRoute());
         
         return f;
+    }
+    
+    
+//    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public FlightReservation makeFlightReservation(long partnerId, long flightScheduleId, String cabinClassName, List<String> seatNumberList, List<Passenger> passengerDetails, String creditCardNumber, double ticketPricesForEachFlightScheduleList) {
+        int numPassengers = passengerDetails.size();
+        
+        // check whether flight schedule plan disabled
+        FlightSchedule test = flightScheduleEntitySessionBean.getFlightScheduleById(flightScheduleId);
+        if (test.getFlightSchedulePlan().getStatus() == FlightSchedulePlanStatus.DISABLED) {
+            ejbContext.setRollbackOnly();
+        }
+        
+        // get Customer 
+        Partner partner = partnerEntitySessionBean.findPartner(partnerId);
+
+        // association between flight reservation and customer,
+//        FlightReservation flightReservation = new FlightReservation(partner, creditCardNumber);
+        FlightReservation flightReservation = null;
+         //  persist the flight reservation
+        flightReservation = flightReservationEntitySessionBean.makeFlightReservation(flightReservation);
+
+        int init1 = flightReservation.getPassengerList().size();
+        
+        // take in passenger data
+        for (Passenger p : passengerDetails) {
+            passengerEntitySessionBean.persistPassenger(p);
+            // association between flight reservation and passenger
+            flightReservation.getPassengerList().add(p);
+        }
+        
+        // association between partner to flight reservation
+//        partner.getFlightReservationList().size();
+//        partner.getFlightReservationList().add(flightReservation);
+
+        // persist the flight booking
+        // cannot use seat booking because there might be duplciate seat numbers between cabin classes
+        // massive assumption, assuming that one flight schedule and one cabin class is chosen
+        FlightBooking flightBooking = this.makeFlightBooking(flightScheduleId, cabinClassName, seatNumberList, flightReservation, ticketPricesForEachFlightScheduleList, passengerDetails);
+        // association between flight reservation and flightBooking 
+        int init = flightReservation.getFlightBookingList().size();
+        flightReservation.getFlightBookingList().add(flightBooking);            
+        flightBooking.setFlightReservation(flightReservation);
+
+
+        return flightReservation;
+    }
+    
+    public FlightBooking makeFlightBooking(long flightSchdeduleId, String flightCabinClassName, List<String> seatNumber, FlightReservation flightReservation, double ticketPricesForEachFlightSchedule, List<Passenger> passengerList) {
+            FlightSchedule flightSchedule = flightScheduleEntitySessionBean.getFlightScheduleById(flightSchdeduleId);
+            String flightNumber = flightSchedule.getFlightSchedulePlan().getFlight().getFlightNumber();
+            FlightCabinClass flightCabinClass = flightCabinClassEntitySessionBean.findFccWithFSAndFCCType(flightSchdeduleId, flightCabinClassName).get(0);
+            
+            BigDecimal prevReserved = flightCabinClass.getNumReservedSeats();
+            BigDecimal newReserved = prevReserved.add(new BigDecimal(seatNumber.size()));
+            BigDecimal newBalanced = flightCabinClass.getNumAvailableSeats().subtract(newReserved);
+            // updated the numbers 
+            flightCabinClass.setNumReservedSeats(newReserved);
+            flightCabinClass.setNumBalanceSeats(newBalanced);
+            
+            List<Seat> toAdd = new ArrayList<Seat>();
+            
+            // navigate to the correct flight cabin class
+            int counter = 0;
+            flightCabinClass.getSeatList().size();
+            for (String str : seatNumber) {
+                for (Seat s : flightCabinClass.getSeatList()) {
+                    if (s.getSeatNumber().equals(str)) {
+                        s.setSeatStatus(SeatStatus.RESERVED);
+                        s.setPassenger(passengerList.get(counter));
+                        toAdd.add(s);
+                    }
+                }
+                counter += 1;
+            }
+            // associationdone flight booking to flight schedule (records the price paid by the customer for the seat)
+            FlightBooking flightBooking = new FlightBooking(flightNumber, flightSchedule, new BigDecimal(ticketPricesForEachFlightSchedule));
+            // associate flight booking to flight reservation
+            flightBooking.setFlightReservation(flightReservation);
+            // persist flight booking
+            flightBooking = flightBookingEntitySessionBean.makeBooking(flightBooking);
+            // association flight schedule to flight booking 
+            int initLazy = flightSchedule.getFlightBookingList().size();
+            flightSchedule.getFlightBookingList().add(flightBooking);
+            
+            int init = flightBooking.getReservedSeats().size();
+            // association done flight booking to seats
+            flightBooking.getReservedSeats().addAll(toAdd);
+            return flightBooking;
+    }
+    
+    @Override
+    public CabinClass retrieveCabinClass(long fspID, CabinClassType name) {
+        FlightSchedule fs = flightScheduleEntitySessionBean.getFlightScheduleById(fspID);
+        fs.getFccList().size();
+        CabinClass toReturn = null;
+        fs.getFccList().stream().forEach(x -> {
+            CabinClass cc = x.getCabinClass();
+            if (cc.getCabinClassName().equals(name)) {
+                em.detach(cc);
+                cc.getAircraftConfigurationList().size();
+                cc.getAircraftConfigurationList().stream().forEach(y -> {
+                    em.detach(y);
+                });
+            }
+        });
+        
+        return toReturn;
+        
+    }
+    
+    @Override
+    public List<Seat> retrieveSeats(long fspID, CabinClassType name) {
+        FlightSchedule fs = flightScheduleEntitySessionBean.getFlightScheduleById(fspID);
+        fs.getFccList().size();
+        List<Seat> toReturn = new ArrayList<Seat>();
+        fs.getFccList().stream().forEach(x -> {
+            if (x.getCabinClass().getCabinClassName().equals(name)) {
+                x.getSeatList().size();
+                x.getSeatList().stream().forEach(y -> {
+                    em.detach(y);
+                    toReturn.add(y);
+                });
+            }
+        });
+        
+        return toReturn;
     }
     
     @Override

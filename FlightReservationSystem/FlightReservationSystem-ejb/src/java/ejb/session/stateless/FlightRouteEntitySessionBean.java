@@ -13,7 +13,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import util.enumerations.FlightRouteStatus;
+import util.exception.AirportNotFoundException;
+
 import util.exception.NoExistingAirportException;
+
 import util.exception.NoFlightRouteFoundException;
 
 /**
@@ -56,20 +59,17 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
     
     
     @Override
-    public FlightRoute getFlightRouteByCityName(String originAirport, String destinationAirport) throws NoFlightRouteFoundException, NoExistingAirportException {
+    public FlightRoute getFlightRouteByCityName(String originAirport, String destinationAirport) throws NoFlightRouteFoundException, AirportNotFoundException {
+        try {
         long originId = airportEntitySessionBean.findAirport(originAirport).getId();
         long destinationId = airportEntitySessionBean.findAirport(destinationAirport).getId();
-        
-        if (Objects.isNull(originId) || Objects.isNull(destinationId) ) {
-            throw new NoExistingAirportException("Airport does not exist, did not create Flight Route");
-        }
-        
-        
-        try {
+
         return (FlightRoute)em.createQuery("SELECT flightRoute FROM FlightRoute flightRoute WHERE flightRoute.origin.id = :originId AND flightRoute.destination.id = :destinationId")
                              .setParameter("originId", originId)
                              .setParameter("destinationId", destinationId)
                              .getSingleResult();
+        } catch (AirportNotFoundException exception) {
+            throw new AirportNotFoundException("TRANSACTION ABORTED: AIRPORT NOT FOUND IN DATABASE");
         } catch (NoResultException exception) {
             throw new NoFlightRouteFoundException("No Flight Route has been detected");
         }
@@ -84,6 +84,8 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
             FlightRoute flightRoute = this.getFlightRouteByCityName(originAirport, destinationAirport);
             // update the flightRoute
             flightRoute.setFlightRouteStatus(FlightRouteStatus.DISABLED);
+        } catch (AirportNotFoundException exception) {
+            
         } catch (NoFlightRouteFoundException exception) {
             // no flight has been found at all
             throw new NoExistingAirportException("Flight Route not found, unable to delete Flight Route");        
@@ -102,6 +104,8 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
             flightRoute.setDestination(null);
             // delete the flightRoute from the database
             em.remove(flightRoute);
+        } catch (AirportNotFoundException exception) {
+            
         } catch (NoFlightRouteFoundException exception) {
             // no flight has been found at all
             throw new NoExistingAirportException("Flight Route not found, unable to disable Flight Route");

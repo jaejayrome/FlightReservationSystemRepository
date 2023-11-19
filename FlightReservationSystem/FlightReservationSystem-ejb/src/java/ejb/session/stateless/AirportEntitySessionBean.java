@@ -8,7 +8,9 @@ import entity.Airport;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import util.exception.AirportNotFoundException;
 
 /**
  *
@@ -33,10 +35,19 @@ public class AirportEntitySessionBean implements AirportEntitySessionBeanLocal {
     }
     
     @Override
-    public Airport findAirport(String iataCode) {
-        Airport airport = (Airport)(em.createQuery("SELECT a FROM Airport a WHERE a.iataAirportCode = :airportCode").setParameter("airportCode", iataCode).getSingleResult());
-        return airport;
+    public Airport findAirport(String iataCode) throws AirportNotFoundException {
+        try {
+        return (Airport)(em.createQuery("SELECT a FROM Airport a WHERE a.iataAirportCode = :airportCode").setParameter("airportCode", iataCode).getSingleResult());
+        } catch (NoResultException e) {
+            throw new AirportNotFoundException("TRANSACTION ABORTED: AIRPORT NOT FOUND IN DATABASE");
+        }
+        
     }
-
+    
+    @Override
+    public Airport findAirportForDataInit(String iataCode) {
+        return (Airport)(em.createQuery("SELECT a FROM Airport a WHERE a.iataAirportCode = :airportCode").setParameter("airportCode", iataCode).getSingleResult());
+    }
+    
     
 }
