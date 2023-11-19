@@ -90,6 +90,7 @@ public class ScheduleManagerUseCase {
     public void createFlight() {
         System.out.println("Step 1: Enter the Flight Number");
         System.out.print("> ");
+
         String flightNumber = scanner.nextLine();
         // make the flight status disbaled until a flight schedule plan is attached to it 
         
@@ -163,23 +164,7 @@ public class ScheduleManagerUseCase {
     // arranged if exact return flight is after it, it should be directly below it
     public void viewAllFlights() {
         List<Flight> flightList = scheduleManagerUseCaseSessionBeanRemote.viewAllFlights();
-        Comparator<Flight> flightComparator = (x, y) -> {
-            String routeIdX = x.getFlightRoute().getOrigin().getIataAirportCode() + "-" + x.getFlightRoute().getDestination().getIataAirportCode();
-            String routeIdY = y.getFlightRoute().getOrigin().getIataAirportCode() + "-" + y.getFlightRoute().getDestination().getIataAirportCode();
-
-            // Compare the route identifiers.
-            int routeComparison = routeIdX.compareTo(routeIdY);
-            
-            if (routeComparison == 0) {
-                // If the routes are the same, check if one is a complementary return flight.
-                boolean xIsReturnFlight = x.getFlightRoute().getOrigin().getIataAirportCode().equals(y.getFlightRoute().getDestination().getIataAirportCode()) &&
-                                          x.getFlightRoute().getDestination().getIataAirportCode().equals(y.getFlightRoute().getOrigin().getIataAirportCode());
-                return xIsReturnFlight ? -1 : 1;
-            }
-            return routeComparison;
-        };
-                
-       flightList.stream().forEach(x -> printSingleFlight(x));
+        flightList.stream().forEach(x -> printSingleFlight(x));
     }
     
     // everything down to the cabin class have been printed out
