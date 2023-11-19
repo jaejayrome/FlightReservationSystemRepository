@@ -4,7 +4,9 @@
  */
 package ejb.session.stateless;
 
+import entity.FlightReservation;
 import entity.Partner;
+import java.util.List;
 import javax.ejb.Local;
 import util.exception.InvalidLoginCredentialsException;
 
@@ -18,4 +20,5 @@ public interface PartnerEntitySessionBeanLocal {
     public Partner authenticatePartner(String username, String password) throws InvalidLoginCredentialsException;
     public void updateLogInStatus(boolean newStatus, long id);
     public Partner findPartner(long id);
+    public List<FlightReservation> getFlightReservations(long id);
 }

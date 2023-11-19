@@ -67,9 +67,24 @@ public class FlightReservationSystemWebService {
     @WebMethod(operationName = "retrieveCabinClass")
     public CabinClass retrieveCabinClass(
         @WebParam(name = "fspID") long fspID,
-        @WebParam(name = "cabinClassName") CabinClassType name 
+        @WebParam(name = "cabinClassName") String name 
     ) {
-        CabinClass cc = partnerUseCaseSessionBeanLocal.retrieveCabinClass(fspID, name);
+        CabinClassType chosenOne = null;
+         switch (name) {
+            case "F": 
+                chosenOne = CabinClassType.F;
+                break;
+            case "Y": 
+                chosenOne = CabinClassType.Y;
+                break;
+            case "W": 
+                chosenOne = CabinClassType.W;
+                break;   
+             case "J": 
+                chosenOne = CabinClassType.J;
+                break;
+        }
+        CabinClass cc = partnerUseCaseSessionBeanLocal.retrieveCabinClass(fspID, chosenOne);
         cc.setAircraftConfigurationList(Collections.EMPTY_LIST);
         return cc;
     }
@@ -77,24 +92,58 @@ public class FlightReservationSystemWebService {
     @WebMethod(operationName = "retrieveSeats")
     public List<Seat> retrieveSeats(
         @WebParam(name = "fspID") long fspID,
-        @WebParam(name = "cabinClassName") CabinClassType name 
+        @WebParam(name = "cabinClassName") String name 
     ) {
-        List<Seat> seatList = partnerUseCaseSessionBeanLocal.retrieveSeats(fspID, name);
+        CabinClassType chosenOne = null;
+         switch (name) {
+            case "F": 
+                chosenOne = CabinClassType.F;
+                break;
+            case "Y": 
+                chosenOne = CabinClassType.Y;
+                break;
+            case "W": 
+                chosenOne = CabinClassType.W;
+                break;   
+             case "J": 
+                chosenOne = CabinClassType.J;
+                break;
+        }
+        List<Seat> seatList = partnerUseCaseSessionBeanLocal.retrieveSeats(fspID, chosenOne);
         seatList.stream().forEach(x -> {
             x.setFlightCabinClass(null);
         });
         return seatList;
     }
-    
+    // passengers, flight bookings, flight reservation
     @WebMethod(operationName = "makeFlightBooking")
-    public void makeFlightBooking(
+    public FlightBooking makeFlightBooking(
         @WebParam(name = "flightScheduleId") long flightScheduleId,
         @WebParam(name = "cabinClassName") String cabinClassName,
         @WebParam(name = "seatNumber") List<String> seatNumber,
-        @WebParam(name = "flightReservation") FlightReservation flightReservation,
         @WebParam(name = "ticketPricesForEachFlightSchedule") double ticketPricesForEachFlightSchedule,
         @WebParam(name = "passengerList") List<Passenger> passengerList) {
-        partnerUseCaseSessionBeanLocal.makeFlightBooking(flightScheduleId, cabinClassName, seatNumber, flightReservation, ticketPricesForEachFlightSchedule, passengerList);
+        FlightBooking fb = partnerUseCaseSessionBeanLocal.makeFlightBooking(flightScheduleId, cabinClassName, seatNumber, ticketPricesForEachFlightSchedule, passengerList);
+        fb.setFlightSchedule(null);
+        fb.setReservedSeats(Collections.EMPTY_LIST);
+        return fb;
+    }
+    
+    @WebMethod(operationName = "persistPassengers")
+    public Passenger persistPassengers(
+       @WebParam(name = "passengerDetails") List<String> passenger) {
+       return partnerUseCaseSessionBeanLocal.persistPassengers(passenger);
+    }
+            
+    @WebMethod(operationName = "makeFlightReservation")
+    public void makeFlightReservation(
+        @WebParam(name = "partnerId") long partnerId,
+        @WebParam(name = "flightScheduleId") Long flightScheduleId,
+        @WebParam(name = "passengerDetails") List<Passenger> passengerDetails,
+        @WebParam(name = "creditCardNumber") String creditCardNumber,
+        @WebParam(name = "bookings") List<FlightBooking> bookings) {
+
+        partnerUseCaseSessionBeanLocal.makeFlightReservation(partnerId, flightScheduleId, passengerDetails, creditCardNumber, bookings);
     }
     
     @WebMethod(operationName = "retrieveFlightRoute")
@@ -227,6 +276,27 @@ public class FlightReservationSystemWebService {
             }
     }
     
+    @WebMethod(operationName = "viewFlightResevations")
+    public List<FlightReservation> getFlightReservations(
+            @WebParam(name = "partnerID") long partnerID) {
+        List<FlightReservation> list = partnerUseCaseSessionBeanLocal.getFlightReservations(partnerID);
+        list.stream().forEach(x -> x.setFlightBookingList(Collections.EMPTY_LIST));
+        list.stream().forEach(x -> x.setCustomer(null));
+        list.stream().forEach(x -> x.setPassengerList(Collections.EMPTY_LIST));
+        list.stream().forEach(x -> x.setPartner(null));
+        return list;
+    }
+    
+    @WebMethod(operationName = "getFlightBookingsForReservation")
+    public List<FlightBooking> getFlightBookingsForReservation(
+            @WebParam(name = "flightReservationId") long flightReservationId) {
+            List<FlightBooking> list = partnerUseCaseSessionBeanLocal.getFlightBookingsForReservation(flightReservationId);
+            list.stream().forEach(x -> x.setFlightReservation(null));
+            list.stream().forEach(x -> x.setFlightSchedule(null));
+            list.stream().forEach(x -> x.setReservedSeats(Collections.EMPTY_LIST));
+            return list;
+    }
+    
     
     @WebMethod(operationName = "retrieveFaresForFlightSchedule")
     public Fare retrieveFaresForFlightSchedule(@WebParam(name = "flightSchedulIed") long id, @WebParam(name = "cabinClassName") String cabinClass) {
@@ -234,10 +304,6 @@ public class FlightReservationSystemWebService {
         if (!fares.isEmpty()) {
             fares.stream().forEach(x -> x.setCabinClass(null));
         fares.stream().forEach(x -> x.setFlightSchedulePlan(null));
-        
-        // get the highest fare
-//        Comparator<Fare> highestFare = Comparator.comparingDouble(x -> x.getFareAmount().doubleValue());
-//        return fares.stream().max(highestFare).get();
         return fares.get(0);
         } else {
             return null;

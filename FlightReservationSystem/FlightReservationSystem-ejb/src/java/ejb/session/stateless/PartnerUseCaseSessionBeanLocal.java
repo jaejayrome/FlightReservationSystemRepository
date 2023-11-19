@@ -37,7 +37,11 @@ public interface PartnerUseCaseSessionBeanLocal {
     public List<String> retrieveFlightRoute(long flightID);
     public CabinClass retrieveCabinClass(long fspID, CabinClassType name);
     public List<Seat> retrieveSeats(long fspID, CabinClassType name);
-    public FlightBooking makeFlightBooking(long flightSchdeduleId, String flightCabinClassName, List<String> seatNumber, FlightReservation flightReservation, double ticketPricesForEachFlightSchedule, List<Passenger> passengerList);
-    
+    public FlightReservation makeFlightReservation(long partnerId, long flightScheduleId, List<Passenger> passengerDetails, String creditCardNumber, List<FlightBooking> bookings);
+    public FlightBooking makeFlightBooking(long flightSchdeduleId, String flightCabinClassName, List<String> seatNumber, double ticketPricesForEachFlightSchedule, List<Passenger> passengerList);
+    public Passenger persistPassengers(List<String> passenger);
+    public List<FlightReservation> getFlightReservations(long partnerID);
+    public List<FlightBooking> getFlightBookingsForReservation(long flightReservationId);
+            
             
 }

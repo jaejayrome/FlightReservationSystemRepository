@@ -4,6 +4,7 @@
  */
 package ejb.session.stateless;
 
+import entity.AircraftConfiguration;
 import entity.CabinClass;
 import entity.Customer;
 import entity.Fare;
@@ -23,6 +24,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -110,14 +112,15 @@ public class PartnerUseCaseSessionBean implements PartnerUseCaseSessionBeanLocal
         em.detach(f.getAircraftConfiguration());
         f.getFlightSchedulePlanList().stream().forEach(x -> em.detach(x));
         em.detach(f.getFlightRoute());
-        
+        em.detach(fs);
+        em.detach(fs.getFlightSchedulePlan());
+        em.detach(fs.getFlightSchedulePlan().getFlight());
         return f;
     }
     
     
-//    @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public FlightReservation makeFlightReservation(long partnerId, long flightScheduleId, String cabinClassName, List<String> seatNumberList, List<Passenger> passengerDetails, String creditCardNumber, double ticketPricesForEachFlightScheduleList) {
+    @Override
+    public FlightReservation makeFlightReservation(long partnerId, long flightScheduleId, List<Passenger> passengerDetails, String creditCardNumber, List<FlightBooking> bookings) {
         int numPassengers = passengerDetails.size();
         
         // check whether flight schedule plan disabled
@@ -126,43 +129,50 @@ public class PartnerUseCaseSessionBean implements PartnerUseCaseSessionBeanLocal
             ejbContext.setRollbackOnly();
         }
         
-        // get Customer 
+        // get Partner 
         Partner partner = partnerEntitySessionBean.findPartner(partnerId);
 
         // association between flight reservation and customer,
-//        FlightReservation flightReservation = new FlightReservation(partner, creditCardNumber);
-        FlightReservation flightReservation = null;
+        FlightReservation flightReservation = new FlightReservation(partner, creditCardNumber);
+        
          //  persist the flight reservation
         flightReservation = flightReservationEntitySessionBean.makeFlightReservation(flightReservation);
 
-        int init1 = flightReservation.getPassengerList().size();
         
-        // take in passenger data
+        
         for (Passenger p : passengerDetails) {
-            passengerEntitySessionBean.persistPassenger(p);
+            Passenger g = passengerEntitySessionBean.findPassenger(p.getId());
             // association between flight reservation and passenger
-            flightReservation.getPassengerList().add(p);
+            flightReservation.getPassengerList().add(g);
         }
         
         // association between partner to flight reservation
-//        partner.getFlightReservationList().size();
-//        partner.getFlightReservationList().add(flightReservation);
-
-        // persist the flight booking
-        // cannot use seat booking because there might be duplciate seat numbers between cabin classes
-        // massive assumption, assuming that one flight schedule and one cabin class is chosen
-        FlightBooking flightBooking = this.makeFlightBooking(flightScheduleId, cabinClassName, seatNumberList, flightReservation, ticketPricesForEachFlightScheduleList, passengerDetails);
+        partner.getReservations().size();
+        partner.getReservations().add(flightReservation);
+        
         // association between flight reservation and flightBooking 
         int init = flightReservation.getFlightBookingList().size();
-        flightReservation.getFlightBookingList().add(flightBooking);            
-        flightBooking.setFlightReservation(flightReservation);
 
-
+        // assuming flight booking has been persisted
+        // association flight booking -> flight reservation
+        for (FlightBooking b : bookings) {
+            // this is detached so need to find the exact instance 
+            FlightBooking c = flightBookingEntitySessionBean.findBooking(b.getId());
+            c.setFlightReservation(flightReservation);
+            flightReservation.getFlightBookingList().add(c);            
+        }
+        
         return flightReservation;
     }
     
-    public FlightBooking makeFlightBooking(long flightSchdeduleId, String flightCabinClassName, List<String> seatNumber, FlightReservation flightReservation, double ticketPricesForEachFlightSchedule, List<Passenger> passengerList) {
+    @Override
+    public FlightBooking makeFlightBooking(long flightSchdeduleId, String flightCabinClassName, List<String> seatNumber, double ticketPricesForEachFlightSchedule, List<Passenger> passengerList) {
             FlightSchedule flightSchedule = flightScheduleEntitySessionBean.getFlightScheduleById(flightSchdeduleId);
+            if (flightSchedule.getFlightSchedulePlan().getStatus() == FlightSchedulePlanStatus.DISABLED) {
+                // throw null if we cannot make a flight booking under this disabled FSP
+                return null;
+            }
+            
             String flightNumber = flightSchedule.getFlightSchedulePlan().getFlight().getFlightNumber();
             FlightCabinClass flightCabinClass = flightCabinClassEntitySessionBean.findFccWithFSAndFCCType(flightSchdeduleId, flightCabinClassName).get(0);
             
@@ -188,10 +198,9 @@ public class PartnerUseCaseSessionBean implements PartnerUseCaseSessionBeanLocal
                 }
                 counter += 1;
             }
-            // associationdone flight booking to flight schedule (records the price paid by the customer for the seat)
+            
             FlightBooking flightBooking = new FlightBooking(flightNumber, flightSchedule, new BigDecimal(ticketPricesForEachFlightSchedule));
-            // associate flight booking to flight reservation
-            flightBooking.setFlightReservation(flightReservation);
+           
             // persist flight booking
             flightBooking = flightBookingEntitySessionBean.makeBooking(flightBooking);
             // association flight schedule to flight booking 
@@ -201,27 +210,47 @@ public class PartnerUseCaseSessionBean implements PartnerUseCaseSessionBeanLocal
             int init = flightBooking.getReservedSeats().size();
             // association done flight booking to seats
             flightBooking.getReservedSeats().addAll(toAdd);
+            
+            
+            // before returning back to the client 
+            em.detach(flightBooking);
             return flightBooking;
     }
     
     @Override
+    public Passenger persistPassengers(List<String> passenger) {
+        Passenger newPassenger = new Passenger(passenger.get(0), passenger.get(1), passenger.get(2));
+        newPassenger = passengerEntitySessionBean.persistPassenger(newPassenger);
+        // em.detach(newPassenger);
+        return newPassenger;
+    }
+    
+    @Override    
     public CabinClass retrieveCabinClass(long fspID, CabinClassType name) {
+        System.out.println(fspID);
+        System.out.println(name);
         FlightSchedule fs = flightScheduleEntitySessionBean.getFlightScheduleById(fspID);
+        System.out.println(fs);
+
         fs.getFccList().size();
         CabinClass toReturn = null;
-        fs.getFccList().stream().forEach(x -> {
+
+        List<FlightCabinClass> fccList = fs.getFccList();
+        for (int i = 0; i < fccList.size(); i++) {
+            FlightCabinClass x = fccList.get(i);
             CabinClass cc = x.getCabinClass();
             if (cc.getCabinClassName().equals(name)) {
                 em.detach(cc);
                 cc.getAircraftConfigurationList().size();
-                cc.getAircraftConfigurationList().stream().forEach(y -> {
+                for (AircraftConfiguration y : cc.getAircraftConfigurationList()) {
                     em.detach(y);
-                });
+                }
+                toReturn = cc;
+                break;
             }
-        });
-        
-        return toReturn;
-        
+        }
+
+    return toReturn;
     }
     
     @Override
@@ -389,12 +418,31 @@ public class PartnerUseCaseSessionBean implements PartnerUseCaseSessionBeanLocal
    }
    
    
-       public static Date formatDate(String dateTimeInput) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            LocalDateTime dateTime = LocalDateTime.parse(dateTimeInput, formatter);
-            ZoneId zoneId = ZoneId.of("Asia/Singapore");
-            Date date = Date.from(dateTime.atZone(zoneId).toInstant());
+    public static Date formatDate(String dateTimeInput) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.parse(dateTimeInput, formatter);
+        ZoneId zoneId = ZoneId.of("Asia/Singapore");
+        Date date = Date.from(dateTime.atZone(zoneId).toInstant());
         return date;
     }
+       
+    @Override
+    public List<FlightReservation> getFlightReservations(long partnerID) {
+        return partnerEntitySessionBean.getFlightReservations(partnerID);
+    }
+    
+    @Override
+    public List<FlightBooking> getFlightBookingsForReservation(long flightReservationId) {
+        FlightReservation flightReservation = em.find(FlightReservation.class, flightReservationId);
+        if (flightReservation != null) {
+            flightReservation.getFlightBookingList().size();
+            List<FlightBooking> list = flightReservation.getFlightBookingList();
+            list.stream().forEach(x -> em.detach(x));
+            return list;
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
 
 }

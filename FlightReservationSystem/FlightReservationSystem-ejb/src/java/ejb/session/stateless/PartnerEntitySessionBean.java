@@ -4,7 +4,9 @@
  */
 package ejb.session.stateless;
 
+import entity.FlightReservation;
 import entity.Partner;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -50,5 +52,15 @@ public class PartnerEntitySessionBean implements PartnerEntitySessionBeanLocal {
     @Override
     public Partner findPartner(long id) {
         return em.find(Partner.class, id);
+    }
+    
+    @Override
+    public List<FlightReservation> getFlightReservations(long id) {
+        this.findPartner(id).getReservations().size();
+        this.findPartner(id).getReservations().stream().forEach(x -> em.detach(x));
+        this.findPartner(id).getReservations().stream().forEach(x -> x.getPassengerList().stream().forEach(y -> em.detach(y)));
+        this.findPartner(id).getReservations().stream().forEach(x -> x.getFlightBookingList().stream().forEach(z -> em.detach(z)));
+        this.findPartner(id).getReservations().stream().forEach(x -> em.detach(x.getPartner()));
+        return this.findPartner(id).getReservations();
     }
 }

@@ -47,7 +47,7 @@ public class FlightReservation implements Serializable {
     @JoinColumn (nullable = true)
     private Customer customer;
     
-    @ManyToOne  (optional = true)
+    @ManyToOne (optional = true)
     @JoinColumn (nullable = true)
     private Partner partner;
     public FlightReservation() {    
@@ -62,7 +62,7 @@ public class FlightReservation implements Serializable {
     }
     
     public FlightReservation(Partner partner, String creditCardNumber) {
-        this.customer = customer;
+        this.partner = partner;
         this.flightBookingList = new ArrayList<FlightBooking>();
         this.passengerList = new ArrayList<Passenger>();
         this.creditCardNumber = creditCardNumber;

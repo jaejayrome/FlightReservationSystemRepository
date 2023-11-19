@@ -26,6 +26,10 @@ public class FlightBookingEntitySessionBean implements FlightBookingEntitySessio
         return flightBooking;
     }
 
+    @Override
+    public FlightBooking findBooking(long id) {
+        return em.find(FlightBooking.class, id);
+    }
    
     
 }

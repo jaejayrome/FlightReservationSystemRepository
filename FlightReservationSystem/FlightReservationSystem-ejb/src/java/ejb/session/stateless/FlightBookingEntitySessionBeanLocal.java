@@ -14,4 +14,5 @@ import javax.ejb.Local;
 @Local
 public interface FlightBookingEntitySessionBeanLocal {
     public FlightBooking makeBooking(FlightBooking flightBooking);
+    public FlightBooking findBooking(long id);
 }

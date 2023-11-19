@@ -14,4 +14,5 @@ import javax.ejb.Local;
 @Local
 public interface PassengerEntitySessionBeanLocal {
     public Passenger persistPassenger(Passenger passenger);
+    public Passenger findPassenger(long id);
 }

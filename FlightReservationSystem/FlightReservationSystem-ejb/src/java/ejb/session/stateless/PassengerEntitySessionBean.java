@@ -26,4 +26,9 @@ public class PassengerEntitySessionBean implements PassengerEntitySessionBeanLoc
         return passenger;
     }
     
+    @Override
+    public Passenger findPassenger(long id) {
+        return em.find(Passenger.class, id);
+    }
+    
 }

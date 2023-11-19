@@ -50,8 +50,8 @@ public class FlightBooking implements Serializable {
     @JoinColumn (nullable = false)
     private FlightSchedule flightSchedule;
     
-    @ManyToOne (optional = false)
-    @JoinColumn (nullable = false)
+    @ManyToOne (optional = true)
+    @JoinColumn (nullable = true)
     private FlightReservation flightReservation;
 
     // constructor 

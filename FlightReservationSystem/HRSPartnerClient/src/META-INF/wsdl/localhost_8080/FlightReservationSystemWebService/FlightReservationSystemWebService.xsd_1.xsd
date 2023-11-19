@@ -1,5 +1,17 @@
 <?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI (http://jax-ws.java.net). RI's version is Metro/2.4.3 (RELEASE-2.4.3-ad3323c; 2019-01-21T17:46:06+0000) JAXWS-RI/2.3.2 JAXWS-API/2.3.2 JAXB-RI/2.3.2 JAXB-API/2.3.2 git-revision#unknown. --><xs:schema xmlns:tns="http://ws.session.ejb/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://ws.session.ejb/">
 
+<xs:element name="getFlightBookingsForReservation" type="tns:getFlightBookingsForReservation"/>
+
+<xs:element name="getFlightBookingsForReservationResponse" type="tns:getFlightBookingsForReservationResponse"/>
+
+<xs:element name="makeFlightBooking" type="tns:makeFlightBooking"/>
+
+<xs:element name="makeFlightBookingResponse" type="tns:makeFlightBookingResponse"/>
+
+<xs:element name="makeFlightReservation" type="tns:makeFlightReservation"/>
+
+<xs:element name="makeFlightReservationResponse" type="tns:makeFlightReservationResponse"/>
+
 <xs:element name="partnerLogin" type="tns:partnerLogin"/>
 
 <xs:element name="partnerLoginResponse" type="tns:partnerLoginResponse"/>
@@ -15,6 +27,10 @@
 <xs:element name="partnerSearchFlight" type="tns:partnerSearchFlight"/>
 
 <xs:element name="partnerSearchFlightResponse" type="tns:partnerSearchFlightResponse"/>
+
+<xs:element name="persistPassengers" type="tns:persistPassengers"/>
+
+<xs:element name="persistPassengersResponse" type="tns:persistPassengersResponse"/>
 
 <xs:element name="retrieveCabinClass" type="tns:retrieveCabinClass"/>
 
@@ -36,31 +52,74 @@
 
 <xs:element name="retrieveSeatsResponse" type="tns:retrieveSeatsResponse"/>
 
-<xs:complexType name="partnerLogin">
+<xs:element name="viewFlightResevations" type="tns:viewFlightResevations"/>
+
+<xs:element name="viewFlightResevationsResponse" type="tns:viewFlightResevationsResponse"/>
+
+<xs:complexType name="makeFlightReservation">
 <xs:sequence>
-<xs:element name="username" type="xs:string" minOccurs="0"/>
+<xs:element name="partnerId" type="xs:long"/>
+<xs:element name="flightScheduleId" type="xs:long" minOccurs="0"/>
+<xs:element name="passengerDetails" type="tns:passenger" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="creditCardNumber" type="xs:string" minOccurs="0"/>
+<xs:element name="bookings" type="tns:flightBooking" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="passenger">
+<xs:sequence>
+<xs:element name="firstName" type="xs:string" minOccurs="0"/>
+<xs:element name="id" type="xs:long" minOccurs="0"/>
+<xs:element name="lastName" type="xs:string" minOccurs="0"/>
+<xs:element name="passportNumber" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="flightBooking">
+<xs:sequence>
+<xs:element name="flightLegCost" type="xs:decimal" minOccurs="0"/>
+<xs:element name="flightNumber" type="xs:string" minOccurs="0"/>
+<xs:element name="flightReservation" type="tns:flightReservation" minOccurs="0"/>
+<xs:element name="flightSchedule" type="tns:flightSchedule" minOccurs="0"/>
+<xs:element name="id" type="xs:long" minOccurs="0"/>
+<xs:element name="reservedSeats" type="tns:seat" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="flightReservation">
+<xs:sequence>
+<xs:element name="creditCardNumber" type="xs:string" minOccurs="0"/>
+<xs:element name="customer" type="tns:customer" minOccurs="0"/>
+<xs:element name="date" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="flightBookingList" type="tns:flightBooking" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="id" type="xs:long" minOccurs="0"/>
+<xs:element name="partner" type="tns:partner" minOccurs="0"/>
+<xs:element name="passengerList" type="tns:passenger" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="customer">
+<xs:sequence>
+<xs:element name="address" type="xs:string" minOccurs="0"/>
+<xs:element name="email" type="xs:string" minOccurs="0"/>
+<xs:element name="firstName" type="xs:string" minOccurs="0"/>
+<xs:element name="flightReservationList" type="tns:flightReservation" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="id" type="xs:long" minOccurs="0"/>
+<xs:element name="lastName" type="xs:string" minOccurs="0"/>
 <xs:element name="password" type="xs:string" minOccurs="0"/>
+<xs:element name="phoneNumber" type="xs:string" minOccurs="0"/>
+<xs:element name="roleType" type="tns:roleType" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="partnerLoginResponse">
+<xs:complexType name="partner">
 <xs:sequence>
-<xs:element name="return" type="xs:long"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="partnerSearchConnectingFlightLeg1">
-<xs:sequence>
-<xs:element name="departureAirport" type="xs:string" minOccurs="0"/>
-<xs:element name="departureDate" type="xs:string" minOccurs="0"/>
-<xs:element name="destinationAirport" type="xs:string" minOccurs="0"/>
-<xs:element name="isFirst" type="xs:boolean"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="partnerSearchConnectingFlightLeg1Response">
-<xs:sequence>
-<xs:element name="return" type="tns:flightSchedule" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="companyName" type="xs:string" minOccurs="0"/>
+<xs:element name="id" type="xs:long" minOccurs="0"/>
+<xs:element name="isLoggedIn" type="xs:boolean"/>
+<xs:element name="loginPassword" type="xs:string" minOccurs="0"/>
+<xs:element name="loginUsername" type="xs:string" minOccurs="0"/>
+<xs:element name="reservations" type="tns:flightReservation" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -185,53 +244,95 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="passenger">
-<xs:sequence>
-<xs:element name="firstName" type="xs:string" minOccurs="0"/>
-<xs:element name="id" type="xs:long" minOccurs="0"/>
-<xs:element name="lastName" type="xs:string" minOccurs="0"/>
-<xs:element name="passportNumber" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="flightBooking">
-<xs:sequence>
-<xs:element name="flightLegCost" type="xs:decimal" minOccurs="0"/>
-<xs:element name="flightNumber" type="xs:string" minOccurs="0"/>
-<xs:element name="flightReservation" type="tns:flightReservation" minOccurs="0"/>
-<xs:element name="flightSchedule" type="tns:flightSchedule" minOccurs="0"/>
-<xs:element name="id" type="xs:long" minOccurs="0"/>
-<xs:element name="reservedSeats" type="tns:seat" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="flightReservation">
-<xs:sequence>
-<xs:element name="creditCardNumber" type="xs:string" minOccurs="0"/>
-<xs:element name="customer" type="tns:customer" minOccurs="0"/>
-<xs:element name="date" type="xs:dateTime" minOccurs="0"/>
-<xs:element name="flightBookingList" type="tns:flightBooking" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="id" type="xs:long" minOccurs="0"/>
-<xs:element name="passengerList" type="tns:passenger" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="customer">
-<xs:sequence>
-<xs:element name="address" type="xs:string" minOccurs="0"/>
-<xs:element name="email" type="xs:string" minOccurs="0"/>
-<xs:element name="firstName" type="xs:string" minOccurs="0"/>
-<xs:element name="flightReservationList" type="tns:flightReservation" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="id" type="xs:long" minOccurs="0"/>
-<xs:element name="lastName" type="xs:string" minOccurs="0"/>
-<xs:element name="password" type="xs:string" minOccurs="0"/>
-<xs:element name="phoneNumber" type="xs:string" minOccurs="0"/>
-<xs:element name="roleType" type="tns:roleType" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="duration" final="extension restriction">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="makeFlightReservationResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="makeFlightBooking">
+<xs:sequence>
+<xs:element name="flightScheduleId" type="xs:long"/>
+<xs:element name="cabinClassName" type="xs:string" minOccurs="0"/>
+<xs:element name="seatNumber" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="ticketPricesForEachFlightSchedule" type="xs:double"/>
+<xs:element name="passengerList" type="tns:passenger" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="makeFlightBookingResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:flightBooking" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="partnerSearchFlight">
+<xs:sequence>
+<xs:element name="departureAirport" type="xs:string" minOccurs="0"/>
+<xs:element name="departureDate" type="xs:string" minOccurs="0"/>
+<xs:element name="destinationAirport" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="partnerSearchFlightResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:flightSchedule" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="persistPassengers">
+<xs:sequence>
+<xs:element name="passengerDetails" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="persistPassengersResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:passenger" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveCabinClass">
+<xs:sequence>
+<xs:element name="fspID" type="xs:long"/>
+<xs:element name="cabinClassName" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveCabinClassResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:cabinClass" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="partnerLogin">
+<xs:sequence>
+<xs:element name="username" type="xs:string" minOccurs="0"/>
+<xs:element name="password" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="partnerLoginResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:long"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="partnerSearchConnectingFlightLeg1">
+<xs:sequence>
+<xs:element name="departureAirport" type="xs:string" minOccurs="0"/>
+<xs:element name="departureDate" type="xs:string" minOccurs="0"/>
+<xs:element name="destinationAirport" type="xs:string" minOccurs="0"/>
+<xs:element name="isFirst" type="xs:boolean"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="partnerSearchConnectingFlightLeg1Response">
+<xs:sequence>
+<xs:element name="return" type="tns:flightSchedule" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="retrieveFaresForFlightSchedule">
@@ -259,20 +360,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="partnerSearchFlight">
-<xs:sequence>
-<xs:element name="departureAirport" type="xs:string" minOccurs="0"/>
-<xs:element name="departureDate" type="xs:string" minOccurs="0"/>
-<xs:element name="destinationAirport" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="partnerSearchFlightResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:flightSchedule" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="partnerLogout">
 <xs:sequence>
 <xs:element name="partnerId" type="xs:long"/>
@@ -283,10 +370,22 @@
 <xs:sequence/>
 </xs:complexType>
 
+<xs:complexType name="viewFlightResevations">
+<xs:sequence>
+<xs:element name="partnerID" type="xs:long"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="viewFlightResevationsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:flightReservation" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="retrieveSeats">
 <xs:sequence>
 <xs:element name="fspID" type="xs:long"/>
-<xs:element name="cabinClassName" type="tns:cabinClassType" minOccurs="0"/>
+<xs:element name="cabinClassName" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -296,16 +395,15 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="retrieveCabinClass">
+<xs:complexType name="getFlightBookingsForReservation">
 <xs:sequence>
-<xs:element name="fspID" type="xs:long"/>
-<xs:element name="cabinClassName" type="tns:cabinClassType" minOccurs="0"/>
+<xs:element name="flightReservationId" type="xs:long"/>
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="retrieveCabinClassResponse">
+<xs:complexType name="getFlightBookingsForReservationResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:cabinClass" minOccurs="0"/>
+<xs:element name="return" type="tns:flightBooking" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -320,6 +418,13 @@
 <xs:element name="return" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
+
+<xs:simpleType name="roleType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="CUSTOMER"/>
+<xs:enumeration value="VISITOR"/>
+</xs:restriction>
+</xs:simpleType>
 
 <xs:simpleType name="aircraftTypeName">
 <xs:restriction base="xs:string">
@@ -366,13 +471,6 @@
 <xs:restriction base="xs:string">
 <xs:enumeration value="AVAILABLE"/>
 <xs:enumeration value="RESERVED"/>
-</xs:restriction>
-</xs:simpleType>
-
-<xs:simpleType name="roleType">
-<xs:restriction base="xs:string">
-<xs:enumeration value="CUSTOMER"/>
-<xs:enumeration value="VISITOR"/>
 </xs:restriction>
 </xs:simpleType>
 </xs:schema>

@@ -23,11 +23,14 @@ import ws.entity.CabinClass;
 import ws.entity.CabinClassType;
 import ws.entity.Fare;
 import ws.entity.Flight;
+import ws.entity.FlightBooking;
 import ws.entity.FlightCabinClass;
+import ws.entity.FlightReservation;
 import ws.entity.FlightReservationSystemWebService;
 import ws.entity.FlightReservationSystemWebService_Service;
 import ws.entity.FlightRoute;
 import ws.entity.FlightSchedule;
+import ws.entity.Passenger;
 import ws.entity.Seat;
 import ws.entity.SeatStatus;
 
@@ -90,11 +93,11 @@ public class HRSPartnerClient {
                 doMainMenu(sc, port);
                 break;
             case 2: 
-                viewFlightReservations();
+                viewFlightReservations(port);
                 doMainMenu(sc, port);
                 break;
             case 3: 
-                viewFlightReservationDetails();
+                viewFlightReservationDetails(port, sc);
                 doMainMenu(sc, port);
                 break;
         }
@@ -110,12 +113,50 @@ public class HRSPartnerClient {
         return partnerId;
     }
     
-    public static void viewFlightReservations() {
-        
+    public static void viewFlightReservations(FlightReservationSystemWebService port) {
+        List<FlightReservation> frlist = port.viewFlightResevations(sessionId);
+        for (FlightReservation fr : frlist) {
+            System.out.println("Credit Card Number Paid " + fr.getCreditCardNumber());
+            System.out.println("Date of Transaction " + fr.getDate());
+        }
     }
     
-    public static void viewFlightReservationDetails() {
+    public static void viewFlightReservationDetails(FlightReservationSystemWebService port, Scanner scanner) {
+        List<FlightReservation> frlist = port.viewFlightResevations(sessionId);
+
+        if (frlist.isEmpty()) {
+            System.out.println("No flight reservations found.");
+            return;
+        }
+
+        // Display available flight reservations
+        System.out.println("Available Flight Reservations:");
+        for (int i = 0; i < frlist.size(); i++) {
+            System.out.println((i + 1) + ". " + frlist.get(i).getDate());
+        }
+
+        // Prompt the user to choose a flight reservation
+        System.out.print("Enter the number corresponding to the desired flight reservation: ");
+        int selectedReservationIndex = scanner.nextInt();
+
+        // Ensure the selected index is valid
+        if (selectedReservationIndex < 1 || selectedReservationIndex > frlist.size()) {
+            System.out.println("Invalid selection. Exiting...");
+            return;
+        }
+
+        long selectedReservationId = frlist.get(selectedReservationIndex - 1).getId();
+
+        List<FlightBooking> flightBookings = port.getFlightBookingsForReservation(selectedReservationId);
+
+        System.out.println("Details for Flight Reservation " + selectedReservationId + ":");
         
+        System.out.println("Associated Flight Bookings:");
+        for (FlightBooking flightBooking : flightBookings) {
+            System.out.println("Flight Booking ID: " + flightBooking.getId());
+            System.out.println("Flight Number: " + flightBooking.getFlightNumber());
+            System.out.println("Flight Leg Cost: " + flightBooking.getFlightLegCost().doubleValue());
+        }
     }
 
     public static void main(String[] args) {
@@ -274,9 +315,9 @@ public class HRSPartnerClient {
                     if (!list6.isEmpty()) masterList.add(list6);
                 }
             }
-            
+            System.out.println(masterList.size());
             // at least one outcome would have 1 flight
-            if (masterList.size() > 1) {
+            if (masterList.size() >= 1) {
                 System.out.println("Would you like to proceed to make reservations?");
                 System.out.println("Press 0 to head back to the main menu");
                 System.out.println("Press 1 to proceed");
@@ -293,6 +334,17 @@ public class HRSPartnerClient {
                     System.out.println("");
                     // return this too
                     List<HashMap<Integer, String>> allPDetails = enterPassengerDetails(numPassengers, sc);
+                    List<List<String>> allPDetailsList = new ArrayList<>();
+
+                    // Convert List<HashMap<Integer, String>> to List<List<String>>
+                    for (HashMap<Integer, String> map : allPDetails) {
+                        List<String> detailsList = new ArrayList<>();
+                        detailsList.add(map.get(0));
+                        detailsList.add(map.get(1));
+                        detailsList.add(map.get(2));
+                        allPDetailsList.add(detailsList);
+                    }
+
                     
                     boolean connectingFound = (!needReturn) ? (masterList.size() == 4) :  (masterList.size() == 6);
                     double onePassengerFareDirect = 0.0;
@@ -335,17 +387,48 @@ public class HRSPartnerClient {
                                 ticketPricesForEachFlightSchedulePerPerson.add(connectingReturn2OnePerson);
                              }
                         }
+                    } else {
+                        double directToOnePassengerFare = enterDetailsForDirectTo(0, 0, false, false, masterList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassTypeList, finalSeatsChoice, allPDetails, chosenType, port);
+                        onePassengerFareDirect += directToOnePassengerFare;
+                        ticketPricesForEachFlightSchedulePerPerson.add(directToOnePassengerFare);
+                        if (needReturn) {
+                             double directReturnOnePassengerFare =  enterDetailsForDirectTo(0, 1, true, false, masterList, departureAirport, destinationAirport, numPassengers, sc, finalFlightScheduleIdList, finalFlightCabinClassTypeList, finalSeatsChoice, allPDetails, chosenType, port);
+                             onePassengerFareDirect += directReturnOnePassengerFare;
+                             ticketPricesForEachFlightSchedulePerPerson.add(directReturnOnePassengerFare);
+                        }
+                    }
                         
                         double totalCostPerPerson = ticketPricesForEachFlightSchedulePerPerson.stream().reduce(0.0, (x, y) -> x + y);
                         System.out.println("Total Cost for Your Trip would be: $" + (totalCostPerPerson * numPassengers));
                         
+                        System.out.println("Please Enter Your Credit Card Number");
+                        System.out.print("> ");
+                        String creditCard = sc.next();
+                        sc.nextLine();
+                        
+                        List<Passenger> passengerList = new ArrayList<Passenger>();
+                        // persist passenger
+                        for (List<String> map : allPDetailsList) {
+                            Passenger p = port.persistPassengers(map);
+                            passengerList.add(p);
+                        }
+                        
+                        // make flight bookings 
+                        List<FlightBooking> flightBookingList = new ArrayList<FlightBooking>();
                         for (int i = 0; i < finalFlightScheduleIdList.size(); i++) {
                             // do the booking here
                             long fsID = finalFlightScheduleIdList.get(i);
                             String ccName = finalFlightCabinClassTypeList.get(i);
                             List<String> reservedSeats = finalSeatsChoice.get(i);
+                            double cost = ticketPricesForEachFlightSchedulePerPerson.get(i);
+                            // need the cost of this
+                            flightBookingList.add(port.makeFlightBooking(fsID, ccName, reservedSeats, cost, passengerList));
                         }
-                    } 
+                        
+                        // make flight reservation
+                        port.makeFlightReservation(partnerid, finalFlightScheduleIdList.get(0), passengerList, creditCard, flightBookingList);
+                        
+                    
                     
                 } 
             }
@@ -408,7 +491,7 @@ public class HRSPartnerClient {
 
         // this would be the total amount of money for one leg of the flight itnerary
         double amountForOnePassenger = chosenFCC.getValue().getFareAmount().doubleValue();
-
+        System.out.println(chosenFCC.getKey());
         System.out.println("STEP 1c: SELECT SEAT FOR PASSENGERS");
         List<String> reservedSeats = printSeatLayout(chosenFlightScheduleId, chosenFCC.getKey(), numPassengers, sc, passengerDetails, port);
         finalSeatsChoice.add(reservedSeats);
@@ -501,35 +584,35 @@ public class HRSPartnerClient {
     
     
     public static List<FlightSchedule> printFlightScheduleInformation(String departureAirport, String startDateTimeInput, String destinationAirport, Scanner sc, FlightReservationSystemWebService port, CabinClassType chosenPreference) {
-        List<FlightSchedule> flightScheduleList = port.partnerSearchFlight(departureAirport, startDateTimeInput, destinationAirport);
-       
-        // print flight cabin class fares
-            HashMap<String, Fare> fareListForEachCabinClass = new HashMap<>();
-            if (!flightScheduleList.isEmpty()) {
-                // get the first flight schedule plan and cabin class configuration 
-                long fspId = flightScheduleList.get(0).getId();
-                // get all flight cabin calsses
-                fareListForEachCabinClass = getFaresFromBackend(port, fspId);
-                
-                if (chosenPreference != null) {
-                    HashMap<String, Fare> newFares = new HashMap<>();
-                    newFares.put(chosenPreference.name(), fareListForEachCabinClass.get(chosenPreference.name()));
-                    fareListForEachCabinClass = newFares;
-                }
-                
-                // print flight information
-                Flight flight = port.retrieveFlights(fspId);
-                System.out.println(flight.getFlightNumber());
-                    
-                // print all cabin class preferences
-                printNoPreferenceCabinClassFares(fareListForEachCabinClass);
-                
-                // print all flight schedules 
-                printFlightSchedulesForNoPreference(flightScheduleList, fareListForEachCabinClass);
-            }
-            
-            return flightScheduleList;
+    List<FlightSchedule> flightScheduleList = port.partnerSearchFlight(departureAirport, startDateTimeInput, destinationAirport);
+
+    if (!flightScheduleList.isEmpty()) {
+        // get the first flight schedule plan and cabin class configuration 
+        long fspId = flightScheduleList.get(0).getId();
+        
+        // get all flight cabin classes
+        HashMap<String, Fare> fareListForEachCabinClass = getFaresFromBackend(port, fspId);
+        
+        if (chosenPreference != null && fareListForEachCabinClass.containsKey(chosenPreference.name())) {
+            // If the chosen preference is valid, keep only that cabin class in the map
+            fareListForEachCabinClass = new HashMap<>();
+            fareListForEachCabinClass.put(chosenPreference.name(), getFaresFromBackend(port, fspId).get(chosenPreference.name()));
+        }
+
+        // print flight information
+        Flight flight = port.retrieveFlights(fspId);
+        System.out.println(flight.getFlightNumber());
+
+        // print all cabin class preferences
+        printNoPreferenceCabinClassFares(fareListForEachCabinClass);
+
+        // print all flight schedules 
+        printFlightSchedulesForNoPreference(flightScheduleList, fareListForEachCabinClass);
     }
+
+    return flightScheduleList;
+}
+
     
    public static void printFlightSchedulesForNoPreference(List<FlightSchedule> flightScheduleList, HashMap<String, Fare> fareListForEachCabinClass) {
         flightScheduleList.forEach(schedule -> {
@@ -602,7 +685,8 @@ public class HRSPartnerClient {
         System.out.println("Enter Your Option:");
         System.out.print("> ");
         String chosenCabinClassName = mapToChoose.get(scanner.nextInt());
-        System.out.println(fareForEachCabinClass.get(chosenCabinClassName));
+//        System.out.println(chosenCabinClassName);
+//        System.out.println(fareForEachCabinClass.get(chosenCabinClassName));
         return new Pair<String, Fare>(chosenCabinClassName, fareForEachCabinClass.get(chosenCabinClassName));
     }
     
@@ -726,56 +810,33 @@ public class HRSPartnerClient {
     public static List<String> printSeatLayout(long fspID, String chosen, int numPassengers, Scanner sc, 
         List<HashMap<Integer, String>> passengerDetails, FlightReservationSystemWebService port) {
         
-        CabinClassType chosenOne = null;
-        for (CabinClassType cct : hashMap.values()) {
-            if (cct.name().equals(chosen)) chosenOne = cct;
-        }
-        
         // must get a list of seats
-        CabinClass chosenCabinClass = port.retrieveCabinClass(fspID, chosenOne);
+        CabinClass chosenCabinClass = port.retrieveCabinClass(fspID, chosen);
        
         int numRows = chosenCabinClass.getNumRows().intValue();
         int numColumns = chosenCabinClass.getNumAisles().intValue() + chosenCabinClass.getNumSeatsAbreast().intValue();
         HashSet<String> reservedSeatsSet = new HashSet<String>();
         // need to initalise this
         List<String> seatChosen = new ArrayList<String>();
-        List<Seat> seatList = port.retrieveSeats(fspID, chosenOne);
+        List<Seat> seatList = port.retrieveSeats(fspID, chosen);
         
         // make a seat array
         String[][] seatLayout = new String[numRows][numColumns];
         String convertedConfiguration = convertSeatingConfiguration(chosenCabinClass.getSeatingConfiguration());
         int[] breakpoints = parseSeatingConfiguration(convertedConfiguration);
         HashSet<Integer> breakpointSet = convertToHashSet(breakpoints);
-        
-        // sort the seatlist based on seat number
-         Comparator<Seat> customComparator = Comparator
-        .<Seat, Integer>comparing(seat -> Integer.parseInt(seat.getSeatNumber().substring(0, seat.getSeatNumber().length() - 1)))
-        .thenComparing(Comparator.comparing(Seat::getSeatNumber));
-
-        // Sort the list using the custom comparator
-        Collections.sort(seatList, customComparator);
-        int counter = 0;
-        // initalise all the aisles
+    
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numColumns; j++) {
-                // this woud be A, B ,C ,D 
                 if (breakpointSet.contains(j)) {
                     seatLayout[i][j] = "<=>";
                 } else {
-                    if (counter < seatList.size()) {
-                        if (seatList.get(counter).getSeatStatus() == SeatStatus.RESERVED) {
-                            String xxx = seatList.get(counter).getSeatNumber().length() == 3 ? "XXX" : "XX";
-                            seatLayout[i][j] = xxx;
-                        } else {
-                            seatLayout[i][j] = seatList.get(counter).getSeatNumber();
-                        }
-                        counter += 1;
-                    }
+                    char rowChar = (char) ('A' + j % (chosenCabinClass.getNumSeatsAbreast().intValue() + numColumns));
+                    seatLayout[i][j] = (i + 1) + "" + rowChar;
                 }
             }
         }
         
-        // print array
         for (int i = 0; i < seatLayout.length; i++) {
             for (int j = 0; j < seatLayout[i].length; j++) {
                 System.out.print(seatLayout[i][j] + " ");
