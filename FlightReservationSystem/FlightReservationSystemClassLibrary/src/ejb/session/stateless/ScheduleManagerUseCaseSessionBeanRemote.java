@@ -16,6 +16,7 @@ import util.enumerations.CabinClassType;
 import util.enumerations.FlightStatus;
 import util.exception.InitialFlightNotInstantiatedException;
 import util.exception.NoExistingAirportException;
+import util.exception.NoFlightRouteFoundException;
 import util.exception.UpdateFlightSchedulePlanException;
 
 /**
@@ -27,7 +28,7 @@ public interface ScheduleManagerUseCaseSessionBeanRemote {
     public long createNewFlight(String flightNumber, String configurationName, String originAirport, String destinationAirport, boolean createReturn, long initialId) throws InitialFlightNotInstantiatedException, NoExistingAirportException;
     public List<Flight> viewAllFlights();
     public Flight viewSpecificFlightDetails(String flightNumber);
-    public long createNewFlightSchedulePlan(String flightNumber, List<Date> departureDateList, Duration duration, Date endDate, int frequency, HashMap<CabinClassType, List<Fare>> faresForCabinClassList, boolean makeReturn, long id, Duration layover);
+    public long createNewFlightSchedulePlan(String flightNumber, List<Date> departureDateList, Duration duration, Date endDate, int frequency, HashMap<CabinClassType, List<Fare>> faresForCabinClassList, boolean makeReturn, long id, Duration layover) throws NoFlightRouteFoundException;
     public List<FlightSchedulePlan> viewAllFlightSchedulePlan();
     public void updateFlightNumber(String flightNumber, String newFlightNumber);
     public void updateFlightStatus(String flightNumber, FlightStatus newStatus);

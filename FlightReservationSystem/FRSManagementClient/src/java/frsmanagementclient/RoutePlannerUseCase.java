@@ -14,6 +14,7 @@ import util.enumerations.FlightRouteStatus;
 import util.exception.AirportNotFoundException;
 import util.exception.DuplicateFlightRouteException;
 import util.exception.NoExistingAirportException;
+import util.exception.NoFlightRouteFoundException;
 
 /**
  *
@@ -103,18 +104,23 @@ public class RoutePlannerUseCase {
         
         if (choice == 1) {
             try {
-                boolean deletedOrDisabled = routePlannerUseCaseSessionBeanRemote.deleteFlightRoute(originAirport, destinationAirport);
-                if (deletedOrDisabled) {
-                    System.out.println("You have successfully disabled / deleted the flight route!");
-                } else {
-                    System.out.println("You have entered an invalid flight route!");
+                try {
+                    boolean deletedOrDisabled = routePlannerUseCaseSessionBeanRemote.deleteFlightRoute(originAirport, destinationAirport);
+                    if (deletedOrDisabled) {
+                        System.out.println("You have successfully disabled / deleted the flight route!");
+                    } else {
+                        System.out.println("You have entered an invalid flight route!");
+                    }
+                } catch (AirportNotFoundException e){
+                    throw new NoExistingAirportException();
                 }
+                
             } catch (NoExistingAirportException e) {
-                System.out.println("You have entered an invalid flight route!");
-            }
-            
-        } else {
-            return;
+                System.out.println("Entered Airports is invalid, unable to find and delete flight route");
+            } catch (NoFlightRouteFoundException e) {
+                System.out.println("Entered Flight Route is inavalid, unable to delete flight route");
+
+            }  
         }
     }
     

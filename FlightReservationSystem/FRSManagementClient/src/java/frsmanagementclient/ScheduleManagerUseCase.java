@@ -10,7 +10,6 @@ import entity.AircraftConfiguration;
 import entity.CabinClass;
 import entity.Fare;
 import entity.Flight;
-import entity.FlightBooking;
 import entity.FlightCabinClass;
 import entity.FlightSchedule;
 import entity.FlightSchedulePlan;
@@ -23,7 +22,6 @@ import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -34,16 +32,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.stream.Collectors;
-import javax.ejb.EJB;
 import util.enumerations.CabinClassType;
-import util.enumerations.FlightSchedulePlanStatus;
 import util.enumerations.FlightStatus;
 import util.enumerations.ScheduleType;
 import util.exception.InitialFlightNotInstantiatedException;
 import util.exception.NoExistingAirportException;
+import util.exception.NoFlightRouteFoundException;
 import util.exception.UpdateFlightSchedulePlanException;
-import util.util.Pair;
 import util.util.TwoPair;
 
 /**
@@ -245,7 +240,7 @@ public class ScheduleManagerUseCase {
     }
     
     // 
-    public void createFlightSchedulePlan() {
+    public void createFlightSchedulePlan() throws NoFlightRouteFoundException { 
         // can create one flight schedule plan it must be associated with a flight 
         // a flight might not have a schedule plan but a flight schedule plan
         System.out.println("Step 1: Choose Your Schedule Type");
@@ -332,7 +327,12 @@ public class ScheduleManagerUseCase {
             if (createFlight) {
                 System.out.println("To proceed, please enter your layover duration");
                 Duration layover = checkDuration();
-                scheduleManagerUseCaseSessionBeanRemote.createNewFlightSchedulePlan(flightNumber, departureDateList, duration, endDate, frequency, faresForCabinClassList, true, promptReturnFlightSchedule, layover);
+                try {
+                    scheduleManagerUseCaseSessionBeanRemote.createNewFlightSchedulePlan(flightNumber, departureDateList, duration, endDate, frequency, faresForCabinClassList, true, promptReturnFlightSchedule, layover);
+                } catch (NoFlightRouteFoundException e) {
+                    
+                }
+                
             }
        }
        

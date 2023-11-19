@@ -80,6 +80,7 @@ public class FleetManagerUseCase {
                }
             }
          }
+        return -1;
     }
     
     public void viewAllAircraftConfiguration() {

@@ -13,6 +13,7 @@ import util.exception.InvalidLoginCredentialsException;
 import ejb.session.stateless.RoutePlannerUseCaseSessionBeanRemote;
 import ejb.session.stateless.SalesManagerUseCaseSessionBeanRemote;
 import ejb.session.stateless.ScheduleManagerUseCaseSessionBeanRemote;
+import util.exception.NoFlightRouteFoundException;
 
 /**
  *
@@ -130,10 +131,12 @@ public class RunApp {
         } catch (InvalidLoginCredentialsException exception) {
             System.out.println(exception.getMessage());
             doLogin(scanner);
-        } 
+        } catch (NoFlightRouteFoundException e) {
+            
+        }
     }
     
-    public void showUseCaseOptions(Scanner scanner, JobTitle jobtitle) {
+    public void showUseCaseOptions(Scanner scanner, JobTitle jobtitle) throws NoFlightRouteFoundException{
         switch (jobtitle) {
             case FLEET_MANAGER:
                 System.out.println("-------------------------------");
@@ -269,7 +272,11 @@ public class RunApp {
                         showUseCaseOptions(scanner, jobtitle);
                         break;
                     case 6: 
-                        scheduleManagerUseCase.createFlightSchedulePlan();
+                        try {
+                            scheduleManagerUseCase.createFlightSchedulePlan();
+                        } catch (NoFlightRouteFoundException e) {
+                            System.out.println("Failed to create new flight schedule, please try again ");
+                        }
                         showUseCaseOptions(scanner, jobtitle);
                         break;
                     case 7: 

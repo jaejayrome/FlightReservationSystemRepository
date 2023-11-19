@@ -78,25 +78,37 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
     
     
     @Override
-    public boolean disableFlightRoute(String originAirport, String destinationAirport) throws NoExistingAirportException {
-        // just label as disabled 
+    public boolean disableFlightRoute(String originAirport, String destinationAirport) throws AirportNotFoundException, NoFlightRouteFoundException {
+        
         try {
             FlightRoute flightRoute = this.getFlightRouteByCityName(originAirport, destinationAirport);
             // update the flightRoute
             flightRoute.setFlightRouteStatus(FlightRouteStatus.DISABLED);
-        } catch (AirportNotFoundException exception) {
-            
-        } catch (NoFlightRouteFoundException exception) {
-            // no flight has been found at all
-            throw new NoExistingAirportException("Flight Route not found, unable to delete Flight Route");        
-        } catch (NoExistingAirportException e) {
-            throw new NoExistingAirportException("Airport does not exist, unable to delete Flight Route");
+            return true;
+        } catch (AirportNotFoundException e) {
+            throw new AirportNotFoundException("Airport not found, unable to disable flight route");
+            //unable to set flight route
+        } catch (NoFlightRouteFoundException e) {
+            throw new AirportNotFoundException("There is no flight route between both cities, unable to disable non-existing flight route");
+
         }
-        return true;
     }
+        // just label as disabled 
+//        try {
+            
+//        } catch (AirportNotFoundException exception) {
+//            
+//        } catch (NoFlightRouteFoundException exception) {
+//            // no flight has been found at all
+//            throw new NoExistingAirportException("Flight Route not found, unable to delete Flight Route");        
+//        } catch (NoExistingAirportException e) {
+//            throw new NoExistingAirportException("Airport does not exist, unable to delete Flight Route");
+//        }
+//        return true;
+//    }
     
     @Override
-    public boolean deleteFlightRoute(String originAirport, String destinationAirport) throws NoExistingAirportException {
+    public boolean deleteFlightRoute(String originAirport, String destinationAirport) throws NoFlightRouteFoundException, AirportNotFoundException {
         try {
             FlightRoute flightRoute = this.getFlightRouteByCityName(originAirport, destinationAirport);
             // dissociate the flightRoute with the airport
@@ -105,12 +117,10 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
             // delete the flightRoute from the database
             em.remove(flightRoute);
         } catch (AirportNotFoundException exception) {
-            
+            throw new AirportNotFoundException("Airport does not exist, unable to delete Flight Route");
         } catch (NoFlightRouteFoundException exception) {
             // no flight has been found at all
-            throw new NoExistingAirportException("Flight Route not found, unable to disable Flight Route");
-        } catch (NoExistingAirportException exception) {
-            throw new NoExistingAirportException("Airport does not exist, unable to delete Flight Route");
+            throw new NoFlightRouteFoundException("Flight Route not found, unable to disable Flight Route");
         }
         
         return true;

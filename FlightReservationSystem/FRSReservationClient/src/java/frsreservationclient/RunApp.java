@@ -462,7 +462,7 @@ public class RunApp {
     }
     
     public double enterDetailsForDirectTo(int leg, int choice, boolean isReturn, boolean isConnecting, List<List<FlightSchedule>> flightScheduleList, String departureAirport, String destinationAirport, int numPassengers, Scanner sc, 
-            List<Long> finalFlightScheduleIdList, List<Long> finalFlightCabinClassIdList, List<List<String>> finalSeatsChoice, List<HashMap<Integer, String>> passengerDetails, CabinClassType cabinClassPreference) {
+            List<Long> finalFlightScheduleIdList, List<Long> finalFlightCabinClassIdList, List<List<String>> finalSeatsChoice, List<HashMap<Integer, String>> passengerDetails) {
 
         // make 
         IntStream.rangeClosed(1, 10).boxed().forEach(x -> System.out.println());

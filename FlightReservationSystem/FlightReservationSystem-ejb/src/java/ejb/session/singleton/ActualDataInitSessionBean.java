@@ -38,6 +38,7 @@ import util.enumerations.FlightRouteStatus;
 import util.enumerations.GenderType;
 import util.enumerations.JobTitle;
 import util.exception.InitialDatabaseException;
+import util.exception.NoFlightRouteFoundException;
 
 
 /**
@@ -250,8 +251,13 @@ public class ActualDataInitSessionBean {
         firstRWfaresForCabinClassList.put(CabinClassType.J, fareList11);
         firstRWfaresForCabinClassList.put(CabinClassType.Y, fareList12);
         
-        long idFirstt = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML711", firstDepartDateList, Duration.ofSeconds(14 * 60 * 60), formatDate("2023-12-31 09:00:00"), 7, firstRWfaresForCabinClassList, false, -1, null);
-        scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML711", firstDepartDateList, Duration.ofSeconds(14 * 60 * 60), formatDate("2023-12-31 09:00:00"), 7, firstRWfaresForCabinClassList, true, idFirstt, Duration.ofSeconds(2 * 60 * 60));
+        try {
+            long idFirstt = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML711", firstDepartDateList, Duration.ofSeconds(14 * 60 * 60), formatDate("2023-12-31 09:00:00"), 7, firstRWfaresForCabinClassList, false, -1, null);
+            scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML711", firstDepartDateList, Duration.ofSeconds(14 * 60 * 60), formatDate("2023-12-31 09:00:00"), 7, firstRWfaresForCabinClassList, true, idFirstt, Duration.ofSeconds(2 * 60 * 60));
+        } catch (NoFlightRouteFoundException e) {
+            System.out.println(e);
+        }
+        
         
         // recurrent weekly flight schedule plan 2
         Date secondRWDate = formatDate("2023-12-03 12:00:00");
@@ -276,8 +282,14 @@ public class ActualDataInitSessionBean {
         secondRWfaresForCabinClassList.put(CabinClassType.F, fareList13);
         secondRWfaresForCabinClassList.put(CabinClassType.J, fareList14);
         secondRWfaresForCabinClassList.put(CabinClassType.Y, fareList15);
-        long idsecondt = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML611", secondDepartDateList, Duration.ofSeconds(8 * 60 * 60), formatDate("2023-12-31 12:00:00"), 7, secondRWfaresForCabinClassList, false, -1, null);
-        scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML611", secondDepartDateList, Duration.ofSeconds(8 * 60 * 60), formatDate("2023-12-31 12:00:00"), 7, secondRWfaresForCabinClassList, true, idsecondt, Duration.ofSeconds(2 * 60 * 60));
+        
+         try {
+            long idsecondt = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML611", secondDepartDateList, Duration.ofSeconds(8 * 60 * 60), formatDate("2023-12-31 12:00:00"), 7, secondRWfaresForCabinClassList, false, -1, null);
+            scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML611", secondDepartDateList, Duration.ofSeconds(8 * 60 * 60), formatDate("2023-12-31 12:00:00"), 7, secondRWfaresForCabinClassList, true, idsecondt, Duration.ofSeconds(2 * 60 * 60));
+        } catch (NoFlightRouteFoundException e) {
+            System.out.println(e);
+        }
+        
         
         // refcurrent weekly flight schedule plan 3
         Date thirdRWDate = formatDate("2023-12-05 10:00:00");
@@ -292,8 +304,13 @@ public class ActualDataInitSessionBean {
         fareList16.add(y3);
 
         thirdRWfaresForCabinClassList.put(CabinClassType.Y, fareList16);
-        long idthirdt = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML621", thirdDepartDateList, Duration.ofSeconds(8 * 60 * 60), formatDate("2023-12-31 10:00:00"), 7, thirdRWfaresForCabinClassList, false, -1, null);
-        scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML621", thirdDepartDateList, Duration.ofSeconds(8 * 60 * 60), formatDate("2023-12-31 10:00:00"), 7, thirdRWfaresForCabinClassList, true, idthirdt, Duration.ofSeconds(2 * 60 * 60));
+        
+        try {
+            long idthirdt = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML621", thirdDepartDateList, Duration.ofSeconds(8 * 60 * 60), formatDate("2023-12-31 10:00:00"), 7, thirdRWfaresForCabinClassList, false, -1, null);
+            scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML621", thirdDepartDateList, Duration.ofSeconds(8 * 60 * 60), formatDate("2023-12-31 10:00:00"), 7, thirdRWfaresForCabinClassList, true, idthirdt, Duration.ofSeconds(2 * 60 * 60));
+        } catch (NoFlightRouteFoundException e) {
+            System.out.println(e);
+        }
         
         // recurrent weekly flight schedule plan 4
         Date fourthRWDate = formatDate("2023-12-04 10:00:00");
@@ -318,9 +335,14 @@ public class ActualDataInitSessionBean {
         fourthRWfaresForCabinClassList.put(CabinClassType.F, fareList17);
         fourthRWfaresForCabinClassList.put(CabinClassType.J, fareList18);
         fourthRWfaresForCabinClassList.put(CabinClassType.Y, fareList19);
-        long idfourtht = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML311", fourthDepartDateList, Duration.ofSeconds(23400), formatDate("2023-12-31 10:00:00"), 7, fourthRWfaresForCabinClassList, false, -1, null);
-        scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML311", fourthDepartDateList, Duration.ofSeconds(23400), formatDate("2023-12-31 10:00:00"), 7, fourthRWfaresForCabinClassList, true, idfourtht, Duration.ofSeconds(3 * 60 * 60));
         
+        
+        try {
+            long idfourtht = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML311", fourthDepartDateList, Duration.ofSeconds(23400), formatDate("2023-12-31 10:00:00"), 7, fourthRWfaresForCabinClassList, false, -1, null);
+            scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML311", fourthDepartDateList, Duration.ofSeconds(23400), formatDate("2023-12-31 10:00:00"), 7, fourthRWfaresForCabinClassList, true, idfourtht, Duration.ofSeconds(3 * 60 * 60));
+        } catch (NoFlightRouteFoundException e) {
+            System.out.println(e);
+        }
         // recurrent n day flight schedule plan
         Date firstFormatDate = formatDate("2023-12-01 13:00:00");
         List<Date> firstDepartureDateList = new ArrayList<Date>();
@@ -344,8 +366,14 @@ public class ActualDataInitSessionBean {
          firstfaresForCabinClassList.put(CabinClassType.F, fareList1);
          firstfaresForCabinClassList.put(CabinClassType.J, fareList2);
          firstfaresForCabinClassList.put(CabinClassType.Y, fareList3);
-        long idFirst = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML411", firstDepartureDateList, Duration.ofSeconds(4 * 60 * 60), formatDate("2023-12-31 13:00:00"), 2, firstfaresForCabinClassList, false, -1, null);
-        scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML411", firstDepartureDateList, Duration.ofSeconds(4 * 60 * 60), formatDate("2023-12-31 13:00:00"), 2, firstfaresForCabinClassList, true, idFirst, Duration.ofSeconds(4 * 60 * 60));
+         
+         
+        try {
+            long idFirst = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML411", firstDepartureDateList, Duration.ofSeconds(4 * 60 * 60), formatDate("2023-12-31 13:00:00"), 2, firstfaresForCabinClassList, false, -1, null);
+            scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML411", firstDepartureDateList, Duration.ofSeconds(4 * 60 * 60), formatDate("2023-12-31 13:00:00"), 2, firstfaresForCabinClassList, true, idFirst, Duration.ofSeconds(4 * 60 * 60));
+        } catch (NoFlightRouteFoundException e) {
+            System.out.println(e);
+        }
         
         // manual multiple flight schedule plan
         Date secondFormatDate = formatDate("2023-12-07 17:00:00");
@@ -374,8 +402,11 @@ public class ActualDataInitSessionBean {
         secondfaresForCabinClassList.put(CabinClassType.F, fareList4);
         secondfaresForCabinClassList.put(CabinClassType.J, fareList5);
         secondfaresForCabinClassList.put(CabinClassType.Y, fareList6);
-        long idsecond = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML511", secondDepartureDateList, Duration.ofSeconds(3 * 60 * 60), null, 0, secondfaresForCabinClassList, false, -1, null);
-        scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML511", secondDepartureDateList, Duration.ofSeconds(3 * 60 * 60), null, 0, secondfaresForCabinClassList, true, idsecond, Duration.ofSeconds(2 * 60 * 60));
-        
+        try {
+            long idsecond = scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML511", secondDepartureDateList, Duration.ofSeconds(3 * 60 * 60), null, 0, secondfaresForCabinClassList, false, -1, null);
+            scheduleManagerUseCaseSessionBean.createNewFlightSchedulePlan("ML511", secondDepartureDateList, Duration.ofSeconds(3 * 60 * 60), null, 0, secondfaresForCabinClassList, true, idsecond, Duration.ofSeconds(2 * 60 * 60));
+        } catch (NoFlightRouteFoundException e) {
+            System.out.println(e);
+        }
     }
 }

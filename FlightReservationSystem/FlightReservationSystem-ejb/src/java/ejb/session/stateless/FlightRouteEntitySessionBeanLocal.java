@@ -23,7 +23,7 @@ public interface FlightRouteEntitySessionBeanLocal {
     public FlightRoute getFlightRouteById(long id);
     // public FlightRoute deleteFlightRoute(long id);
     public FlightRoute getFlightRouteByCityName(String originAirport, String destinationAirport) throws NoFlightRouteFoundException, AirportNotFoundException;
-    public boolean disableFlightRoute(String originAirport, String destinationAirport);
-    public boolean deleteFlightRoute(String originAirport, String destinationAirport);
+    public boolean disableFlightRoute(String originAirport, String destinationAirport) throws AirportNotFoundException, NoFlightRouteFoundException;
+    public boolean deleteFlightRoute(String originAirport, String destinationAirport) throws NoFlightRouteFoundException, AirportNotFoundException;
 
 }

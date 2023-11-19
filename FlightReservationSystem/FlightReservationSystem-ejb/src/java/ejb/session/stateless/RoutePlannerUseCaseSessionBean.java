@@ -50,8 +50,9 @@ public class RoutePlannerUseCaseSessionBean implements RoutePlannerUseCaseSessio
             if (complementaryFlightRoute != null) throw new DuplicateFlightRouteException("TRANSACTION ABORTED: DUPLICATE FLIGHT ROUTE FOUND");
         } catch (NoResultException e) {
             throw new AirportNotFoundException("TRANSACTION ABORTED: AIRPORT NOT FOUND IN DATABASE");
-            FlightRoute complementaryFlightRoute = flightRouteEntitySessionBean.getFlightRouteByCityName(originAirport.getIataAirportCode(), destinationAirport.getIataAirportCode());
-            throw new DuplicateFlightRouteException("Duplicated Flight Route, did not create a new route");
+            
+//            FlightRoute complementaryFlightRoute = flightRouteEntitySessionBean.getFlightRouteByCityName(originAirport.getIataAirportCode(), destinationAirport.getIataAirportCode());
+//            throw new DuplicateFlightRouteException("Duplicated Flight Route, did not create a new route");
         } catch (NoFlightRouteFoundException e) {
             try {
                 Airport originAirportInstance = airportEntitySessionBean.findAirport(originAirport);
@@ -129,28 +130,51 @@ public class RoutePlannerUseCaseSessionBean implements RoutePlannerUseCaseSessio
     }
     
     @Override
-    public boolean deleteFlightRoute(String originAirport, String destinationAirport) {
+    public boolean deleteFlightRoute(String originAirport, String destinationAirport) throws NoExistingAirportException, NoFlightRouteFoundException, AirportNotFoundException{
         // check whether is there a flight route in the first palce
         
-        
-        // checks whether is this flight route in use 
-        List<Flight> flightsFound = flightEntitySessionBean.checkFlightRouteUsed(originAirport, destinationAirport);
-        // if in use ,disable it 
-        if (!flightsFound.isEmpty()) {
-           return flightRouteEntitySessionBean.disableFlightRoute(originAirport, destinationAirport);
-        } else {
-            return flightRouteEntitySessionBean.deleteFlightRoute(originAirport, destinationAirport);
-        }
-
-        
         try {
+            // checks whether is this flight route in use 
+            List<Flight> flightsFound = flightEntitySessionBean.checkFlightRouteUsed(originAirport, destinationAirport);
+            // if in use ,disable it 
             if (!flightsFound.isEmpty()) {
-                return flightRouteEntitySessionBean.disableFlightRoute(originAirport, destinationAirport);
+                try {
+                    return flightRouteEntitySessionBean.disableFlightRoute(originAirport, destinationAirport);
+                } catch (AirportNotFoundException e) {
+                    throw new NoExistingAirportException();
+                }
+                
+               
             } else {
-                return flightRouteEntitySessionBean.deleteFlightRoute(originAirport, destinationAirport);
+                try {
+                    return flightRouteEntitySessionBean.deleteFlightRoute(originAirport, destinationAirport);
+                } catch (AirportNotFoundException e) {
+                    throw new NoExistingAirportException();
+                }
             }    
         } catch (NoExistingAirportException exception) {
+            System.out.println("No airport found, route deletion is invalid");
             return false;
-        }      
+        } catch (NoFlightRouteFoundException e){
+            System.out.println("Flight route not found, unable to delete flight route");
+        }
+
+//        } catch (AirportNotFound e) {
+//            System.out.println("Airport not found, unable to delete flight route");
+//
+//        }
+        
+
+//        
+//        try {
+//            if (!flightsFound.isEmpty()) {
+//                return flightRouteEntitySessionBean.disableFlightRoute(originAirport, destinationAirport);
+//            } else {
+//                return flightRouteEntitySessionBean.deleteFlightRoute(originAirport, destinationAirport);
+//            }    
+//        } catch (NoExistingAirportException exception) {
+//            return false;
+//        }      
+        return false;
     }
 }
