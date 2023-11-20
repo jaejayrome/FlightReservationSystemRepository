@@ -14,6 +14,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.ManyToOne;
 import javax.persistence.JoinColumn;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -30,8 +33,11 @@ public class Fare implements Serializable {
     
    @Column(nullable = false)
    private String fareBasicCode;
-   @Column(nullable = false)
-   private BigDecimal fareAmount;
+   
+    @Column(nullable = false)
+    @NotNull
+    @DecimalMin(value = "0.01", inclusive = true)
+    private BigDecimal fareAmount;
    
    // relationships
    @ManyToOne(optional = false)

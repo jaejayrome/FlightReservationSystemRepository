@@ -76,11 +76,6 @@ public class CustomerUseCaseSessionBean implements CustomerUseCaseSessionBeanRem
         em.persist(object);
     }
     
-
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
-    
-    
     @Override
     public long customerLogin(String email, String password) throws CustomerAuthenticationFailedException {
         Customer authCustomer = null;

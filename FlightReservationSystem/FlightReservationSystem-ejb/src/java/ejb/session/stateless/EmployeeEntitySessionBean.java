@@ -7,6 +7,7 @@ package ejb.session.stateless;
 import entity.Employee;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.Resource;
 import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
@@ -15,6 +16,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
@@ -43,7 +45,6 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanLocal
     private EJBContext ejbContext;
 
     public EmployeeEntitySessionBean() {
-        // cache retrieval strategy
         props.put("javax.persistence.cache.retrieveMode", "USE");
         
     }
@@ -52,19 +53,21 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanLocal
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public long createNewEmployee(String firstName, String lastName, GenderType gender, String email, String phoneNumber, JobTitle jobTitle, EmploymentType typeOfEmployment, String loginUsername, String loginPassword) {
         Employee employee = new Employee(firstName, lastName, gender, email, phoneNumber, jobTitle, typeOfEmployment, loginUsername, loginPassword);
-        validator.validate(employee);
-        em.persist(employee);
-        em.flush();
-        return employee.getId();
+        Set<ConstraintViolation<Employee>> constraints = validator.validate(employee);
+        if (constraints.size() == 0) {
+            em.persist(employee);
+            em.flush();
+            return employee.getId();
+        } else {
+            ejbContext.setRollbackOnly();
+            return -1;
+        }
     }
     
-//    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Employee retrieveEmployeeById(long id) throws EmployeeNotFoundException{
         Employee employee = em.find(Employee.class, id, this.props);
         if (employee == null) {
-            // ejbContext.setRollbackOnly();
             throw new EmployeeNotFoundException("Employee has not been found yet!");
-//            return null;
         } else {
             return employee;
         }
@@ -72,7 +75,6 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanLocal
     
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Employee authenticateEmployeeDetails(String username, String password) throws InvalidLoginCredentialsException{
-        
         String query = "SELECT employee FROM Employee employee WHERE employee.loginUsername = :username";
         Employee employee = (Employee)em.createQuery(query)
                 .setParameter("username", username)
@@ -101,8 +103,8 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanLocal
         }
     }
     
-     public void processLogout(long employeeId) {
-         Employee employee = em.find(Employee.class, employeeId);
-         employee.setIsLoggedIn(false);
-     }
+    public void processLogout(long employeeId) {
+        Employee employee = em.find(Employee.class, employeeId);
+        employee.setIsLoggedIn(false);
+    }
 }

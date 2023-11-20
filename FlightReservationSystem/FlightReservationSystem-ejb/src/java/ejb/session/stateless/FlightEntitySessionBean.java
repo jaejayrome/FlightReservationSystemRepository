@@ -5,15 +5,21 @@
 package ejb.session.stateless;
 
 import entity.AircraftConfiguration;
+import entity.CabinClass;
 import entity.Flight;
 import entity.FlightRoute;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.enumerations.AircraftTypeName;
 import util.enumerations.FlightStatus;
 
@@ -31,15 +37,20 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanLocal {
     private AircraftConfigurationEntitySessionBeanLocal aircraftConfigurationEntitySessionBean;
 
     
+    private static ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+    private static Validator validator = validatorFactory.getValidator();
     
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager em;
     
     @Override
     public long createFlight(Flight flight) {
-        em.persist(flight);
-        em.flush();
-        return flight.getId();
+        Set<ConstraintViolation<Flight>> constraints = validator.validate(flight);
+        if (constraints.size() == 0) {
+            em.persist(flight);
+            em.flush();
+            return flight.getId();
+        } return -1L;
     }
     
     @Override

@@ -308,7 +308,7 @@ public class HRSPartnerClient {
         
         // ask for cabin class preference
         IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
-        System.out.println("\u001B[1mCABIN CLASS PREFERENCE\u001B[0m");
+        System.out.println("CABIN CLASS PREFERENCE");
         System.out.println("Press 0 if you have \u001B[1mno preference\u001B[0m");
         System.out.println("Press 1 if you want to \u001B[1mmake a preference\u001B[0m");
         System.out.print("> ");
@@ -701,7 +701,8 @@ public class HRSPartnerClient {
 
             // Calculate duration
             Duration duration = Duration.between(departureTime, arrivalTime);
-
+            System.out.println();
+            System.out.println();
             System.out.println("Departure Time: " + formattedDepartureTime);
             System.out.println("Arrival Time: " + formattedArrivalTime);
             System.out.println("Flight Duration: " + formatDuration(duration));

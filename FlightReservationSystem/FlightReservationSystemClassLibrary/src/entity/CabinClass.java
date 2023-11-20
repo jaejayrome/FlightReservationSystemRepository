@@ -18,6 +18,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -33,14 +35,26 @@ public class CabinClass implements Serializable {
     private Long id;
  
     @Column(nullable = false)
+    @NotNull
     private CabinClassType cabinClassName;
+    
     @Column(nullable = false)
+    @NotNull
+    @Size(min = 0, max = 2)
     private BigDecimal numAisles;
+    
     @Column(nullable = false)
+    @NotNull
+    @Size(min = 1)
     private BigDecimal numRows;
+    
     @Column(nullable = false)
+    @NotNull
+    @Size(min = 1)
     private BigDecimal numSeatsAbreast;
+    
     @Column(nullable = false)
+    @NotNull
     private String seatingConfiguration;
 
     
