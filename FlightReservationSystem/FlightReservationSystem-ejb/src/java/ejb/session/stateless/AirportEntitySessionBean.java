@@ -4,12 +4,18 @@
  */
 package ejb.session.stateless;
 
+import entity.AircraftType;
 import entity.Airport;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.exception.AirportNotFoundException;
 
 /**
@@ -20,13 +26,18 @@ import util.exception.AirportNotFoundException;
 public class AirportEntitySessionBean implements AirportEntitySessionBeanLocal {
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager em;
+    private static ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+    private static Validator validator = validatorFactory.getValidator();
     
     @Override
     public Airport createNewAirport(String airportName, String iataAirportCode, String city, String state, String country) {
         Airport airport = new Airport (airportName, iataAirportCode, city, state, country);
-        em.persist(airport);
-        em.flush();
-        return airport;
+         Set<ConstraintViolation<Airport>> errors = validator.validate(airport);
+        if (errors.size() == 0) {
+            em.persist(airport);
+            em.flush();
+            return airport;
+        } else return null;
     }
     
     @Override

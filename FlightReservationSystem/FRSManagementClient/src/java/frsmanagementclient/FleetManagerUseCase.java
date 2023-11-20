@@ -141,6 +141,7 @@ public class FleetManagerUseCase {
     }
     
     public void printSingleAircraftConfiguration(AircraftConfiguration aircraftConfiguration, int counter) {
+        System.out.println();
         System.out.println("Aircraft Configuration #" + counter);
         System.out.println("Configuration Name: " + aircraftConfiguration.getConfigurationName());
         System.out.println("Configuration Aircraft Type Name: " + aircraftConfiguration.getAircraftType().getAircraftTypeName());

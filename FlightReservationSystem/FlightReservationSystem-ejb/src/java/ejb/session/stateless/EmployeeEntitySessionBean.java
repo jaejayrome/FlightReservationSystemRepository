@@ -4,9 +4,11 @@
  */
 package ejb.session.stateless;
 
+import entity.AircraftType;
 import entity.Employee;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.Resource;
 import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
@@ -15,6 +17,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
@@ -52,10 +55,12 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanLocal
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public long createNewEmployee(String firstName, String lastName, GenderType gender, String email, String phoneNumber, JobTitle jobTitle, EmploymentType typeOfEmployment, String loginUsername, String loginPassword) {
         Employee employee = new Employee(firstName, lastName, gender, email, phoneNumber, jobTitle, typeOfEmployment, loginUsername, loginPassword);
-        validator.validate(employee);
-        em.persist(employee);
-        em.flush();
-        return employee.getId();
+        Set<ConstraintViolation<Employee>> errors = validator.validate(employee);
+        if (errors.size() == 0) {
+            em.persist(employee);
+            em.flush();
+            return employee.getId();
+        } else return -1L;
     }
     
 //    @TransactionAttribute(TransactionAttributeType.REQUIRED)

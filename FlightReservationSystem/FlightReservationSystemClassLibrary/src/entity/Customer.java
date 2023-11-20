@@ -43,15 +43,19 @@ public class Customer implements Serializable {
     private String lastName;
 
     @Column (nullable = false)        
+    @NotNull
     private String email;
     
     @Column (nullable = false)
+    @NotNull
     private String phoneNumber;
     
     @Column (nullable = false)
+    @NotNull
     private String address;
     
     @Column (nullable = false)
+    @NotNull
     private String password;
     
     // relationships

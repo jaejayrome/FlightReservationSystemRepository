@@ -5,17 +5,24 @@
 package ejb.session.stateless;
 
 import entity.AircraftConfiguration;
+import entity.AircraftType;
 import entity.Flight;
 import entity.FlightRoute;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.enumerations.AircraftTypeName;
 import util.enumerations.FlightStatus;
+import util.exception.FlightNotFoundException;
 
 /**
  *
@@ -35,11 +42,17 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanLocal {
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager em;
     
+    private static ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+    private static Validator validator = validatorFactory.getValidator();
+    
     @Override
     public long createFlight(Flight flight) {
-        em.persist(flight);
-        em.flush();
-        return flight.getId();
+        Set<ConstraintViolation<Flight>> errors = validator.validate(flight);
+        if (errors.size() == 0) {
+            em.persist(flight);
+            em.flush();
+            return flight.getId();
+        } else return -1L;
     }
     
     @Override
@@ -59,8 +72,18 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanLocal {
     // remember to throw any exception if needed
     @Override
     public long getIdByFlightNumber(String flightNumber) {
-        Flight flight = (Flight)(em.createQuery("SELECT flight FROM Flight flight WHERE flight.flightNumber = :number").setParameter("number", flightNumber).getSingleResult());
+        Flight flight = (Flight)(em.createQuery("SELECT flight FROM Flight flight WHERE flight.flightNumber = :number").setParameter("number", flightNumber).getSingleResult()); 
         return flight.getId();
+    }
+    
+    @Override
+    public Flight getFlightByFlightNumber(String flightNumber) throws FlightNotFoundException {
+        try {
+            Flight flight = (Flight)(em.createQuery("SELECT flight FROM Flight flight WHERE flight.flightNumber = :number").setParameter("number", flightNumber).getSingleResult()); 
+            return flight;
+        } catch (NoResultException e) {
+            throw new FlightNotFoundException();
+        }
     }
     
     @Override

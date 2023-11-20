@@ -109,6 +109,7 @@ public class SalesManagerUseCase {
             System.out.print("> ");
             int choice = scanner.nextInt();
             FlightSchedule fs = flightScheduleList.get((choice - 1));
+            System.out.println();
             System.out.println("Flight Reservation Information");
             
             HashMap<CabinClassType, List<Seat>> seatMap = new HashMap<>();

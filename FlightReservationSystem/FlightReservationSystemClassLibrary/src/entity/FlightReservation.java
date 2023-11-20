@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -31,6 +32,7 @@ public class FlightReservation implements Serializable {
     
     // attributes
     @Column (nullable = false)
+    @NotNull
     private String creditCardNumber; 
     
     @Column (nullable = false)

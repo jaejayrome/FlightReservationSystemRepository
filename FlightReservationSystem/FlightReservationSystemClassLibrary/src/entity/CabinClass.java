@@ -40,6 +40,7 @@ public class CabinClass implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CabinClassType cabinClassName;
 
@@ -60,6 +61,7 @@ public class CabinClass implements Serializable {
     private BigDecimal numSeatsAbreast;
 
     @Column(nullable = false)
+    @NotNull
     private String seatingConfiguration;
     
     // relationships

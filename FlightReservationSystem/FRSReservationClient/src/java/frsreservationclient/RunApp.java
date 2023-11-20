@@ -155,13 +155,15 @@ public class RunApp {
                                 + "account?\n");
                         System.out.println("Enter Y to register new account");
                         System.out.println("Enter N try logging in again");
-                        System.out.println("> ");
-                        String tmpOption = sc.nextLine();
+                        System.out.print("> ");
+                        String tmpOption = sc.next();
+                        sc.nextLine();
                         if (tmpOption.equals("Y")) {
                             createNewCustomerAccount(sc);
                             this.customerIsLoggedIn = true;
                             System.out.println("You account has been created! \n Please Login to your acccount!");
                             IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
+                            userAuthPrompt(sc);
                         } else {
                             userAuthPrompt(sc);
                         }
@@ -402,6 +404,7 @@ public class RunApp {
                     double onePassengerFareConnecting = 0.0;
                     int choice2 = -1;
                     if (connectingFound) {
+                        System.out.println();
                         System.out.println("There is a choice between connecting and direct flights");
                         System.out.println("Press 0 to choose connecting flights");
                         System.out.println("Press 1 to choose direct flights");
@@ -477,7 +480,7 @@ public class RunApp {
     public void viewAllFlightReservations() {
         IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
         List<FlightReservation> myFRList = customerUseCaseSessionBean.viewAllFlightReservations(this.customerId);
-        
+        if (myFRList.size() == 0) System.out.println("There are currently no flight reservations at all!");
         int counter = 1; 
         for (FlightReservation fr : myFRList) {
             System.out.println();
@@ -512,7 +515,7 @@ public class RunApp {
     }
     
     public void printSpecificFlightReservation(FlightReservation fr) {
-        System.out.println("Number of Flight Legs in this Itenerary: " + fr.getFlightBookingList().size());
+        System.out.println("Number of Flight Legs in this Itinerary: " + fr.getFlightBookingList().size());
         int counter = 1;
         double totalCostItenerary = 0.0;
         
@@ -631,6 +634,7 @@ public class RunApp {
         List<HashMap<Integer, String>> allDetails = new ArrayList<HashMap<Integer, String>>();
         for (int i = 0; i < numP; i++) {
             HashMap<Integer, String> details = new HashMap<Integer, String>();
+            System.out.println();
             System.out.println("Passenger Details #" + (i + 1));
             System.out.println("Enter Passenger First Name");
             System.out.print("> ");
@@ -781,6 +785,7 @@ public class RunApp {
             boolean validSeatChosen = false;
             while (!validSeatChosen) {
                 String passengerName = passengerDetails.get(i).get(1) + " " + passengerDetails.get(i).get(2);
+                System.out.println();
                 System.out.println("Choose Seat for Passenger #" + (i+1) + " : " + passengerName);
                 System.out.println("Enter Seat Number");
                 System.out.print("> ");

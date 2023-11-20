@@ -4,10 +4,16 @@
  */
 package ejb.session.stateless;
 
+import entity.AircraftType;
 import entity.Fare;
+import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 /**
  *
@@ -19,10 +25,16 @@ public class FareEntitySessionBean implements FareEntitySessionBeanLocal {
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager em;
     
+    private static ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+    private static Validator validator = validatorFactory.getValidator();
+    
     @Override
     public long createFare(Fare fare) {
-        em.persist(fare);
-        em.flush();
-        return fare.getId();
+        Set<ConstraintViolation<Fare>> errors = validator.validate(fare);
+        if (errors.size() == 0) {
+           em.persist(fare);
+           em.flush();
+           return fare.getId();
+        } else return -1L;
     }
 }

@@ -4,13 +4,19 @@
  */
 package ejb.session.stateless;
 
+import entity.AircraftType;
 import entity.FlightReservation;
 import entity.Partner;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.exception.InvalidLoginCredentialsException;
 
 /**
@@ -21,13 +27,20 @@ import util.exception.InvalidLoginCredentialsException;
 public class PartnerEntitySessionBean implements PartnerEntitySessionBeanLocal {
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager em;
+    
+    private static ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+    private static Validator validator = validatorFactory.getValidator();
+    
      
     @Override
     public long createNewPartner(String companyName, String loginUsername, String loginPassword) {
         Partner partner = new Partner(companyName, loginUsername, loginPassword);
-        em.persist(partner);
-        em.flush();
-        return partner.getId();
+        Set<ConstraintViolation<Partner>> errors = validator.validate(partner);
+        if (errors.size() == 0) {
+            em.persist(partner);
+            em.flush();
+            return partner.getId();
+        } else return -1L;
     }
     
     @Override

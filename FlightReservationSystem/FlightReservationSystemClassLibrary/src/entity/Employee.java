@@ -34,18 +34,18 @@ public class Employee implements Serializable {
     // bean validation
     // database validation 
     @Column(nullable = false, length = 64)
-//    @NotNull
-//    @Size(min = 1, max = 64)
+    @NotNull
+    @Size(min = 1, max = 64)
     public String firstName; 
     
     @Column(nullable = false, length = 64)
-//    @NotNull
-//    @Size(min = 1, max = 64)
+    @NotNull
+    @Size(min = 1, max = 64)
     private String lastName;
     
-    //@Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-//    @NotNull
+    @NotNull
     private GenderType gender;
     
     @Column(nullable = false)

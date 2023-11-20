@@ -4,12 +4,18 @@
  */
 package ejb.session.stateless;
 
+import entity.AircraftType;
 import entity.FlightCabinClass;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.enumerations.CabinClassType;
 
 /**
@@ -22,12 +28,18 @@ public class FlightCabinClassEntitySessionBean implements FlightCabinClassEntity
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager em;
     
+    private static ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+    private static Validator validator = validatorFactory.getValidator();
+    
     
     @Override
     public FlightCabinClass createFlightCabinClass(FlightCabinClass fcc) {
+        Set<ConstraintViolation<FlightCabinClass>> errors = validator.validate(fcc);
+        if (errors.size() == 0) {
         em.persist(fcc);
         em.flush();
         return fcc;
+        } else return null;
     }
     
     @Override

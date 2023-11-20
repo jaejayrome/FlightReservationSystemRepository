@@ -4,15 +4,21 @@
  */
 package ejb.session.stateless;
 
+import entity.AircraftConfiguration;
 import entity.AircraftType;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.CacheRetrieveMode;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.enumerations.AircraftTypeName;
 
 /**
@@ -23,6 +29,8 @@ import util.enumerations.AircraftTypeName;
 public class AircraftTypeEntitySessionBean implements AircraftTypeEntitySessionBeanLocal {
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager em;
+    private static ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+    private static Validator validator = validatorFactory.getValidator();
     
     Map<String, Object> props = new HashMap<String, Object>();
 
@@ -33,9 +41,12 @@ public class AircraftTypeEntitySessionBean implements AircraftTypeEntitySessionB
     @Override
     public long createNewAircraftType(AircraftTypeName aircraftTypeName, BigDecimal passengerSeatCapacity) {
         AircraftType aircraftType = new AircraftType(aircraftTypeName, passengerSeatCapacity);
-        em.persist(aircraftType);
-        em.flush();
-        return aircraftType.getId();
+         Set<ConstraintViolation<AircraftType>> errors = validator.validate(aircraftType);
+        if (errors.size() == 0) {
+            em.persist(aircraftType);
+            em.flush();
+            return aircraftType.getId();
+        } else return -1L;
     }
     
     @Override

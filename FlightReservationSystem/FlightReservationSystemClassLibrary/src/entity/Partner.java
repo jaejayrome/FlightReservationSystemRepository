@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -27,10 +28,13 @@ public class Partner implements Serializable {
     private Long id;
     
     @Column(nullable = false)
+    @NotNull
     private String companyName;
     @Column(nullable = false)
+    @NotNull
     private String loginUsername;
     @Column(nullable = false)
+    @NotNull
     private String loginPassword;
     
     @Column(nullable = false)

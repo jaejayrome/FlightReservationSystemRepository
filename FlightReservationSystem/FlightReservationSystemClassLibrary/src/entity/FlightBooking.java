@@ -40,6 +40,7 @@ public class FlightBooking implements Serializable {
     private String flightNumber;
     
     @Column(nullable = false)
+    @DecimalMin(value = "0.01", inclusive = true)
     private BigDecimal flightLegCost;
     
     // relationships

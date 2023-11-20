@@ -10,6 +10,7 @@ import entity.FlightSchedule;
 import entity.FlightSchedulePlan;
 import entity.Seat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -40,7 +41,27 @@ public class FlightSchedulePlanEntitySessionBean implements FlightSchedulePlanEn
     
     @Override
     public List<FlightSchedulePlan> viewAllFlightSchedulePlan() {
-        return em.createQuery("SELECT fsp FROM FlightSchedulePlan fsp").getResultList();
+        // sort the list in accoradnce 
+        List<FlightSchedulePlan> fspList = em.createQuery("SELECT fsp FROM FlightSchedulePlan fsp").getResultList();
+        Comparator<FlightSchedulePlan> comparator = (x, y) -> {
+            if (x.getFlightSchedulePlanGroup() - y.getFlightSchedulePlanGroup() != 0) {
+                return x.getFlightSchedulePlanGroup() - y.getFlightSchedulePlanGroup() < 0 ? -1 : 1;
+            } else {
+                // if are not complementary of each other
+                if (x.getFlight().getFlightNumber().compareTo(y.getFlight().getFlightNumber()) != 0) {
+                    // compare by flight number
+                    return x.getFlight().getFlightNumber().compareTo(y.getFlight().getFlightNumber());
+                } else {
+                    // if they are the same flight schedule plan group and flight number then we would sort according to their first departure time
+                    return x.getFlightScheduleList().get(0).getDepartureTime().compareTo(y.getFlightScheduleList().get(0).getDepartureTime());
+                }
+            }
+        };
+        
+        // sort the list 
+        fspList.sort(comparator);
+        // returns the sorted list
+        return fspList;
     }
     
     @Override

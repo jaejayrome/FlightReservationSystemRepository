@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -25,14 +26,18 @@ public class Airport implements Serializable {
     private Long id;
     
     @Column(nullable = false)
+    @NotNull
     private String airportName;
     @Column(nullable = false, unique = true)
     private String iataAirportCode;
     @Column(nullable = false)
+    @NotNull
     private String city; 
     @Column(nullable = false)
+    @NotNull
     private String state; 
     @Column(nullable = false)
+    @NotNull
     private String country;
     
     // relationships
