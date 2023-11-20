@@ -110,11 +110,11 @@ public class RunApp {
     }
     
     public void doLogin(Scanner scanner) {
-        System.out.print("Enter Username: ");
+        System.out.println("Enter Username: ");
         System.out.print("> ");
         String username = scanner.next();
         scanner.nextLine();
-        System.out.print("Enter Password: ");
+        System.out.println("Enter Password: ");
         System.out.print("> ");
         String password = scanner.next();
         scanner.nextLine();
