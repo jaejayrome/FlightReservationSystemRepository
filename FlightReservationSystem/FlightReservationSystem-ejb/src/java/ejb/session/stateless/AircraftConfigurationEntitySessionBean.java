@@ -52,6 +52,9 @@ public class AircraftConfigurationEntitySessionBean implements AircraftConfigura
         return aircraftConfiguration;
     }
     
+    // use case for this should be as such
+    // chooes the desired aircraft type to make a configuration with
+    // enter the configuration name
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public long createNewAircraftConfiguration(AircraftType aircraftType, String configurationName, List<CabinClass> cabinClassList) throws InvalidStringLengthException{
@@ -59,6 +62,7 @@ public class AircraftConfigurationEntitySessionBean implements AircraftConfigura
         AircraftConfiguration aircraftConfiguration = new AircraftConfiguration(configurationName, numCabinClass);
         // mandatory relationships
          // association: aircraftConfiguration -> aircraftType 
+         
         aircraftConfiguration.setAircraftType(aircraftType);
         Set<ConstraintViolation<AircraftConfiguration>> errors = validator.validate(aircraftConfiguration);
         if (errors.size() > 0) {

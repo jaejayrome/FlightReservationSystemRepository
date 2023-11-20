@@ -17,7 +17,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -32,15 +31,10 @@ public class FlightCabinClass implements Serializable {
     private Long id;
     
     @Column(nullable = false)
-    @NotNull
     private BigDecimal numAvailableSeats;
-    
     @Column(nullable = false)
-    @NotNull
     private BigDecimal numReservedSeats;
-    
     @Column(nullable = false)
-    @NotNull
     private BigDecimal numBalanceSeats;
     
     

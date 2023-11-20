@@ -24,7 +24,7 @@ import util.enumerations.JobTitle;
  * @author jeromegoh
  */
 @Cacheable(true)
-@Entity
+@Entity 
 public class Employee implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -34,17 +34,18 @@ public class Employee implements Serializable {
     // bean validation
     // database validation 
     @Column(nullable = false, length = 64)
-    @NotNull
-    @Size(min = 1, max = 64)
+//    @NotNull
+//    @Size(min = 1, max = 64)
     public String firstName; 
     
     @Column(nullable = false, length = 64)
-    @NotNull
-    @Size(min = 1, max = 64)
+//    @NotNull
+//    @Size(min = 1, max = 64)
     private String lastName;
     
-    @Enumerated(EnumType.STRING)
+    //@Enumerated(EnumType.STRING)
     @Column(nullable = false)
+//    @NotNull
     private GenderType gender;
     
     @Column(nullable = false)
@@ -54,12 +55,12 @@ public class Employee implements Serializable {
     @Column(nullable = false)
     private String phoneNumber;
     
-    @Enumerated(EnumType.STRING)
+    // @Enumerated(EnumType.STRING)
     @NotNull
     @Column(nullable = false)
     private JobTitle jobTitle;
     
-    @Enumerated(EnumType.STRING)
+    // @Enumerated(EnumType.STRING)
     @NotNull
     @Column(nullable = false)
     private EmploymentType employmentType;

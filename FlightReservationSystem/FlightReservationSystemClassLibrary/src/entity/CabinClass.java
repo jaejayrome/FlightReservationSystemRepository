@@ -26,6 +26,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+
 /**
  *
  * @author jeromegoh
@@ -40,8 +41,6 @@ public class CabinClass implements Serializable {
     private Long id;
     
     @Column(nullable = false)
-    @NotNull
-    @Enumerated(EnumType.STRING)
     private CabinClassType cabinClassName;
 
     @Column(nullable = false)
@@ -61,7 +60,6 @@ public class CabinClass implements Serializable {
     private BigDecimal numSeatsAbreast;
 
     @Column(nullable = false)
-    @NotNull
     private String seatingConfiguration;
     
     // relationships

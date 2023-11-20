@@ -5,14 +5,9 @@
 package ejb.session.stateless;
 
 import entity.FlightReservation;
-import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 
 /**
  *
@@ -24,17 +19,11 @@ public class FlightReservationEntitySessionBean implements FlightReservationEnti
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager em;
     
-    private static ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-    private static Validator validator = validatorFactory.getValidator();
-    
     
     @Override
     public FlightReservation makeFlightReservation(FlightReservation flightReservation) {
-        Set<ConstraintViolation<FlightReservation>> constraints = validator.validate(flightReservation);
-        if (constraints.size() == 0) {
-            em.persist(flightReservation);
-            em.flush();
-            return flightReservation;
-        } return null;
+        em.persist(flightReservation);
+        em.flush();
+        return flightReservation;
     }
 }

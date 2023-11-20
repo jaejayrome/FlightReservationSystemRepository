@@ -4,22 +4,16 @@
  */
 package ejb.session.stateless;
 
-import entity.FlightReservation;
 import entity.FlightRoute;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import util.util.Pair;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import util.enumerations.FlightRouteStatus;
 import util.exception.AirportNotFoundException;
 import util.exception.NoFlightRouteFoundException;
@@ -40,18 +34,13 @@ public class FlightRouteEntitySessionBean implements FlightRouteEntitySessionBea
     @PersistenceContext(unitName = "FlightReservationSystem-ejbPU")
     private EntityManager em;
     
-    private static ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-    private static Validator validator = validatorFactory.getValidator();
     
 
     @Override
     public FlightRoute createFlightRoute(FlightRoute flightRoute) {
-        Set<ConstraintViolation<FlightRoute>> constraints = validator.validate(flightRoute);
-            if (constraints.size() == 0) {
-            em.persist(flightRoute);
-            em.flush();
-            return flightRoute;
-        } else return null;
+        em.persist(flightRoute);
+        em.flush();
+        return flightRoute;
     }
     
     // never check for exceptions yet
