@@ -52,6 +52,9 @@ import util.enumerations.SeatStatus;
 public class PartnerUseCaseSessionBean implements PartnerUseCaseSessionBeanLocal {
 
     @EJB
+    private SeatEntitySessionBeanLocal seatEntitySessionBean;
+
+    @EJB
     private FlightEntitySessionBeanLocal flightEntitySessionBean;
     
     
@@ -438,9 +441,56 @@ public class PartnerUseCaseSessionBean implements PartnerUseCaseSessionBeanLocal
             flightReservation.getFlightBookingList().size();
             List<FlightBooking> list = flightReservation.getFlightBookingList();
             list.stream().forEach(x -> em.detach(x));
+            em.detach(flightReservation.getCustomer());
+            em.detach(flightReservation.getPartner());
+            flightReservation.getPassengerList().size();
+            flightReservation.getPassengerList().stream().forEach(x -> em.detach(x));
             return list;
         } else {
             return Collections.emptyList();
+        }
+    }
+    
+    @Override
+    public List<Seat> getListOfSeats(long flightBookingId) {
+        FlightBooking flightBooking = flightBookingEntitySessionBean.findBooking(flightBookingId);
+        flightBooking.getReservedSeats().size();
+        em.detach(flightBooking);
+        List<Seat> toReturn = new ArrayList<Seat>();
+        flightBooking.getReservedSeats().stream().forEach(x -> em.detach(x));
+        flightBooking.getReservedSeats().stream().forEach(x -> {
+            em.detach(x.getFlightCabinClass());
+            if (x.getPassenger() != null) em.detach(x.getPassenger());
+            toReturn.add(x);
+        });
+        return toReturn;
+    }
+    
+    @Override
+    public FlightCabinClass getFlightCabinClass(long seatId) {
+        Seat s = seatEntitySessionBean.findSeat(seatId);
+        if (s != null) {
+            FlightCabinClass fcc = s.getFlightCabinClass();
+            em.detach(fcc);
+            fcc.getSeatList().stream().forEach(x -> em.detach(x));
+            em.detach(fcc.getCabinClass());
+            em.detach(fcc.getFlightSchedule());
+            return fcc;
+        } else {
+            return null;
+        }
+    }
+    
+    @Override
+    public Passenger getPassengerForSeat(long seatId) {
+        Seat s = seatEntitySessionBean.findSeat(seatId);
+        if (s != null) {
+            Passenger p = s.getPassenger();
+            em.detach(s);
+            em.detach(p);
+            return p;
+        } else {
+            return null;
         }
     }
 

@@ -13,7 +13,6 @@ import entity.FlightReservation;
 import entity.FlightRoute;
 import entity.FlightSchedule;
 import entity.Seat;
-import static java.lang.System.out;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -66,13 +65,65 @@ public class RunApp {
         sc.close();
     }
     
+    public void showLogo() {
+        System.out.println("                      ___");
+        System.out.println("                      \\\\ \\");
+        System.out.println("                       \\\\ `\\");
+        System.out.println("    ___                 \\\\  \\");
+        System.out.println("   |    \\                \\\\  `\\");
+        System.out.println("   |_____\\                \\    \\");
+        System.out.println("   |______\\                \\    `\\");
+        System.out.println("   |       \\                \\     \\");
+        System.out.println("   |      __\\__---------------------------------._.");
+        System.out.println(" __|---~~~__o_o_o_o_o_o_o_o_o_o_o_o_o_o_o_o_o_o_[][__\\");
+        System.out.println("|___                         /~      )                \\__");
+        System.out.println("    ~~~---..._______________/      ,/_________________/");
+        System.out.println("                           /      /");
+        System.out.println("                          /     ,/");
+        System.out.println("                         /     /");
+        System.out.println("                        /    ,/");
+        System.out.println("                       /    /");
+        System.out.println("                      //  ,/");
+        System.out.println("                     //  /");
+        System.out.println("                    // ,/");
+        System.out.println("                   //_/");
+        IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
+        System.out.println("                      _ _                               ");
+        System.out.println("  _ __ ___   ___ _ __| (_) ___  _ __                    ");
+        System.out.println(" | '_ ` _ \\ / _ \\ '__| | |/ _ \\| '_ \\                   ");
+        System.out.println(" | | | | | |  __/ |  | | | (_) | | | |                  ");
+        System.out.println(" |_| |_|_|_|\\___|_|  |_|_|\\___/|_| |_|                  ");
+        System.out.println("   __ _(_)_ __| (_)_ __   ___  ___                      ");
+        System.out.println("  / _` | | '__| | | '_ \\ / _ \\/ __|                     ");
+        System.out.println(" | (_| | | |  | | | | | |  __/\\__ \\                     ");
+        System.out.println("  \\__,_|_|_|  |_|_|_| |_|\\___||___/                     ");
+        System.out.println("  / _| (_) __ _| |__ | |_                               ");
+        System.out.println(" | |_| | |/ _` | '_ \\| __|                              ");
+        System.out.println(" |  _| | | (_| | | | | |_                               ");
+        System.out.println(" |_| |_|_|\\__, |_| |_|\\__|           _   _              ");
+        System.out.println("  _ __ ___|___/  ___ _ ____   ____ _| |_(_) ___  _ __   ");
+        System.out.println(" | '__/ _ \\/ __|/ _ \\ '__\\ \\ / / _` | __| |/ _ \\| '_ \\  ");
+        System.out.println(" | | |  __/\\__ \\  __/ |   \\ V / (_| | |_| | (_) | | | | ");
+        System.out.println(" |_|  \\___||___/\\___|_|    \\_/ \\__,_|\\__|_|\\___/|_| |_| ");
+        System.out.println("  ___ _   _ ___| |_ ___ _ __ ___                        ");
+        System.out.println(" / __| | | / __| __/ _ \\ '_ ` _ \\                       ");
+        System.out.println(" \\__ \\ |_| \\__ \\ ||  __/ | | | | |                      ");
+        System.out.println(" |___/\\__, |___/\\__\\___|_| |_| |_|                      ");
+        System.out.println("      |___/                                             ");
+        
+        
+    }
+    
+    
   
     public void userAuthPrompt(Scanner sc) {
-        System.out.println("Welcome to Merlion Airways Flight Reservation System");
+        showLogo();
+        IntStream.rangeClosed(1, 5).forEach(x -> System.out.println());
+        System.out.println("Welcome to Merlion Airlines Flight Reservation System");
         System.out.println("Press '0' to continue as guest");
         System.out.println("Press '1' to Login to an existing account");
         System.out.println("Press '2' to Register an account");
-        
+        System.out.print("> ");
         int option = sc.nextInt();
         sc.nextLine();
         
@@ -82,30 +133,35 @@ public class RunApp {
                 mainMenuGuest(sc);
                 break;
             case 1:
-                System.out.println("Login selected");
                 System.out.println("Enter Your Email: ");
+                System.out.print("> ");
                 String loginEmail = sc.nextLine();
                 System.out.println("Enter Your Password: ");
+                System.out.print("> ");
                 String loginPassword = sc.nextLine();
                 try {
                     long customerId = customerUseCaseSessionBean.customerLogin(loginEmail, loginPassword);
                     this.customerId = customerId;
-                    System.out.println("Welcome, Customer Found & Authenticated");
+                    System.out.println();
+                    System.out.println("Welcome! Customer Found & Authenticated");
                     customerIsLoggedIn = true;
                     mainMenuCustomer(sc);
                         
                 } catch (CustomerAuthenticationFailedException e) {
                     if (e.getMessage().equals("noAccount")) {
+                        IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
                         System.out.println("Customer account has not been "
                                 + "created yet, would you like to create a new "
                                 + "account?\n");
                         System.out.println("Enter Y to register new account");
                         System.out.println("Enter N try logging in again");
+                        System.out.println("> ");
                         String tmpOption = sc.nextLine();
                         if (tmpOption.equals("Y")) {
                             createNewCustomerAccount(sc);
                             this.customerIsLoggedIn = true;
-                            System.out.println("You account has been created and you are logged in");
+                            System.out.println("You account has been created! \n Please Login to your acccount!");
+                            IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
                         } else {
                             userAuthPrompt(sc);
                         }
@@ -117,7 +173,8 @@ public class RunApp {
                 break;
                 
             case 2:
-            System.out.println("Registering your account");
+                IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
+                System.out.println("Registering your account");
                 createNewCustomerAccount(sc);
                 userAuthPrompt(sc);
                 break;
@@ -136,16 +193,19 @@ public class RunApp {
         
         switch (choice) {
             case 0: 
-                System.exit(1);
+                userAuthPrompt(scanner);
                 break;
             case 1: 
                 searchForFlightRoutes(scanner, false);
                 mainMenuGuest(scanner);
                 break;
+            default:
+                System.exit(1);
         }
     }
     
     public void mainMenuCustomer(Scanner scanner) {
+         IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
         System.out.println("Press 0 to logout");
         System.out.println("Press 1 to search flights and make reservations");
         System.out.println("Press 2 to view my flight reservations");
@@ -211,6 +271,9 @@ public class RunApp {
         int directFlight;
         int numPassengers = 0;
         
+        IntStream.rangeClosed(1, 3).forEach(x -> System.out.println());        
+        System.out.println("SYSTEM USE CASE: SEARCH FLIGHT");
+        IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());        
         System.out.println("Please enter the number of passengers");
         System.out.print("> ");
         numPassengers = sc.nextInt();
@@ -267,17 +330,19 @@ public class RunApp {
             }
         }
         
-        System.out.println("Do you prefer a direct or connecting flight? Press 1 for direct, 2 for Connecting");
+        // flight type  prefeence
+        IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
+        System.out.println("\u001B[1mFLIGHT TYPE PREFERENCE\u001B[0m\nPress 1 for \u001B[1mDirect Flights Only\u001B[0m\nPress 2 For \u001B[1mNo Preference\u001B[0m");
         System.out.print("> ");
         directFlight = sc.nextInt(); 
         sc.nextLine();
         
         
         // ask for cabin class preference
-        System.out.println("Cabin Class Preference");
-        System.out.println("Would you like to have any preference?");
-        System.out.println("Press 0 if you have no preference.");
-        System.out.println("Press 1 if you want to make a preference");
+        IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
+        System.out.println("\u001B[1mCABIN CLASS PREFERENCE\u001B[0m");
+        System.out.println("Press 0 if you have \u001B[1mno preference\u001B[0m");
+        System.out.println("Press 1 if you want to \u001B[1mmake a preference\u001B[0m");
         System.out.print("> ");
         int ccPreference = sc.nextInt();
         sc.nextLine();
@@ -314,6 +379,7 @@ public class RunApp {
             
             // since flight schedules has been found 
             if(isCustomer) {
+                IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
                 System.out.println("Would you to proceed to make a flight reservation?");
                 System.out.println("Press 0 to proceed back to the main menu");
                 System.out.println("Press 1 to proceed with flight reservation");
@@ -394,7 +460,7 @@ public class RunApp {
                     sc.nextLine();
                     // send to backend 
                     customerUseCaseSessionBean.makeFlightReservation(this.customerId, finalFlightScheduleIdList, finalFlightCabinClassIdList, finalSeatsChoice, allPDetails, creditCardNumber, ticketPricesForEachFlightSchedulePerPerson);
-                    System.out.println("Transaction Successful!");
+                    System.out.println("Transaction \u001B[32mSuccessful\u001B[0m!");
                     return;
                 } else {
                     // customer do not wish to make a flight reservation
@@ -409,6 +475,7 @@ public class RunApp {
     }
     
     public void viewAllFlightReservations() {
+        IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
         List<FlightReservation> myFRList = customerUseCaseSessionBean.viewAllFlightReservations(this.customerId);
         
         int counter = 1; 
@@ -422,6 +489,7 @@ public class RunApp {
     }
     
     public void viewFlightReservationDetails(Scanner scanner) {
+        IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
         List<FlightReservation> myFRList = customerUseCaseSessionBean.viewAllFlightReservations(customerId);
         FlightReservation chosenFR = chooseFlightReservation(myFRList, scanner);
         printSpecificFlightReservation(chosenFR);
@@ -445,32 +513,40 @@ public class RunApp {
     
     public void printSpecificFlightReservation(FlightReservation fr) {
         System.out.println("Number of Flight Legs in this Itenerary: " + fr.getFlightBookingList().size());
-        System.out.println();
         int counter = 1;
         double totalCostItenerary = 0.0;
         
         for (FlightBooking fb : fr.getFlightBookingList()) {
+            IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
             System.out.println("Flight Leg #" + counter);
             System.out.println("Flight Number: "  + fb.getFlightNumber());
             System.out.println("Flight Route: " + fb.getFlightSchedule().getFlightSchedulePlan().getFlight().getFlightRoute().getOrigin().getIataAirportCode() + " -> " + fb.getFlightSchedule().getFlightSchedulePlan().getFlight().getFlightRoute().getDestination().getIataAirportCode() );
-            System.out.println("Flight Cost: " + fb.getFlightLegCost().doubleValue());
+            System.out.println("Flight Cost: $" + fb.getFlightLegCost().doubleValue());
             System.out.println("Flight Cabin Class: " + fb.getReservedSeats().get(0).getFlightCabinClass().getCabinClass().getCabinClassName().name());
             System.out.println("Number of Passengers: " + fb.getReservedSeats().size());
             
+            // sort according to ascending seat number ordering 
+            Comparator<Seat> ascendingOrder = (x, y) -> x.getSeatNumber().compareTo(y.getSeatNumber());
+            fb.getReservedSeats().sort(ascendingOrder);
+            
             for (Seat s : fb.getReservedSeats()) {
+                IntStream.rangeClosed(1, 1).forEach(x -> System.out.println());
+                System.out.println(IntStream.range(0, 20).mapToObj(i -> "-").collect(Collectors.joining()));
                 System.out.println("Passenger Name: "  + s.getPassenger().getFirstName() + " " + s.getPassenger().getLastName());
                 System.out.println("Passenger Seat Number: "  + s.getSeatNumber());
+                System.out.println(IntStream.range(0, 20).mapToObj(i -> "-").collect(Collectors.joining()));
+                IntStream.rangeClosed(1, 1).forEach(x -> System.out.println());
             }
             totalCostItenerary +=  (fb.getReservedSeats().size() * fb.getFlightLegCost().doubleValue());
             counter += 1;
         }
-        System.out.println("Total Amount Paid for Flight Reservation " + totalCostItenerary);
+        System.out.println("Total Amount Paid for Flight Reservation: $" + totalCostItenerary);
     }
     
     public double enterDetailsForDirectTo(int leg, int choice, boolean isReturn, boolean isConnecting, List<List<FlightSchedule>> flightScheduleList, String departureAirport, String destinationAirport, int numPassengers, Scanner sc, 
             List<Long> finalFlightScheduleIdList, List<Long> finalFlightCabinClassIdList, List<List<String>> finalSeatsChoice, List<HashMap<Integer, String>> passengerDetails, CabinClassType cabinClassPreference) {
         // make 
-        IntStream.rangeClosed(1, 10).boxed().forEach(x -> System.out.println());
+        IntStream.rangeClosed(1, 5).boxed().forEach(x -> System.out.println());
         String title = isReturn ? "RETURN" : "TO";
         int step = isReturn ? 2 : 1;
         String title2 = isConnecting ? "CONNECTING" : "DIRECT";
@@ -512,6 +588,7 @@ public class RunApp {
         finalFlightScheduleIdList.add(chosenFlightScheduleId);
 
         // fare should be computed here 
+        IntStream.rangeClosed(1, 5).boxed().forEach(x -> System.out.println());
         System.out.println("STEP 1b: SELECT CABIN CLASS");
         System.out.println("");
         FlightCabinClass chosenFlightCabinClass = chooseFCC(flightSchedule, sc);
@@ -524,7 +601,8 @@ public class RunApp {
 
         // this would be the total amount of money for one leg of the flight itnerary
         double amountForOnePassenger = fare.getFareAmount().doubleValue();
-
+        
+        IntStream.rangeClosed(1, 5).boxed().forEach(x -> System.out.println());
         System.out.println("STEP 1c: SELECT SEAT FOR PASSENGERS");
         System.out.println();
         // add the list of seats chosen for one flight schedule
@@ -665,7 +743,6 @@ public class RunApp {
         // initalise all the aisles
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numColumns; j++) {
-                // this woud be A, B ,C ,D 
                 if (breakpointSet.contains(j)) {
                     seatLayout[i][j] = "<=>";
                 } else {
@@ -685,7 +762,14 @@ public class RunApp {
         // print array
         for (int i = 0; i < seatLayout.length; i++) {
             for (int j = 0; j < seatLayout[i].length; j++) {
-                System.out.print(seatLayout[i][j] + " ");
+                String seat = seatLayout[i][j];
+                if (seat.equals("<=>")) {
+                    System.out.print("\u001B[33m" + seat + "\u001B[0m "); 
+                } else if (seat.equals("XXX") || seat.equals("XX")) {
+                    System.out.print("\u001B[31m" + seat + "\u001B[0m "); 
+                } else {
+                    System.out.print("\u001B[32m" + seat + "\u001B[0m "); 
+                }
             }
             System.out.println(); 
         }

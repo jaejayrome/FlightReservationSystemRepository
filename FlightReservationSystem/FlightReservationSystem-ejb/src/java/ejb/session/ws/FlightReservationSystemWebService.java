@@ -129,6 +129,32 @@ public class FlightReservationSystemWebService {
         return fb;
     }
     
+    @WebMethod(operationName = "getFlightBooking")
+    public List<Seat> getSeatFromBooking(
+         @WebParam(name = "flightBookingId") long flightBookingId
+    ) {
+        List<Seat> seatList = partnerUseCaseSessionBeanLocal.getListOfSeats(flightBookingId);
+        seatList.stream().forEach(x -> x.setFlightCabinClass(null));
+        return seatList;
+    }
+    
+    @WebMethod(operationName = "getFlightCabinClass") 
+    public FlightCabinClass  getFlightCabinClass(
+        @WebParam(name = "seatId") long seatId) {
+        FlightCabinClass fcc = partnerUseCaseSessionBeanLocal.getFlightCabinClass(seatId);
+        fcc.setCabinClass(null);
+        fcc.setSeatList(Collections.EMPTY_LIST);
+        fcc.setFlightSchedule(null);
+        return fcc;
+    }
+    
+    @WebMethod(operationName = "getSeatForBooking") 
+    public Passenger getPassengerForThisSeat(
+        @WebParam(name = "seatId") long seatId) {
+        Passenger p = partnerUseCaseSessionBeanLocal.getPassengerForSeat(seatId);
+        return p;
+    }
+    
     @WebMethod(operationName = "persistPassengers")
     public Passenger persistPassengers(
        @WebParam(name = "passengerDetails") List<String> passenger) {

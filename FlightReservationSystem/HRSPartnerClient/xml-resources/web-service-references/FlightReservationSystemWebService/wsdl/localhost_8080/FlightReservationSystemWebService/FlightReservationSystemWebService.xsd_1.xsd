@@ -1,8 +1,20 @@
 <?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI (http://jax-ws.java.net). RI's version is Metro/2.4.3 (RELEASE-2.4.3-ad3323c; 2019-01-21T17:46:06+0000) JAXWS-RI/2.3.2 JAXWS-API/2.3.2 JAXB-RI/2.3.2 JAXB-API/2.3.2 git-revision#unknown. --><xs:schema xmlns:tns="http://ws.session.ejb/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://ws.session.ejb/">
 
+<xs:element name="getFlightBooking" type="tns:getFlightBooking"/>
+
+<xs:element name="getFlightBookingResponse" type="tns:getFlightBookingResponse"/>
+
 <xs:element name="getFlightBookingsForReservation" type="tns:getFlightBookingsForReservation"/>
 
 <xs:element name="getFlightBookingsForReservationResponse" type="tns:getFlightBookingsForReservationResponse"/>
+
+<xs:element name="getFlightCabinClass" type="tns:getFlightCabinClass"/>
+
+<xs:element name="getFlightCabinClassResponse" type="tns:getFlightCabinClassResponse"/>
+
+<xs:element name="getSeatForBooking" type="tns:getSeatForBooking"/>
+
+<xs:element name="getSeatForBookingResponse" type="tns:getSeatForBookingResponse"/>
 
 <xs:element name="makeFlightBooking" type="tns:makeFlightBooking"/>
 
@@ -282,6 +294,18 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="getSeatForBooking">
+<xs:sequence>
+<xs:element name="seatId" type="xs:long"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSeatForBookingResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:passenger" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="persistPassengers">
 <xs:sequence>
 <xs:element name="passengerDetails" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
@@ -291,6 +315,18 @@
 <xs:complexType name="persistPassengersResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:passenger" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getFlightBooking">
+<xs:sequence>
+<xs:element name="flightBookingId" type="xs:long"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getFlightBookingResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:seat" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -370,15 +406,15 @@
 <xs:sequence/>
 </xs:complexType>
 
-<xs:complexType name="viewFlightResevations">
+<xs:complexType name="getFlightCabinClass">
 <xs:sequence>
-<xs:element name="partnerID" type="xs:long"/>
+<xs:element name="seatId" type="xs:long"/>
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="viewFlightResevationsResponse">
+<xs:complexType name="getFlightCabinClassResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:flightReservation" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="return" type="tns:flightCabinClass" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -392,6 +428,18 @@
 <xs:complexType name="retrieveSeatsResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:seat" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="viewFlightResevations">
+<xs:sequence>
+<xs:element name="partnerID" type="xs:long"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="viewFlightResevationsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:flightReservation" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 

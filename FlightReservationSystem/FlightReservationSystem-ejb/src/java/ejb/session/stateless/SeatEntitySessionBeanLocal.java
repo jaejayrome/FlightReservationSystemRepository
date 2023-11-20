@@ -14,4 +14,5 @@ import javax.ejb.Local;
 @Local
 public interface SeatEntitySessionBeanLocal {
     public long createSeat(Seat seat);
+    public Seat findSeat(long seatId);
 }

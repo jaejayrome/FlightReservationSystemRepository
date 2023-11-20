@@ -13,6 +13,7 @@ import util.exception.InvalidLoginCredentialsException;
 import ejb.session.stateless.RoutePlannerUseCaseSessionBeanRemote;
 import ejb.session.stateless.SalesManagerUseCaseSessionBeanRemote;
 import ejb.session.stateless.ScheduleManagerUseCaseSessionBeanRemote;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -50,49 +51,44 @@ public class RunApp {
         Scanner scanner = new Scanner(System.in);
         printPlane();
         printLogo();
-        printEstablish();
+//        printEstablish();
+        IntStream.rangeClosed(1, 5).forEach(x -> System.out.println());
+        System.out.println("Welcome to Merlion Airlines Flight Management System!");
         doLogin(scanner);
         
         scanner.close();
     }
     
     public void printPlane() {
-    System.out.println("");
-    System.out.println("                                      \\ \\");
-    System.out.println("                                       \\ `\\");
-    System.out.println("                    ___                 \\  \\");
-    System.out.println("                   |    \\                \\  `\\");
-    System.out.println("                   |_____\\                \\    \\");
-    System.out.println("                   |______\\                \\    `\\");
-    System.out.println("                   |       \\                \\     \\");
-    System.out.println("                   |      __\\__---------------------------------._.");
-    System.out.println("                 __|---~~~__o_o_o_o_o_o_o_o_o_o_o_o_o_o_o_o_o_o_[]\\[__");
-    System.out.println("                |___                         /~      )                \\__");
-    System.out.println("                    ~~~---..._______________/      ,/_________________/");
-    System.out.println("                                           /      /");
-    System.out.println("                                          /     ,/");
-    System.out.println("                                         /     /");
-    System.out.println("                                        /    ,/");
-    System.out.println("                                       /    /");
-    System.out.println("                                      //  ,/");
-    System.out.println("                                     //  /");
-    System.out.println("                                    // ,/");
-    System.out.println("                                   //_/");
-    System.out.println("");
+        IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
+        System.out.println("                                   |");
+        System.out.println("                                   |");
+        System.out.println("                                 .-'-.");
+        System.out.println("                                ' ___ '");
+        System.out.println("                       ---------'  .-.  '---------");
+        System.out.println("       _________________________'  '-'  '_________________________");
+        System.out.println("        ''''''-|---|--/    \\==][^',_m_,'^][==/    \\--|---|-''''''");
+        System.out.println("                      \\    /  ||/   H   \\||  \\    /");
+        System.out.println("                       '--'   OO   O|O   OO   '--'");
     }
 
     
     public void printLogo() {
 
-    String asciiArt =
-        "███╗   ███╗███████╗██████╗ ██╗     ██╗ ██████╗ ███╗   ██╗     █████╗ ██╗██████╗ ██╗     ██╗███╗   ██╗███████╗███████╗\n" +
-        "████╗ ████║██╔════╝██╔══██╗██║     ██║██╔═══██╗████╗  ██║    ██╔══██╗██║██╔══██╗██║     ██║████╗  ██║██╔════╝██╔════╝\n" +
-        "██╔████╔██║█████╗  ██████╔╝██║     ██║██║   ██║██╔██╗ ██║    ███████║██║██████╔╝██║     ██║██╔██╗ ██║█████╗  ███████╗\n" +
-        "██║╚██╔╝██║██╔══╝  ██╔══██╗██║     ██║██║   ██║██║╚██╗██║    ██╔══██║██║██╔══██╗██║     ██║██║╚██╗██║██╔══╝  ╚════██║\n" +
-        "██║ ╚═╝ ██║███████╗██║  ██║███████╗██║╚██████╔╝██║ ╚████║    ██║  ██║██║██║  ██║███████╗██║██║ ╚████║███████╗███████║";
-    System.out.println("\n");
-    System.out.println(asciiArt);
-    System.out.println("\n");
+ System.out.println("                      _ _                     _      _ _                                     ");
+        System.out.println("  _ __ ___   ___ _ __| (_) ___  _ __     __ _(_)_ __| (_)_ __   ___  ___                     ");
+        System.out.println(" | '_ ` _ \\ / _ \\ '__| | |/ _ \\| '_ \\   / _` | | '__| | | '_ \\ / _ \\/ __|                    ");
+        System.out.println(" | | | | | |  __/ |  | | | (_) | | | | | (_| | | |  | | | | | |  __/\\__ \\                    ");
+        System.out.println(" |_|_|_|_|_|\\___|_|  |_|_|\\___/|_| |_|  \\__,_|_|_|  |_|_|_| |_|\\___||___/               _    ");
+        System.out.println("  / _| (_) __ _| |__ | |_   _ __ ___   __ _ _ __   __ _  __ _  ___ _ __ ___   ___ _ __ | |_  ");
+        System.out.println(" | |_| | |/ _` | '_ \\| __| | '_ ` _ \\ / _` | '_ \\ / _` |/ _` |/ _ \\ '_ ` _ \\ / _ \\ '_ \\| __| ");
+        System.out.println(" |  _| | | (_| | | | | |_  | | | | | | (_| | | | | (_| | (_| |  __/ | | | | |  __/ | | | |_  ");
+        System.out.println(" |_| |_|_\\__, |_| |_|\\__| |_| |_| |_|\\__,_|_| |_|\\__,_|\\__, |\\___|_| |_| |_|\\___|_| |_|\\__| ");
+        System.out.println("  ___ _   |___/| |_ ___ _ __ ___                        |___/                                ");
+        System.out.println(" / __| | | / __| __/ _ \\ '_ ` _ \\                                                            ");
+        System.out.println(" \\__ \\ |_| \\__ \\ ||  __/ | | | | |                                                           ");
+        System.out.println(" |___/\\__, |___/\\__\\___|_| |_| |_|                                                           ");
+        System.out.println("      |___/                                                                                   ");
     }
     
     public void printEstablish() {
@@ -114,17 +110,16 @@ public class RunApp {
     }
     
     public void doLogin(Scanner scanner) {
-        System.out.println("");
-        System.out.println("");
-        System.out.println("");
-        System.out.println("");
         System.out.print("Enter Username: ");
+        System.out.print("> ");
         String username = scanner.next();
+        scanner.nextLine();
         System.out.print("Enter Password: ");
+        System.out.print("> ");
         String password = scanner.next();
+        scanner.nextLine();
  
         try {
-//            System.out.println(employeeUseCaseSessionBeanRemote == null);
             this.currentEmployee = employeeUseCaseSessionBeanRemote.doLogin(username, password);
             showUseCaseOptions(scanner, this.currentEmployee.getJobTitle());
         } catch (InvalidLoginCredentialsException exception) {
@@ -200,9 +195,10 @@ public class RunApp {
                 System.out.println("Press '1' to View Seats Inventory");
                 System.out.println("Press '2' to View Flight Reservations");
                 System.out.println("Press '0' to Logout from this session");
-                System.out.print("> ");
-                System.out.println("-------------------------------");
                 SalesManagerUseCase salesManagerUseCase = new SalesManagerUseCase(this.currentEmployee, salesManagerUseCaseSessionBeanRemote);
+                System.out.println("-------------------------------");
+                System.out.print("> ");
+                
                 int choice2 = scanner.nextInt();
                 System.out.println("");
                 switch (choice2) {

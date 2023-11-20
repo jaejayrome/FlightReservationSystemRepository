@@ -49,6 +49,7 @@ public class RoutePlannerUseCase {
             System.out.print("> ");
             String destination = scanner.next();
             scanner.nextLine();
+            System.out.println();
             System.out.println("Would you like to make a complementary flight route for this?");
             System.out.println("Press 0 to skip.");
             System.out.println("Press 1 to create a return flight route.");
@@ -60,6 +61,7 @@ public class RoutePlannerUseCase {
             FlightRoute flightRoute = new FlightRoute(FlightRouteStatus.DISABLED);
             try {
                 routePlannerUseCaseSessionBeanRemote.createNewFlightRoute(origin, destination, flightRoute, makeReturnFlightRoute);
+                System.out.println("Transaction \u001B[32mSuccessful\u001B[0m!");
             } catch (DuplicateFlightRouteException e) {
                 System.out.println(e.getMessage());
             } catch (AirportNotFoundException ee) {
@@ -70,8 +72,6 @@ public class RoutePlannerUseCase {
     
     public void viewAllFlightRoutes() {
         List<FlightRoute> flightRoutes = routePlannerUseCaseSessionBeanRemote.viewAllFlightRoute();
-         //Comparator<Pair<FlightRoute>> sortPairs = (x, y) -> x.getFirst().getOrigin().getAirportName().compareTo(y.getFirst().getOrigin().getAirportName());
-  
         if (flightRoutes.size() > 0){
             flightRoutes.stream().forEach(flightRoutePair -> {
                 printSingleFlightRoute(flightRoutePair);
@@ -105,8 +105,11 @@ public class RoutePlannerUseCase {
         if (choice == 1) {
             boolean deletedOrDisabled = routePlannerUseCaseSessionBeanRemote.deleteFlightRoute(originAirport, destinationAirport);
             if (deletedOrDisabled) {
+                System.out.println();
+                System.out.println("Transaction \u001B[32mSuccessful\u001B[0m!");
                 System.out.println("You have successfully disabled / deleted the flight route!");
             } else {
+                System.out.println();
                 System.out.println("You have entered an invalid flight route!");
             }
         } else {

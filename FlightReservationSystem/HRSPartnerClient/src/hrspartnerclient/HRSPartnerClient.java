@@ -53,9 +53,40 @@ public class HRSPartnerClient {
     
     
     public static void showMenuOptions(Scanner sc, FlightReservationSystemWebService port) {
+        System.out.println("                                 .''.");
+        System.out.println("       .''.             *''*    :_\\/_:     . ");
+        System.out.println("      :_\\/_:   .    .:.*_\\/_*   : /\\ :  .'.:.'.");
+        System.out.println("  .''.: /\\ : _\\(/_  ':'* /\\ *  : '..'.  -=:o:=-");
+        System.out.println(" :_\\/_:'.:::. /)\\*''*  .|.* '.\\'/.'_\\(/_'.':'.");
+        System.out.println(" : /\\ : :::::  '*_\\/_* | |  -= o =- /)\\    '  *");
+        System.out.println("  '..'  ':::'   * /\\ * |'|  .'/.'\\'.  '._____.");
+        System.out.println("      *        __*..* |  |     :      |.   |' .---\"|");
+        System.out.println("       _*   .-'   '-. |  |     .--'|  ||   | _|    |");
+        System.out.println("    .-'|  _.|  |    ||   '-__  |   |  |    ||      |");
+        System.out.println("    |' | |.    |    ||       | |   |  |    ||      |");
+        System.out.println(" ___|  '-'     '    \"\"       '-'   '-.'    '`      |____");
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
+        System.out.println("                      _ _                     _      _ _                                    ");
+        System.out.println("  _ __ ___   ___ _ __| (_) ___  _ __     __ _(_)_ __| (_)_ __   ___  ___                    ");
+        System.out.println(" | '_ ` _ \\ / _ \\ '__| | |/ _ \\| '_ \\   / _` | | '__| | | '_ \\ / _ \\/ __|                   ");
+        System.out.println(" | | | | | |  __/ |  | | | (_) | | | | | (_| | | |  | | | | | |  __/\\__ \\                   ");
+        System.out.println(" |_| |_| |_|\\___|_|  |_|_|\\___/|_| |_|  \\__,_|_|_|  |_|_|_| |_|\\___||___/_   _              ");
+        System.out.println(" | |__   ___ | (_) __| | __ _ _   _   _ __ ___  ___  ___ _ ____   ____ _| |_(_) ___  _ __   ");
+        System.out.println(" | '_ \\ / _ \\| | |/ _` |/ _` | | | | | '__/ _ \\/ __|/ _ \\ '__\\ \\ / / _` | __| |/ _ \\| '_ \\  ");
+        System.out.println(" | | | | (_) | | | (_| | (_| | |_| | | | |  __/\\__ \\  __/ |   \\ V / (_| | |_| | (_) | | | | ");
+        System.out.println(" |_| |_|\\___/|_|_|\\__,_|\\__, | |_|  |_|_|  \\___||___/\\___|_|    \\_/ \\__,_|\\__|_|\\___/|_| |_| ");
+        System.out.println("  ___ _   _ ___| |_ ___ _ __ _|___/                                                        ");
+        System.out.println(" / __| | | / __| __/ _ \\ '_ ` _ \\                                                          ");
+        System.out.println(" \\__ \\ |_| \\__ \\ ||  __/ | | | | |                                                         ");
+        System.out.println(" |___/\\__, |___/\\__\\___|_| |_| |_|                                                         ");
+        System.out.println("      |___/                                                                                ");
+        
+        IntStream.rangeClosed(1, 5).forEach(x -> System.out.println());
         System.out.println("Welcome to Merlion Airways (Partner) Holiday Reservation System");
         System.out.println("Press '0' to exit");
         System.out.println("Press '1' to Login to an existing account");
+        System.out.print("> ");
         int option = sc.nextInt();
         sc.nextLine();
         switch(option) {
@@ -63,10 +94,12 @@ public class HRSPartnerClient {
                 System.exit(1);
                 break;
             case 1:
-                System.out.println("Login selected");
-                System.out.println("Enter Your Username: ");
+                System.out.println();
+                System.out.println("Enter Your Username");
+                System.out.print("> ");
                 String loginEmail = sc.nextLine();
-                System.out.println("Enter Your Password: ");
+                System.out.println("Enter Your Password");
+                System.out.print("> ");
                 String loginPassword = sc.nextLine();
                 long partnerId = doLogin(loginEmail, loginPassword, port);
                 sessionId = partnerId;
@@ -78,10 +111,14 @@ public class HRSPartnerClient {
         }
     }    
     public static void doMainMenu(Scanner sc, FlightReservationSystemWebService port) {
+        IntStream.rangeClosed(1, 1).forEach(x -> System.out.println());
+        System.out.println(IntStream.range(0, 20).mapToObj(i -> "-").collect(Collectors.joining()));
         System.out.println("Press '0' to logout");
         System.out.println("Press '1' to Search Flights and Reserve Flights");
         System.out.println("Press '2' to View Partner Flight Reservations");
         System.out.println("Press '3' to View Partner Flight Reservation Details");
+        System.out.println(IntStream.range(0, 20).mapToObj(i -> "-").collect(Collectors.joining()));
+        System.out.print("> ");
         int option2 = sc.nextInt();
         sc.nextLine();
         switch (option2) {
@@ -105,6 +142,7 @@ public class HRSPartnerClient {
     
     public static void doLogout(FlightReservationSystemWebService port, long partnerId) {
         port.partnerLogout(partnerId);
+        IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
         System.out.println("Partner has successfully logged out!");
     }
     
@@ -115,8 +153,8 @@ public class HRSPartnerClient {
     
     public static void viewFlightReservations(FlightReservationSystemWebService port) {
         List<FlightReservation> frlist = port.viewFlightResevations(sessionId);
-        
-        if (!frlist.isEmpty()) {
+        IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
+        if (frlist.isEmpty()) {
             System.out.println("There are currently no transactions ongoing!");
         }
         
@@ -128,7 +166,7 @@ public class HRSPartnerClient {
     
     public static void viewFlightReservationDetails(FlightReservationSystemWebService port, Scanner scanner) {
         List<FlightReservation> frlist = port.viewFlightResevations(sessionId);
-
+        IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
         if (frlist.isEmpty()) {
             System.out.println("No flight reservations found.");
             return;
@@ -151,17 +189,46 @@ public class HRSPartnerClient {
         }
 
         long selectedReservationId = frlist.get(selectedReservationIndex - 1).getId();
-
-        List<FlightBooking> flightBookings = port.getFlightBookingsForReservation(selectedReservationId);
-
-        System.out.println("Details for Flight Reservation " + selectedReservationId + ":");
         
+        
+        
+        List<FlightBooking> flightBookings = port.getFlightBookingsForReservation(selectedReservationId);
+        
+        System.out.println("Details for Flight Reservation " + selectedReservationId + ":");
         System.out.println("Associated Flight Bookings:");
+        System.out.println("Number of Flight Legs: " + flightBookings.size());
+        
+        double totalCostPerPassenger = 0;
+        int numPassengers = 0;
+        int counter = 1;
         for (FlightBooking flightBooking : flightBookings) {
+            List<Seat> passengersInvolved = port.getFlightBooking(flightBooking.getId());
+            // sort according to the ascending order
+            passengersInvolved.sort((x, y) -> x.getSeatNumber().compareTo(y.getSeatNumber()));
+            FlightCabinClass fcc = port.getFlightCabinClass(passengersInvolved.get(0).getId());
+            numPassengers = passengersInvolved.size(); 
+            System.out.println("Flight Itenerary Number #" + counter);
             System.out.println("Flight Booking ID: " + flightBooking.getId());
             System.out.println("Flight Number: " + flightBooking.getFlightNumber());
             System.out.println("Flight Leg Cost: " + flightBooking.getFlightLegCost().doubleValue());
+            
+            for (Seat s : passengersInvolved) {
+                IntStream.rangeClosed(1, 1).forEach(x -> System.out.println());
+                System.out.println(IntStream.range(0, 20).mapToObj(i -> "-").collect(Collectors.joining()));
+                System.out.println("Seat Number: " + s.getSeatNumber());
+                Passenger passengerThisSeat = port.getSeatForBooking(s.getId());
+                System.out.println("Passenger First Name: " + passengerThisSeat.getFirstName());
+                System.out.println("Passenger Last Name: " + passengerThisSeat.getLastName());
+                System.out.println("Passenger Passport Number: " + passengerThisSeat.getPassportNumber());
+                System.out.println(IntStream.range(0, 20).mapToObj(i -> "-").collect(Collectors.joining()));
+                IntStream.rangeClosed(1, 1).forEach(x -> System.out.println());
+            }
+            totalCostPerPassenger += flightBooking.getFlightLegCost().doubleValue();
+            counter += 1;
         }
+        
+        System.out.println("Total Flight Fare Information");
+        System.out.println("Total Amount Paid: $" + (totalCostPerPassenger * numPassengers));
     }
 
     public static void main(String[] args) {
@@ -183,28 +250,24 @@ public class HRSPartnerClient {
         String startDateTimeInput = "";
         String returnDateTimeInput = "";
 
-
+        IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
         System.out.println("Please enter the number of passengers");
         System.out.print("> ");
         numPassengers = sc.nextInt();
         sc.nextLine();
-
         System.out.println("Please enter your Flight details to check for available flights");
         System.out.println("Trip Type: Press 1 for One-Way, 2 for Return");
         System.out.print("> ");
         roundTrip = sc.nextInt();
         sc.nextLine();
-
         System.out.println("Enter Trip Departure Airport: ");
         System.out.print("> ");
         departureAirport = sc.next();
         sc.nextLine();
-
         System.out.println("Enter Destination Airport: ");
         System.out.print("> ");
         destinationAirport = sc.next();
         sc.nextLine();
-
         System.out.println("Enter the Departure Date (yyyy-MM-dd):");
         System.out.print("> ");
         String startDateInput = sc.next();
@@ -233,23 +296,21 @@ public class HRSPartnerClient {
             String end = endDateInput + " " + endTimeInput;
             returnDateTimeInput = end;
             try {
-                // check returnDate
-                // System.out.println("return is " + returnDateTimeInput);
             } catch (Exception e) {
                 System.out.println("Invalid Date format. Please try again");
             }
         }
-
-        System.out.println("Do you prefer a direct or connecting flight? Press 1 for direct, 2 for Connecting");
+        IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
+        System.out.println("FLIGHT TYPE PREFERENCE \nPress 1 for \u001B[1mDirect Flights Only\u001B[0m\nPress 2 For \u001B[1mNo Preference\u001B[0m");
         System.out.print("> ");
         directFlight = sc.nextInt(); 
         sc.nextLine();
         
         // ask for cabin class preference
-        System.out.println("Cabin Class Preference");
-        System.out.println("Would you like to have any preference?");
-        System.out.println("Press 0 if you have no preference.");
-        System.out.println("Press 1 if you want to make a preference");
+        IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
+        System.out.println("\u001B[1mCABIN CLASS PREFERENCE\u001B[0m");
+        System.out.println("Press 0 if you have \u001B[1mno preference\u001B[0m");
+        System.out.println("Press 1 if you want to \u001B[1mmake a preference\u001B[0m");
         System.out.print("> ");
         int ccPreference = sc.nextInt();
         sc.nextLine();
@@ -280,49 +341,55 @@ public class HRSPartnerClient {
         
             List<List<FlightSchedule>> masterList = new ArrayList<>();
             // DIRECT: TO
-            System.out.println("DIRECT: TO");
+            System.out.println("\u001B[1mDIRECT: TO\u001B[0m");
             System.out.println("");
-//            System.out.println("sdssdd " + startDateTimeInput);
             List<FlightSchedule> list1  =  printFlightScheduleInformation(departureAirport, startDateTimeInput, destinationAirport, sc, port, chosenType);
             if (!list1.isEmpty()) masterList.add(list1);
+            if (list1.isEmpty()) System.out.println("sorry, no flight schedules have been found");
             
             // DIRECT: RETURN
             if (!returnDateTimeInput.isEmpty()) {
-                System.out.println("DIRECT: RETURN");
+                System.out.println("\u001B[1mDIRECT: TO\u001B[0m");
                 System.out.println("");
                 List<FlightSchedule> list2  = printFlightScheduleInformation(destinationAirport, returnDateTimeInput, departureAirport, sc, port, chosenType);
                 if (!list2.isEmpty()) masterList.add(list2);
+                if (list2.isEmpty()) System.out.println("sorry, no flight schedules have been found");
             }
             if (directFlight == 2) {
                 // CONNECTING: TO : LEG 1
-                System.out.println("CONNECTING TO: LEG 1");
+                System.out.println("\u001B[1mCONNECTING TO: LEG 1\u001B[0m");
                 System.out.println("");
                 List<FlightSchedule> list3  = printFlightScheduleInformationConnecting(departureAirport, startDateTimeInput, destinationAirport, sc, port, true, chosenType);
                 if (!list3.isEmpty()) masterList.add(list3);
+                if (list3.isEmpty()) System.out.println("sorry, no flight schedules have been found");
 
                 // CONNECTING TO : LEG 2
-                System.out.println("CONNECTING TO: LEG 2");
+                System.out.println("\u001B[1mCONNECTING TO: LEG 2\u001B[0m");
                 System.out.println("");
                 List<FlightSchedule> list4  = printFlightScheduleInformationConnecting(departureAirport, startDateTimeInput, destinationAirport, sc, port, false, chosenType);
                 if (!list4.isEmpty()) masterList.add(list4);
+                if (list3.isEmpty()) System.out.println("sorry, no flight schedules have been found");
 
                 if (!returnDateTimeInput.isEmpty()) {
                     // CONNECTING BACK : LEG 1
-                    System.out.println("CONNECTING RETURN: LEG 1");
+                    System.out.println("\u001B[1mCONNECTING RETURN: LEG 1\u001B[0m");
                     System.out.println("");
                     List<FlightSchedule> list5 = printFlightScheduleInformationConnecting(destinationAirport, returnDateTimeInput, departureAirport, sc, port, true, chosenType);
                     if (!list5.isEmpty()) masterList.add(list5);
+                    if (list5.isEmpty()) System.out.println("sorry, no flight schedules have been found");
 
                     // CONNECTING BACK : LEG 2
-                    System.out.println("CONNECTING RETURN: LEG 2");
+                    System.out.println("\u001B[1mCONNECTING RETURN: LEG 2\u001B[0m");
                     System.out.println("");
                     List<FlightSchedule> list6 = printFlightScheduleInformationConnecting(destinationAirport, returnDateTimeInput, departureAirport, sc, port, false, chosenType);
                     if (!list6.isEmpty()) masterList.add(list6);
+                    if (list6.isEmpty()) System.out.println("sorry, no flight schedules have been found");
                 }
             }
-            System.out.println(masterList.size());
+            
             // at least one outcome would have 1 flight
             if (masterList.size() >= 1) {
+                IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
                 System.out.println("Would you like to proceed to make reservations?");
                 System.out.println("Press 0 to head back to the main menu");
                 System.out.println("Press 1 to proceed");
@@ -356,9 +423,10 @@ public class HRSPartnerClient {
                     double onePassengerFareConnecting = 0.0;
                     int choice2 = -1;
                     if (connectingFound) {
-                        System.out.println("There is a choice between connecting and direct flights");
-                        System.out.println("Press 0 to choose connecting flights");
-                        System.out.println("Press 1 to choose direct flights");
+                        IntStream.rangeClosed(1, 2).forEach(x -> System.out.println());
+                        System.out.println("\u001B[1mFLIGHT TYPE PREFERENCE\u001B[0m");
+                        System.out.println("Press 0 to choose \u001B[1mConnecting Flights\u001B[0m");
+                        System.out.println("Press 1 to choose \u001B[1mDirect Flights\u001B[0m");
                         System.out.print("> ");
                         choice2 = sc.nextInt();
                         if (choice2 == 1) {
@@ -404,7 +472,10 @@ public class HRSPartnerClient {
                     }
                         
                         double totalCostPerPerson = ticketPricesForEachFlightSchedulePerPerson.stream().reduce(0.0, (x, y) -> x + y);
-                        System.out.println("Total Cost for Your Trip would be: $" + (totalCostPerPerson * numPassengers));
+                        System.out.println();
+                        System.out.println("\u001B[1mCHECKOUT PROCEDURE\u001B[0m");
+
+                        System.out.println("Total Cost for Your Trip would be: $\u001B[1m" + (totalCostPerPerson * numPassengers) + "\u001B[0m");
                         
                         System.out.println("Please Enter Your Credit Card Number");
                         System.out.print("> ");
@@ -489,6 +560,7 @@ public class HRSPartnerClient {
         finalFlightScheduleIdList.add(chosenFlightScheduleId);
         
         // fare should be computed here 
+        System.out.println();
         System.out.println("STEP 1b: SELECT CABIN CLASS");
         System.out.println("");
         Pair<String, Fare> chosenFCC = chooseFCC(fareListForEachCabinClass, sc);
@@ -497,6 +569,7 @@ public class HRSPartnerClient {
         // this would be the total amount of money for one leg of the flight itnerary
         double amountForOnePassenger = chosenFCC.getValue().getFareAmount().doubleValue();
         System.out.println(chosenFCC.getKey());
+        System.out.println();
         System.out.println("STEP 1c: SELECT SEAT FOR PASSENGERS");
         List<String> reservedSeats = printSeatLayout(chosenFlightScheduleId, chosenFCC.getKey(), numPassengers, sc, passengerDetails, port);
         finalSeatsChoice.add(reservedSeats);
@@ -527,7 +600,7 @@ public class HRSPartnerClient {
             
             // print flight information
             Flight flight = port.retrieveFlights(fs.getId());
-            System.out.println(flight.getFlightNumber());
+            System.out.println("Flight Number: " + flight.getFlightNumber());
             
             
             long fspId = fs.getId();
@@ -554,7 +627,6 @@ public class HRSPartnerClient {
     
     
     public static List<FlightSchedule> printFlightScheduleInformationConnecting(String departureAirport, String startDateTimeInput, String destinationAirport, Scanner sc, FlightReservationSystemWebService port, boolean isFirst, CabinClassType chosenPreference) 
-//    throws NoFlightScheduleResultException {
     {
         List<FlightSchedule> flightScheduleList = port.partnerSearchConnectingFlightLeg1(departureAirport, startDateTimeInput, destinationAirport, isFirst);
         // print flight cabin class fares
@@ -583,40 +655,39 @@ public class HRSPartnerClient {
             printFlightSchedulesForNoPreference(flightScheduleList, fareListForEachCabinClass);
         }
         return flightScheduleList;
-//        throw new NoFlightScheduleResultException("No Flight Schedules have been found!");
     }
     
     
     
     public static List<FlightSchedule> printFlightScheduleInformation(String departureAirport, String startDateTimeInput, String destinationAirport, Scanner sc, FlightReservationSystemWebService port, CabinClassType chosenPreference) {
-    List<FlightSchedule> flightScheduleList = port.partnerSearchFlight(departureAirport, startDateTimeInput, destinationAirport);
+        List<FlightSchedule> flightScheduleList = port.partnerSearchFlight(departureAirport, startDateTimeInput, destinationAirport);
 
-    if (!flightScheduleList.isEmpty()) {
-        // get the first flight schedule plan and cabin class configuration 
-        long fspId = flightScheduleList.get(0).getId();
-        
-        // get all flight cabin classes
-        HashMap<String, Fare> fareListForEachCabinClass = getFaresFromBackend(port, fspId);
-        
-        if (chosenPreference != null && fareListForEachCabinClass.containsKey(chosenPreference.name())) {
-            // If the chosen preference is valid, keep only that cabin class in the map
-            fareListForEachCabinClass = new HashMap<>();
-            fareListForEachCabinClass.put(chosenPreference.name(), getFaresFromBackend(port, fspId).get(chosenPreference.name()));
+        if (!flightScheduleList.isEmpty()) {
+            // get the first flight schedule plan and cabin class configuration 
+            long fspId = flightScheduleList.get(0).getId();
+
+            // get all flight cabin classes
+            HashMap<String, Fare> fareListForEachCabinClass = getFaresFromBackend(port, fspId);
+
+            if (chosenPreference != null && fareListForEachCabinClass.containsKey(chosenPreference.name())) {
+                // If the chosen preference is valid, keep only that cabin class in the map
+                fareListForEachCabinClass = new HashMap<>();
+                fareListForEachCabinClass.put(chosenPreference.name(), getFaresFromBackend(port, fspId).get(chosenPreference.name()));
+            }
+
+            // print flight information
+            Flight flight = port.retrieveFlights(fspId);
+            System.out.println(flight.getFlightNumber());
+
+            // print all cabin class preferences
+            printNoPreferenceCabinClassFares(fareListForEachCabinClass);
+
+            // print all flight schedules 
+            printFlightSchedulesForNoPreference(flightScheduleList, fareListForEachCabinClass);
         }
 
-        // print flight information
-        Flight flight = port.retrieveFlights(fspId);
-        System.out.println(flight.getFlightNumber());
-
-        // print all cabin class preferences
-        printNoPreferenceCabinClassFares(fareListForEachCabinClass);
-
-        // print all flight schedules 
-        printFlightSchedulesForNoPreference(flightScheduleList, fareListForEachCabinClass);
+        return flightScheduleList;
     }
-
-    return flightScheduleList;
-}
 
     
    public static void printFlightSchedulesForNoPreference(List<FlightSchedule> flightScheduleList, HashMap<String, Fare> fareListForEachCabinClass) {
@@ -665,7 +736,7 @@ public class HRSPartnerClient {
         for (String key : cabinClassDetails.keySet()) {
             System.out.println("");
             Fare highestFare = cabinClassDetails.get(key);
-            System.out.println(key + " : " + highestFare.getFareAmount().doubleValue());
+            System.out.println(key + " : \u001B[1m" + highestFare.getFareAmount().doubleValue() + "\u001B[0m");
         }
     }
     
@@ -690,8 +761,6 @@ public class HRSPartnerClient {
         System.out.println("Enter Your Option:");
         System.out.print("> ");
         String chosenCabinClassName = mapToChoose.get(scanner.nextInt());
-//        System.out.println(chosenCabinClassName);
-//        System.out.println(fareForEachCabinClass.get(chosenCabinClassName));
         return new Pair<String, Fare>(chosenCabinClassName, fareForEachCabinClass.get(chosenCabinClassName));
     }
     
@@ -700,6 +769,7 @@ public class HRSPartnerClient {
         List<HashMap<Integer, String>> allDetails = new ArrayList<HashMap<Integer, String>>();
         for (int i = 0; i < numP; i++) {
             HashMap<Integer, String> details = new HashMap<Integer, String>();
+            System.out.println();
             System.out.println("Passenger Details #" + (i + 1));
             System.out.println("Enter Passenger First Name");
             System.out.print("> ");
@@ -727,29 +797,19 @@ public class HRSPartnerClient {
     
     public static double printDirectFlightsTo(List<FlightSchedule> fsList, String start, String end, int numPassengers) {
         System.out.println();
-        System.out.println("Direct Flights: " + start + " -> " + end);
+        System.out.println("Direct Flights: \u001B[1m" + start + "\u001B[0m -> \u001B[1m" + end + "\u001B[0m");
         System.out.println();
         double totalCostForThisSingleFlight = 0.0;
         int counter = 1;
         for (FlightSchedule fs : fsList) {
             System.out.println("");
-            System.out.println("Option #" + counter);
+            System.out.println("\u001B[1mOption #" + counter + "\u001B[0m");
             System.out.println("Departure Time " + fs.getDepartureTime());
             System.out.println("Arrival Time " + fs.getArrivalTime());
-//            System.out.println("Duration " + formatDuration(fs.getFlightDuration()));
-            // display cabin class availability
             System.out.println("");
             System.out.println("Cabin Class Availability");
             System.out.println("Cabin Class Options: " + fs.getFccList().size());
             System.out.println("");
-            boolean isAdded = false;
-            for (FlightCabinClass fcc : fs.getFccList()) {
-//                double pricePerPassengerPerCCPerFS = printFlightCabinClass(fcc, numPassengers, false);
-                if (!isAdded) {
-                    // totalCostForThisSingleFlight += pricePerPassengerPerCCPerFS;
-                    isAdded = true;
-                }
-            }
             counter += 1;
         }
         return totalCostForThisSingleFlight;
@@ -761,27 +821,19 @@ public class HRSPartnerClient {
         double totalCostForThisSingleFlight = 0.0;
         for (FlightSchedule fs : fsList) {
             System.out.println("");
-            System.out.println("Connecting Flight Information: " + fs.getFlightSchedulePlan().getFlight().getFlightRoute().getOrigin().getIataAirportCode() + " -> " + fs.getFlightSchedulePlan().getFlight().getFlightRoute().getDestination().getIataAirportCode());
-            System.out.println("Option #" + counter);
+            System.out.println("Connecting Flight Information: " + 
+            "\u001B[1m" + fs.getFlightSchedulePlan().getFlight().getFlightRoute().getOrigin().getIataAirportCode() + "\u001B[0m" +
+            " -> " +
+            "\u001B[1m" + fs.getFlightSchedulePlan().getFlight().getFlightRoute().getDestination().getIataAirportCode() + "\u001B[0m");
+
+            System.out.println("\u001B[1mOption #" + counter + "\u001B[0m");
             System.out.println("Departure Time " + fs.getDepartureTime());
             System.out.println("Arrival Time " + fs.getArrivalTime());
-//            System.out.println("Duration " + formatDuration(fs.getFlightDuration()));
-            // display cabin class availability
             System.out.println("");
             System.out.println("Cabin Class Availability");
             System.out.println("Cabin Class Options: " + fs.getFccList().size());
-//            System.out.println("");
-            boolean isAdded = false;
-            for (FlightCabinClass fcc : fs.getFccList()) {
-                // double returnVal = printFlightCabinClass(fcc, numPassengers, true);
-                if (!isAdded) {
-                  //  totalCostForThisSingleFlight += returnVal;
-                    isAdded = true;
-                }
-            }
             counter += 1;
         }
-        
         return totalCostForThisSingleFlight;
     }
         
@@ -789,9 +841,7 @@ public class HRSPartnerClient {
     public static String formatDuration(Duration duration) {
         long totalMinutes = duration.toMinutes();
         long seconds = duration.minusMinutes(totalMinutes).getSeconds();
-
         String formattedDuration = String.format("%d:%02d", totalMinutes, seconds);
-        
         return formattedDuration;
     }
     
@@ -819,7 +869,7 @@ public class HRSPartnerClient {
         CabinClass chosenCabinClass = port.retrieveCabinClass(fspID, chosen);
        
         int numRows = chosenCabinClass.getNumRows().intValue();
-        int numColumns = chosenCabinClass.getNumAisles().intValue() + chosenCabinClass.getNumSeatsAbreast().intValue();
+        int numColumns = chosenCabinClass.getNumSeatsAbreast().intValue();
         HashSet<String> reservedSeatsSet = new HashSet<String>();
         // need to initalise this
         List<String> seatChosen = new ArrayList<String>();
@@ -833,18 +883,14 @@ public class HRSPartnerClient {
     
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numColumns; j++) {
-                if (breakpointSet.contains(j)) {
-                    seatLayout[i][j] = "<=>";
-                } else {
-                    char rowChar = (char) ('A' + j % (chosenCabinClass.getNumSeatsAbreast().intValue() + numColumns));
-                    seatLayout[i][j] = (i + 1) + "" + rowChar;
-                }
+                char rowChar = (char) ('A' + j % (chosenCabinClass.getNumSeatsAbreast().intValue()));
+                seatLayout[i][j] = (i + 1) + "" + rowChar;
             }
         }
         
         for (int i = 0; i < seatLayout.length; i++) {
             for (int j = 0; j < seatLayout[i].length; j++) {
-                System.out.print(seatLayout[i][j] + " ");
+                System.out.print("\u001B[32m" + seatLayout[i][j] + "\u001B[0m" + " ");
             }
             System.out.println(); 
         }

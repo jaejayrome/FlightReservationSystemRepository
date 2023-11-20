@@ -54,7 +54,6 @@ public class FleetManagerUseCase {
            if (aircraftTypeList.size() > 0) {
                iniitalise();
                printAircraftType();
-               printAircraftTypeChoices();
                AircraftTypeName aircraftTypeName = typeMap.get(this.scanner.nextInt());
                scanner.nextLine();
                if(aircraftTypeName != null) {
@@ -73,6 +72,7 @@ public class FleetManagerUseCase {
                 try {
                 fleetManagerUseCaseSessionBeanRemote.createAircraftConfigurationForFleetManager(JobTitle.FLEET_MANAGER, aircraftTypeName, configurationName
                     , cabinClassNameList, numAislesList, numRowsList, numSeatsAbreastList, seatingConfigurationList);
+                System.out.println("Transaction \u001B[32mSuccessful\u001B[0m!");
                 } catch (SeatLimitExceedException exception) {
                     System.out.println("TRANSACTION ABORTED: MAXIMUM CAPACITY HAS BEEN REACHED");
                 } catch (InvalidStringLengthException exception) {
@@ -147,8 +147,12 @@ public class FleetManagerUseCase {
     
     public void printAircraftType() {
         for (AircraftType aircraftType: aircraftTypeList) {
+            int counter = 1;
+            System.out.println();
             System.out.println("Name: " + aircraftType.getAircraftTypeName());
             System.out.println("Passenger Seat Capacity : " + aircraftType.getPassengerSeatCapacity());
+            System.out.println("Press " + counter + " for " + aircraftType.getAircraftTypeName());
+            counter +=1;
         }
     }
     
@@ -165,11 +169,7 @@ public class FleetManagerUseCase {
         hashMap.put(3, CabinClassType.W);
         hashMap.put(4, CabinClassType.Y);
     }
-    
-    public void printAircraftTypeChoices() {
-        System.out.println("Press 1 for BOEING 737");
-        System.out.println("Press 2 for BOEING 747");
-    }
+
     
     public void iniitalise() {
         typeMap.put(1, AircraftTypeName.BOEING_737);

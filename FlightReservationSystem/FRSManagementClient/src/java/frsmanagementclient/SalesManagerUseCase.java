@@ -15,6 +15,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import util.enumerations.CabinClassType;
 
 /**
@@ -38,7 +40,7 @@ public class SalesManagerUseCase {
     
     
     public void viewSeatsinventory() {
-        System.out.println("Enter flight number: ");
+        System.out.println("Enter flight number:");
         System.out.print("> ");
         String flightNumber = scanner.next();
         List<FlightSchedule> flightScheduleList = salesManagerUseCaseSessionBeanRemote.viewFlightSchedules(flightNumber);
@@ -52,9 +54,7 @@ public class SalesManagerUseCase {
             System.out.println("Press " + counter + " to select this flight schedule");
             counter += 1;
         }
-        
-        
-        
+        System.out.println();
         System.out.println("Enter Your Choice Here");
         System.out.print("> ");
         int choice = scanner.nextInt();
@@ -75,10 +75,15 @@ public class SalesManagerUseCase {
            totalReserved += x.getNumReservedSeats().intValue();
            totalBalanced += x.getNumBalanceSeats().intValue();
         }
-        
+        System.out.println();
+        System.out.println("\u001B[1mFlight Cumulative Information\u001B[0m");
+        System.out.println(IntStream.range(0, 20).mapToObj(i -> "-").collect(Collectors.joining()));
         System.out.println("Total Available Seats " + totalAvail);
         System.out.println("Total Reserved Seats " + totalReserved);
         System.out.println("Total Balanced Seats " + totalBalanced);
+        System.out.println(IntStream.range(0, 20).mapToObj(i -> "-").collect(Collectors.joining()));
+        IntStream.rangeClosed(1, 1).forEach(x -> System.out.println());
+        
         } else {
             System.out.println("This flight has no active flight schedules!");
         }
@@ -126,10 +131,10 @@ public class SalesManagerUseCase {
                 List<Seat> seatList = seatMap.get(cct);
                 Comparator<Seat> seatComparator = Comparator.comparing(Seat::getSeatNumber);
                 seatList.sort(seatComparator);
-                System.out.println("Cabin Class Type:C" + cct);
-                System.out.println();
+                System.out.println("Cabin Class Type: " + cct);
                 if (seatList.size() == 0) System.out.println("There are currently no ongoing flight reservations for this cabin class!");
                 seatList.stream().forEach(x -> {
+                    System.out.println();
                     System.out.println("Seat Number: " + x.getSeatNumber());
                     System.out.println("Passenger name: " + x.getPassenger().getFirstName() + " " + x.getPassenger().getLastName());
                 });

@@ -146,10 +146,10 @@ public class Flight implements Serializable {
         }
         return true;
     }
-
+    
     @Override
     public String toString() {
         return "entity.Flight[ id=" + id + " ]";
     }
-    
+
 }

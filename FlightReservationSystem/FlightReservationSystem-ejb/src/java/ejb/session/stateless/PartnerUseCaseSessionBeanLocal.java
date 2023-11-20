@@ -8,6 +8,7 @@ import entity.CabinClass;
 import entity.Fare;
 import entity.Flight;
 import entity.FlightBooking;
+import entity.FlightCabinClass;
 import entity.FlightReservation;
 import entity.FlightSchedule;
 import entity.Passenger;
@@ -42,6 +43,8 @@ public interface PartnerUseCaseSessionBeanLocal {
     public Passenger persistPassengers(List<String> passenger);
     public List<FlightReservation> getFlightReservations(long partnerID);
     public List<FlightBooking> getFlightBookingsForReservation(long flightReservationId);
-            
+    public Passenger getPassengerForSeat(long seatId);
+    public FlightCabinClass getFlightCabinClass(long seatId);
+    public List<Seat> getListOfSeats(long flightBookingId);
             
 }

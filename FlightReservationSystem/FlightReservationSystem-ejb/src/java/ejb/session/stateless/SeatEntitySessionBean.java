@@ -26,6 +26,11 @@ public class SeatEntitySessionBean implements SeatEntitySessionBeanLocal {
         em.flush();
         return seat.getId();
    }
+   
+   @Override
+   public Seat findSeat(long seatId) {
+       return em.find(Seat.class, seatId);
+   }
 
 
 }
