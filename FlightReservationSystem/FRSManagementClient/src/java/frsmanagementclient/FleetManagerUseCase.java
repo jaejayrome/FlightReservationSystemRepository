@@ -54,14 +54,14 @@ public class FleetManagerUseCase {
            if (aircraftTypeList.size() > 0) {
                iniitalise();
                printAircraftType();
-               AircraftTypeName aircraftTypeName = typeMap.get(this.scanner.nextInt());
+               System.out.print("> ");
+               int choice = scanner.nextInt();
+               AircraftTypeName aircraftTypeName = typeMap.get(choice);
                scanner.nextLine();
                if(aircraftTypeName != null) {
                 System.out.print("Enter the name of the configuration: ");
                 String configurationName = this.scanner.nextLine();
-                
-                // last step 
-                // initialise the cabin class
+    
                 List<CabinClassType> cabinClassNameList = new ArrayList<CabinClassType>();
                 List<Integer> numAislesList = new ArrayList<Integer>();
                 List<Integer> numRowsList = new ArrayList<Integer>();
@@ -105,6 +105,7 @@ public class FleetManagerUseCase {
         System.out.print("> ");
         int number = scanner.nextInt();
         for (int i = 1; i <= number; i++) {
+            System.out.println();
             System.out.println("Details for cabin class #" + i);
             initialiseMap();
             printAllCabinClassTypes();
@@ -146,8 +147,8 @@ public class FleetManagerUseCase {
     }
     
     public void printAircraftType() {
+        int counter = 1;
         for (AircraftType aircraftType: aircraftTypeList) {
-            int counter = 1;
             System.out.println();
             System.out.println("Name: " + aircraftType.getAircraftTypeName());
             System.out.println("Passenger Seat Capacity : " + aircraftType.getPassengerSeatCapacity());

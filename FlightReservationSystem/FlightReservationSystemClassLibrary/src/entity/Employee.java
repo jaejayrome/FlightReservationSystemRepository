@@ -47,7 +47,7 @@ public class Employee implements Serializable {
     @Column(nullable = false)
     private GenderType gender;
     
-     @Column(nullable = false)
+    @Column(nullable = false)
     @Size(min = 1, max = 64)
     private String email; 
     

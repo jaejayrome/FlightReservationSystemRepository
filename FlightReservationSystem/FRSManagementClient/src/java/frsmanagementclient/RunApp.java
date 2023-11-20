@@ -51,7 +51,6 @@ public class RunApp {
         Scanner scanner = new Scanner(System.in);
         printPlane();
         printLogo();
-//        printEstablish();
         IntStream.rangeClosed(1, 5).forEach(x -> System.out.println());
         System.out.println("Welcome to Merlion Airlines Flight Management System!");
         doLogin(scanner);
@@ -110,11 +109,11 @@ public class RunApp {
     }
     
     public void doLogin(Scanner scanner) {
-        System.out.print("Enter Username: ");
+        System.out.println("Enter Username: ");
         System.out.print("> ");
         String username = scanner.next();
         scanner.nextLine();
-        System.out.print("Enter Password: ");
+        System.out.println("Enter Password: ");
         System.out.print("> ");
         String password = scanner.next();
         scanner.nextLine();

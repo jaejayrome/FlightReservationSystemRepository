@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,6 +20,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -33,30 +38,31 @@ public class CabinClass implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
- 
+    
     @Column(nullable = false)
     @NotNull
+    @Enumerated(EnumType.STRING)
     private CabinClassType cabinClassName;
-    
+
     @Column(nullable = false)
     @NotNull
-    @Size(min = 0, max = 2)
+    @DecimalMin(value = "0", inclusive = false)
+    @DecimalMax(value = "2")
     private BigDecimal numAisles;
-    
+
     @Column(nullable = false)
     @NotNull
-    @Size(min = 1)
+    @DecimalMin(value = "1")
     private BigDecimal numRows;
-    
+
     @Column(nullable = false)
     @NotNull
-    @Size(min = 1)
+    @DecimalMin(value = "1")
     private BigDecimal numSeatsAbreast;
-    
+
     @Column(nullable = false)
     @NotNull
     private String seatingConfiguration;
-
     
     // relationships
     @ManyToMany(mappedBy= "cabinClassList")

@@ -99,10 +99,10 @@ public class ActualDataInitSessionBean {
     
     public void initialiseActualTestData() {
         // employees
-        employeeEntitySessionBeanLocal.createNewEmployee("Fleet Manager", "", GenderType.MALE, "fleetmanager@mlair.com.sg", "12345678", JobTitle.FLEET_MANAGER, EmploymentType.FULL_TIME, "fleetmanager", "password");
-        employeeEntitySessionBeanLocal.createNewEmployee("Route Planner", "", GenderType.MALE, "routeplanner@mlair.com.sg", "12345678", JobTitle.ROUTE_PLANNER, EmploymentType.FULL_TIME, "routeplanner", "password");
-        employeeEntitySessionBeanLocal.createNewEmployee("Schedule Manager", "", GenderType.MALE, "schedulemanager@mlair.com.sg", "12345678", JobTitle.SCHEDULE_MANAGER, EmploymentType.FULL_TIME, "schedulemanager", "password");
-        employeeEntitySessionBeanLocal.createNewEmployee("Sales Manager", "", GenderType.MALE, "salesmanager@mlair.com.sg", "12345678", JobTitle.SALES_MANAGER, EmploymentType.FULL_TIME, "salesmanager", "password");
+        employeeEntitySessionBeanLocal.createNewEmployee("Fleet Manager", "11", GenderType.MALE, "fleetmanager@mlair.com.sg", "12345678", JobTitle.FLEET_MANAGER, EmploymentType.FULL_TIME, "fleetmanager", "password");
+        employeeEntitySessionBeanLocal.createNewEmployee("Route Planner", "11", GenderType.MALE, "routeplanner@mlair.com.sg", "12345678", JobTitle.ROUTE_PLANNER, EmploymentType.FULL_TIME, "routeplanner", "password");
+        employeeEntitySessionBeanLocal.createNewEmployee("Schedule Manager", "11", GenderType.MALE, "schedulemanager@mlair.com.sg", "12345678", JobTitle.SCHEDULE_MANAGER, EmploymentType.FULL_TIME, "schedulemanager", "password");
+        employeeEntitySessionBeanLocal.createNewEmployee("Sales Manager", "11", GenderType.MALE, "salesmanager@mlair.com.sg", "12345678", JobTitle.SALES_MANAGER, EmploymentType.FULL_TIME, "salesmanager", "password");
         
         // partner
         partnerEntitySessionBeanLocal.createNewPartner("Holiday.com", "holidaydotcom", "password");
@@ -164,7 +164,7 @@ public class ActualDataInitSessionBean {
         thirdSeatAbreast.add(10);
         List<String> thirdSeatingConfiguration = new ArrayList<String>();
         thirdSeatingConfiguration.add("3-4-3");
-        fleetManagerUseCaseSessionBean.createAircraftConfigurationForFleetManagerDatabaseInit(JobTitle.FLEET_MANAGER, AircraftTypeName.BOEING_737, "Boeing 747 All Economy", thirdCabinClassType, thirdNumAisles, thirdNumRows, thirdSeatAbreast, thirdSeatingConfiguration);
+        fleetManagerUseCaseSessionBean.createAircraftConfigurationForFleetManagerDatabaseInit(JobTitle.FLEET_MANAGER, AircraftTypeName.BOEING_747, "Boeing 747 All Economy", thirdCabinClassType, thirdNumAisles, thirdNumRows, thirdSeatAbreast, thirdSeatingConfiguration);
 
         List<CabinClassType> fourthCabinClassType = new ArrayList<CabinClassType>();
         fourthCabinClassType.add(CabinClassType.F);
@@ -186,7 +186,7 @@ public class ActualDataInitSessionBean {
         fourthSeatingConfiguration.add("1-1");
         fourthSeatingConfiguration.add("2-2-2");
         fourthSeatingConfiguration.add("3-4-3");
-        fleetManagerUseCaseSessionBean.createAircraftConfigurationForFleetManagerDatabaseInit(JobTitle.FLEET_MANAGER, AircraftTypeName.BOEING_737, "Boeing 747 Three Classes", fourthCabinClassType, fourthNumAisles, fourthNumRows, fourthSeatAbreast, fourthSeatingConfiguration);
+        fleetManagerUseCaseSessionBean.createAircraftConfigurationForFleetManagerDatabaseInit(JobTitle.FLEET_MANAGER, AircraftTypeName.BOEING_747, "Boeing 747 Three Classes", fourthCabinClassType, fourthNumAisles, fourthNumRows, fourthSeatAbreast, fourthSeatingConfiguration);
 
 
 

@@ -82,61 +82,66 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
     public long createNewFlight(String flightNumber, String configurationName, String originAirport, String destinationAirport, boolean createReturn, long initialId) throws InitialFlightNotInstantiatedException {
         
         Flight flight = null;
-        try {
-            // cannot use city because there an be a city with 2 airports
-            AircraftConfiguration aircraftConfiguration = aircraftConfigurationEntitySessionBean.getAircraftConfigurationPerConfigurationName(configurationName);
-            FlightRoute flightRoute = flightRouteEntitySessionBean.getFlightRouteByCityName(originAirport, destinationAirport);
-            flight = new Flight(flightNumber, FlightStatus.DISABLED);
-            
-            
-            // associate flight -> aircraft configuration
-            flight.setAircraftConfiguration(aircraftConfiguration);
-            if (!createReturn) {
-                // flight.setAircraftConfiguration(aircraftConfiguration);
-            } else {
-//                AircraftConfiguration returnAC = aircraftConfigurationEntitySessionBean.recreateAircraftConfiguration(aircraftConfiguration);
-            }
-            // associate flight -> flightroute
-            flight.setFlightRoute(flightRoute);
+//        try {
+//            long flightId = flightEntitySessionBean.getIdByFlightNumber(flightNumber);
+//            throw new DuplicateFlightMadeException("TRANSACTION ABORTED: A flight with this flight number has already been made previously!");
+//    } catch (NoResultException exception) {
+                try {
+                    // cannot use city because there an be a city with 2 airports
+                    AircraftConfiguration aircraftConfiguration = aircraftConfigurationEntitySessionBean.getAircraftConfigurationPerConfigurationName(configurationName);
+                    FlightRoute flightRoute = flightRouteEntitySessionBean.getFlightRouteByCityName(originAirport, destinationAirport);
+                    flight = new Flight(flightNumber, FlightStatus.DISABLED);
 
-            // persist to database
-            flightEntitySessionBean.createFlight(flight);
 
-            // associate flightRoute -> flight
-            int init = flightRoute.getFlightList().size();
-            flightRoute.getFlightList().add(flight);
-            flightRoute.setFlightRouteStatus(FlightRouteStatus.ACTIVE);
+                    // associate flight -> aircraft configuration
+                    flight.setAircraftConfiguration(aircraftConfiguration);
+                    if (!createReturn) {
+                        // flight.setAircraftConfiguration(aircraftConfiguration);
+                    } else {
+        //                AircraftConfiguration returnAC = aircraftConfigurationEntitySessionBean.recreateAircraftConfiguration(aircraftConfiguration);
+                    }
+                    // associate flight -> flightroute
+                    flight.setFlightRoute(flightRoute);
 
-            // associate aircraftConfig -> flight
-            int init2 = aircraftConfiguration.getFlightList().size();
-            aircraftConfiguration.getFlightList().add(flight);
-            
-            // (if createReturnFlight is true)
-            
-            if (createReturn) {
-                long flightGroup = flightEntitySessionBean.getFlightById(initialId).getFlightGroup();
-                flight.setFlightGroup(flightGroup);
-            } else {
-                flight.setFlightGroup(flight.getId());
-            }
-        } catch (AirportNotFoundException e) {
-            return -1;
-        } catch (NoFlightRouteFoundException e) {
-            // exception is thrown if initial flight cannot be created in the first place
-            throw new InitialFlightNotInstantiatedException("Invalid Flight Route Entered!");
-        }
-        
-        // would try to create return flight but would return true or false based on this
-        try {
-            // if return flight route can be created
-            FlightRoute returnFlightRoute = flightRouteEntitySessionBean.getFlightRouteByCityName(destinationAirport, originAirport);
-            return flight.getId();
-            
-        } catch (AirportNotFoundException e) {
-            return -1;
-        } catch (NoFlightRouteFoundException e) {
-            // if flight route cannot be created
-            return -1;
+                    // persist to database
+                    flightEntitySessionBean.createFlight(flight);
+
+                    // associate flightRoute -> flight
+                    int init = flightRoute.getFlightList().size();
+                    flightRoute.getFlightList().add(flight);
+                    flightRoute.setFlightRouteStatus(FlightRouteStatus.ACTIVE);
+
+                    // associate aircraftConfig -> flight
+                    int init2 = aircraftConfiguration.getFlightList().size();
+                    aircraftConfiguration.getFlightList().add(flight);
+
+                    // (if createReturnFlight is true)
+
+                    if (createReturn) {
+                        long flightGroup = flightEntitySessionBean.getFlightById(initialId).getFlightGroup();
+                        flight.setFlightGroup(flightGroup);
+                    } else {
+                        flight.setFlightGroup(flight.getId());
+                    }
+                } catch (AirportNotFoundException e) {
+                    return -1;
+                } catch (NoFlightRouteFoundException e) {
+                    // exception is thrown if initial flight cannot be created in the first place
+                    throw new InitialFlightNotInstantiatedException("Invalid Flight Route Entered!");
+                }
+
+                // would try to create return flight but would return true or false based on this
+                try {
+                    // if return flight route can be created
+                    FlightRoute returnFlightRoute = flightRouteEntitySessionBean.getFlightRouteByCityName(destinationAirport, originAirport);
+                    return flight.getId();
+
+                } catch (AirportNotFoundException e) {
+                    return -1;
+                } catch (NoFlightRouteFoundException e) {
+                    // if flight route cannot be created
+                    return -1;
+                }
         }
         
        
