@@ -137,7 +137,6 @@ public class RoutePlannerUseCase {
         System.out.println("Flight Route Destination: " + flightRoute.getDestination().getAirportName());
         System.out.println("Flight Route Destination: " + flightRoute.getDestination().getId());
         System.out.println("Flight Route Destination: " + flightRoute.getDestination().getIataAirportCode());
-        System.out.println("Flight Route Status: " + flightRoute.getFlightRouteStatus());
     }
     
 
