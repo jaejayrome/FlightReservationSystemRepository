@@ -73,7 +73,6 @@ public class RoutePlannerUseCase {
     public void viewAllFlightRoutes() {
         List<FlightRoute> flightRoutes = routePlannerUseCaseSessionBeanRemote.viewAllFlightRoute();
         if (flightRoutes.size() > 0){
-            // flight rotues have already been sorted in the backned using jpql
             flightRoutes.stream().forEach(flightRoutePair -> {
                 printSingleFlightRoute(flightRoutePair);
             });

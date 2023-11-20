@@ -76,7 +76,10 @@ public class FleetManagerUseCaseSessionBean implements FleetManagerUseCaseSessio
 
                 // Verify if totalSeats exceeds the aircraft limit
                 if (totalSeats > aircraftType.getPassengerSeatCapacity().intValue()) {
+                    // Throw a custom exceptionF
                     throw new SeatLimitExceedException("Total seats exceed the aircraft limit.");
+//                    ejbContext.setRollbackOnly();
+                    
                 } else {
                     // Create and persist the aircraft configuration
                     long configurationId = aircraftConfigurationEntitySessionBean.createNewAircraftConfiguration(aircraftType, configurationName, cabinClassList);

@@ -85,11 +85,9 @@ public class FleetManagerUseCase {
     public void viewAllAircraftConfiguration() {
           List<AircraftConfiguration> aircraftConfigurations= fleetManagerUseCaseSessionBeanRemote.viewAllAircraftConfiguration();
           int counter = 1;
-          
           Comparator<AircraftConfiguration> comparator = (x, y) -> x.getAircraftType().getAircraftTypeName().name().compareTo(y.getAircraftType().getAircraftTypeName().name()) == 0 ? 
                                                                 x.getConfigurationName().compareTo(y.getConfigurationName()) 
                                                                 : x.getAircraftType().getAircraftTypeName().name().compareTo(y.getAircraftType().getAircraftTypeName().name());
-          // sorts the aircraft configuration list by alphabetical order (can be done in jpql as well)
           List <AircraftConfiguration> sortedList = aircraftConfigurations.stream().sorted(comparator).collect(Collectors.toList());
           
           if (sortedList.size() > 0) {

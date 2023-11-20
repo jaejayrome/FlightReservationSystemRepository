@@ -14,7 +14,6 @@ import java.util.List;
 import javax.ejb.Remote;
 import util.enumerations.CabinClassType;
 import util.enumerations.FlightStatus;
-import util.exception.DuplicateFlightMadeException;
 import util.exception.InitialFlightNotInstantiatedException;
 import util.exception.UpdateFlightSchedulePlanException;
 
@@ -24,7 +23,7 @@ import util.exception.UpdateFlightSchedulePlanException;
  */
 @Remote
 public interface ScheduleManagerUseCaseSessionBeanRemote {
-    public long createNewFlight(String flightNumber, String configurationName, String originAirport, String destinationAirport, boolean createReturn, long initialId) throws InitialFlightNotInstantiatedException, DuplicateFlightMadeException;
+    public long createNewFlight(String flightNumber, String configurationName, String originAirport, String destinationAirport, boolean createReturn, long initialId) throws InitialFlightNotInstantiatedException;
     public List<Flight> viewAllFlights();
     public Flight viewSpecificFlightDetails(String flightNumber);
     public long createNewFlightSchedulePlan(String flightNumber, List<Date> departureDateList, Duration duration, Date endDate, int frequency, HashMap<CabinClassType, List<Fare>> faresForCabinClassList, boolean makeReturn, long id, Duration layover);

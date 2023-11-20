@@ -40,7 +40,6 @@ import util.enumerations.CabinClassType;
 import util.enumerations.FlightSchedulePlanStatus;
 import util.enumerations.FlightStatus;
 import util.enumerations.ScheduleType;
-import util.exception.DuplicateFlightMadeException;
 import util.exception.InitialFlightNotInstantiatedException;
 import util.exception.UpdateFlightSchedulePlanException;
 import util.util.Pair;
@@ -107,6 +106,9 @@ public class ScheduleManagerUseCase {
         System.out.print("> ");
         String destinationCity = scanner.nextLine();
         
+        System.out.println("origin IATA is " + originCity);
+        System.out.println("destination IATA is " + destinationCity);
+        
         // catch exception if there's for initial flight 
         try {
             long haveReturnFlight = scheduleManagerUseCaseSessionBeanRemote.createNewFlight(flightNumber, configurationName, originCity, destinationCity, false, -1);
@@ -125,9 +127,7 @@ public class ScheduleManagerUseCase {
                 
         } catch (InitialFlightNotInstantiatedException e) {
             System.out.println(e.getMessage());
-        } catch (DuplicateFlightMadeException exception) {
-            System.out.println(exception.getMessage());
-        }
+        } 
     }
     
     // used to create return flight with the same aircraft configuration
@@ -138,16 +138,16 @@ public class ScheduleManagerUseCase {
         
         try {
             scheduleManagerUseCaseSessionBeanRemote.createNewFlight(flightNumber, configurationName, originCity, destinationCity, true, id);
-            System.out.println("Transaction \u001B[32mSuccessful\u001B[0m!");
+            System.out.println("Flight has been successfully created!");
         } catch (InitialFlightNotInstantiatedException e) {
             System.out.println(e.getMessage());
-        } catch (DuplicateFlightMadeException exception) {
-            System.out.println(exception.getMessage());
-        }
+        } 
     }
     
+    // used to view all flights
+    // view according to ascending flight number
+    // arranged if exact return flight is after it, it should be directly below it
     public void viewAllFlights() {
-        // sorting has already been done by pairs then by flight number in jpql
         List<Flight> flightList = scheduleManagerUseCaseSessionBeanRemote.viewAllFlights();
         flightList.stream().forEach(x -> printSingleFlight(x));
     }

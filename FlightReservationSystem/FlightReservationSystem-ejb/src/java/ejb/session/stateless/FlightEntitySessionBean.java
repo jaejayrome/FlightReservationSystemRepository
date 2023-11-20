@@ -61,11 +61,13 @@ public class FlightEntitySessionBean implements FlightEntitySessionBeanLocal {
         
     }
     
+    // remember to throw any exception if needed
     @Override
     public Flight getFlightById(long id) {
         return em.find(Flight.class, id);
     }
     
+    // remember to throw any exception if needed
     @Override
     public long getIdByFlightNumber(String flightNumber) {
         Flight flight = (Flight)(em.createQuery("SELECT flight FROM Flight flight WHERE flight.flightNumber = :number").setParameter("number", flightNumber).getSingleResult());

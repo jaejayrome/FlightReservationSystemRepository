@@ -29,12 +29,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.persistence.NoResultException;
 import util.enumerations.CabinClassType;
 import util.enumerations.FlightRouteStatus;
@@ -42,7 +38,6 @@ import util.enumerations.FlightSchedulePlanStatus;
 import util.enumerations.FlightStatus;
 import util.enumerations.SeatStatus;
 import util.exception.AirportNotFoundException;
-import util.exception.DuplicateFlightMadeException;
 import util.exception.InitialFlightNotInstantiatedException;
 import util.exception.NoFlightRouteFoundException;
 import util.exception.UpdateFlightSchedulePlanException;
@@ -78,73 +73,70 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
     @EJB
     private FlightEntitySessionBeanLocal flightEntitySessionBean;
     
-    @Resource
-    private EJBContext ejbContext;
+    
     
     
     
     
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public long createNewFlight(String flightNumber, String configurationName, String originAirport, String destinationAirport, boolean createReturn, long initialId) throws InitialFlightNotInstantiatedException, DuplicateFlightMadeException {
-        Flight flight = null;
+    public long createNewFlight(String flightNumber, String configurationName, String originAirport, String destinationAirport, boolean createReturn, long initialId) throws InitialFlightNotInstantiatedException {
         
-        // check whethere has a flight with this number has been made 
+        Flight flight = null;
         try {
-            long flightId = flightEntitySessionBean.getIdByFlightNumber(flightNumber);
-            throw new DuplicateFlightMadeException("TRANSACTION ABORTED: A flight with this flight number has already been made previously!");
-        } catch (NoResultException exception) {
-            // if there is no flightid this would mean that we can create a flight that is not exisiting so far
-            try {
-                // cannot use city because there an be a city with 2 airports
-                AircraftConfiguration aircraftConfiguration = aircraftConfigurationEntitySessionBean.getAircraftConfigurationPerConfigurationName(configurationName);
-                FlightRoute flightRoute = flightRouteEntitySessionBean.getFlightRouteByCityName(originAirport, destinationAirport);
-                flight = new Flight(flightNumber, FlightStatus.DISABLED);
-
-
-                // associate flight -> aircraft configuration
-                flight.setAircraftConfiguration(aircraftConfiguration);
-                // associate flight -> flightroute
-                flight.setFlightRoute(flightRoute);
-
-                // persist to database
-                flightEntitySessionBean.createFlight(flight);
-
-                // associate flightRoute -> flight
-                int init = flightRoute.getFlightList().size();
-                flightRoute.getFlightList().add(flight);
-                flightRoute.setFlightRouteStatus(FlightRouteStatus.ACTIVE);
-
-                // associate aircraftConfig -> flight
-                int init2 = aircraftConfiguration.getFlightList().size();
-                aircraftConfiguration.getFlightList().add(flight);
-
-                // (if createReturnFlight is true)
-                if (createReturn) {
-                    long flightGroup = flightEntitySessionBean.getFlightById(initialId).getFlightGroup();
-                    flight.setFlightGroup(flightGroup);
-                } else {
-                    flight.setFlightGroup(flight.getId());
-                }
-            } catch (AirportNotFoundException exception1) {
-                return -1;
-            } catch (NoFlightRouteFoundException exception2) {
-                // exception is thrown if initial flight cannot be created in the first place
-                throw new InitialFlightNotInstantiatedException("Invalid Flight Route Entered!");
+            // cannot use city because there an be a city with 2 airports
+            AircraftConfiguration aircraftConfiguration = aircraftConfigurationEntitySessionBean.getAircraftConfigurationPerConfigurationName(configurationName);
+            FlightRoute flightRoute = flightRouteEntitySessionBean.getFlightRouteByCityName(originAirport, destinationAirport);
+            flight = new Flight(flightNumber, FlightStatus.DISABLED);
+            
+            
+            // associate flight -> aircraft configuration
+            flight.setAircraftConfiguration(aircraftConfiguration);
+            if (!createReturn) {
+                // flight.setAircraftConfiguration(aircraftConfiguration);
+            } else {
+//                AircraftConfiguration returnAC = aircraftConfigurationEntitySessionBean.recreateAircraftConfiguration(aircraftConfiguration);
             }
+            // associate flight -> flightroute
+            flight.setFlightRoute(flightRoute);
 
-            // would try to create return flight but would return true or false based on this
-            try {
-                // if return flight route can be created
-                FlightRoute returnFlightRoute = flightRouteEntitySessionBean.getFlightRouteByCityName(destinationAirport, originAirport);
-                return flight.getId();
+            // persist to database
+            flightEntitySessionBean.createFlight(flight);
 
-            } catch (AirportNotFoundException exception3) {
-                return -1;
-            } catch (NoFlightRouteFoundException exception4) {
-                // if flight route cannot be created
-                return -1;
+            // associate flightRoute -> flight
+            int init = flightRoute.getFlightList().size();
+            flightRoute.getFlightList().add(flight);
+            flightRoute.setFlightRouteStatus(FlightRouteStatus.ACTIVE);
+
+            // associate aircraftConfig -> flight
+            int init2 = aircraftConfiguration.getFlightList().size();
+            aircraftConfiguration.getFlightList().add(flight);
+            
+            // (if createReturnFlight is true)
+            
+            if (createReturn) {
+                long flightGroup = flightEntitySessionBean.getFlightById(initialId).getFlightGroup();
+                flight.setFlightGroup(flightGroup);
+            } else {
+                flight.setFlightGroup(flight.getId());
             }
+        } catch (AirportNotFoundException e) {
+            return -1;
+        } catch (NoFlightRouteFoundException e) {
+            // exception is thrown if initial flight cannot be created in the first place
+            throw new InitialFlightNotInstantiatedException("Invalid Flight Route Entered!");
+        }
+        
+        // would try to create return flight but would return true or false based on this
+        try {
+            // if return flight route can be created
+            FlightRoute returnFlightRoute = flightRouteEntitySessionBean.getFlightRouteByCityName(destinationAirport, originAirport);
+            return flight.getId();
+            
+        } catch (AirportNotFoundException e) {
+            return -1;
+        } catch (NoFlightRouteFoundException e) {
+            // if flight route cannot be created
+            return -1;
         }
         
        
@@ -163,7 +155,11 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
             
             // associate flight -> aircraft configuration
             flight.setAircraftConfiguration(aircraftConfiguration);
-            
+            if (!createReturn) {
+                // flight.setAircraftConfiguration(aircraftConfiguration);
+            } else {
+//                AircraftConfiguration returnAC = aircraftConfigurationEntitySessionBean.recreateAircraftConfiguration(aircraftConfiguration);
+            }
             // associate flight -> flightroute
             flight.setFlightRoute(flightRoute);
 
@@ -211,13 +207,11 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
 
     
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public List<Flight> viewAllFlights() {
         return flightEntitySessionBean.viewAllFlights();
     }
     
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Flight viewSpecificFlightDetails(String flightNumber) {
         long FlightID = flightEntitySessionBean.getIdByFlightNumber(flightNumber);
         Flight flight = flightEntitySessionBean.getFlightById(FlightID);
@@ -242,7 +236,6 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
     }
     
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void updateFlightNumber(String flightNumber, String newFlightNumber) {
         long id = flightEntitySessionBean.getIdByFlightNumber(flightNumber);
         Flight flight = flightEntitySessionBean.getFlightById(id);
@@ -250,7 +243,6 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
     }
     
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void updateFlightStatus(String flightNumber, FlightStatus newStatus) {
         long id = flightEntitySessionBean.getIdByFlightNumber(flightNumber);
         Flight flight = flightEntitySessionBean.getFlightById(id);
@@ -258,7 +250,6 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
     } 
     
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public boolean deleteFlight(String flightNumber) {
         // check whether is there any flight schedule plan that's associated with this flight 
         try {
@@ -285,7 +276,6 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
  
     
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public long createNewFlightSchedulePlan(String flightNumber, List<Date> departureDateList, Duration duration, Date endDate, int frequency, HashMap<CabinClassType, List<Fare>> faresForCabinClassList, boolean makeReturn, long id, Duration layover) {
         // need to add the fares for cabin class
         // should check for whether duration is null
@@ -378,7 +368,6 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
         }
     }
     
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public WeeklyFlightSchedulePlan makeRecurrentWeeklyFlightSchedulePlan(Flight flight, List<Date> departureDateList, Duration duration, HashMap<CabinClassType, List<Fare>> faresForCabinClassList, Date endDate) {
         // persist FSP
         WeeklyFlightSchedulePlan flightSchedulePlan = new WeeklyFlightSchedulePlan(FlightSchedulePlanStatus.ACTIVE, endDate, flight);
@@ -392,13 +381,6 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
         int init = flightSchedulePlan.getFlightScheduleList().size();
         flightSchedulePlan.getFlightScheduleList().addAll(collatedFlightSchedules);
         
-        // check for overlap between existing flight schedules and old flight schedules
-        // do note that this can be done because one way association has only been established between flight schedule plan and flight
-        if (checkWhetherOverLapInPlans(flightSchedulePlan, flight)) {
-            // rollback the entire transaction as it violates the business rules
-            ejbContext.setRollbackOnly();
-        }
-        
         // make FCC AND FS 
         collatedFlightSchedules.forEach(x -> createFCCsAndSeats(flight, x));
         
@@ -411,7 +393,6 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
        return flightSchedulePlan;
     }
     
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public RecurrentFlightSchedulePlan makeRecurrentFlightSchedulePlan(Flight flight, List<Date> departureDateList, Duration duration, HashMap<CabinClassType, List<Fare>> faresForCabinClassList, Date endDate, int frequency) {
         // persist FSP
         RecurrentFlightSchedulePlan flightSchedulePlan = new RecurrentFlightSchedulePlan(FlightSchedulePlanStatus.ACTIVE, endDate, new BigDecimal(frequency), flight);
@@ -424,16 +405,11 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
         int init = flightSchedulePlan.getFlightScheduleList().size();
         flightSchedulePlan.getFlightScheduleList().addAll(collatedFlightSchedules);
         
-        // check for overlap between existing flight schedules and old flight schedules
-        // do note that this can be done because one way association has only been established between flight schedule plan and flight
-        if (checkWhetherOverLapInPlans(flightSchedulePlan, flight)) {
-            // rollback the entire transaction as it violates the business rules
-            ejbContext.setRollbackOnly();
-        }
-            
-        
         // make FCC AND FS 
         collatedFlightSchedules.forEach(x -> createFCCsAndSeats(flight, x));
+        
+        // associate fsp to flight
+        flightSchedulePlan.setFlight(flight);
         
         // associate flight to fsp
         int initialise = flight.getFlightSchedulePlanList().size();
@@ -444,7 +420,6 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
         return flightSchedulePlan;
     }
     
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public SingleFlightSchedulePlan makeSingleFlightSchedulePlan(Flight flight, List<Date> departureDateList, Duration duration, HashMap<CabinClassType, List<Fare>> faresForCabinClassList) {
         // persist FSP
         SingleFlightSchedulePlan flightSchedulePlan = new SingleFlightSchedulePlan(FlightSchedulePlanStatus.ACTIVE, flight);
@@ -452,11 +427,7 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
 
         // persist FS
         FlightSchedule flightSchedule = new FlightSchedule(departureDateList.get(0), duration, computeArrivalTime(departureDateList.get(0), duration));
-        
-        // associate FS with FDSP
         flightSchedule.setFlightSchedulePlan(flightSchedulePlan);
-        
-        // persist FS
         flightScheduleEntitySessionBean.createFlightSchedule(flightSchedule);
         
         flightSchedule = this.createFCCsAndSeats(flight, flightSchedule);
@@ -464,14 +435,12 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
         // associate the fsp with the fs (one to many lazy initialisation)
         int init = flightSchedulePlan.getFlightScheduleList().size();
         flightSchedulePlan.getFlightScheduleList().add(flightSchedule);
-        
-        // check for overlap between existing flight schedules and old flight schedules
-        // do note that this can be done because one way association has only been established between flight schedule plan and flight
-        if (checkWhetherOverLapInPlans(flightSchedulePlan, flight)) {
-            // rollback the entire transaction as it violates the business rules
-            ejbContext.setRollbackOnly();
-        }
-            
+
+        // associate fs with fsp
+        // flightSchedule.setFlightSchedulePlan(flightSchedulePlan);
+
+        // associate fsp with flight 
+        flightSchedulePlan.setFlight(flight);
 
         // associate flight with fsp
         int initFlight = flight.getFlightSchedulePlanList().size();
@@ -486,9 +455,8 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
         return flightSchedulePlan;
     }
     
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public MultipleFlightSchedulePlan makeMultipleFlightSchedulePlan(Flight flight, List<Date> departureDateList, Duration duration, HashMap<CabinClassType, List<Fare>> faresForCabinClassList) {
-            // persist FSP
+        // persist FSP
             MultipleFlightSchedulePlan flightSchedulePlan = new MultipleFlightSchedulePlan( FlightSchedulePlanStatus.ACTIVE, flight);
             flightSchedulePlanEntitySessionBean.createFlightSchedulePlan(flightSchedulePlan);
             
@@ -499,36 +467,28 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
                 // persist FS
                 flightschedule.setFlightSchedulePlan(flightSchedulePlan);
                 flightScheduleEntitySessionBean.createFlightSchedule(flightschedule);
+                // associate FS to FSP
+                // flightschedule.setFlightSchedulePlan(flightSchedulePlan);
                 flightScheduleList.add(flightschedule);
             }
             
-            // associate FSP to FS         
-            int init = flightSchedulePlan.getFlightScheduleList().size();
-            flightSchedulePlan.getFlightScheduleList().addAll(flightScheduleList);
-            
-            // check for overlap between existing flight schedules and old flight schedules
-            // do note that this can be done because one way association has only been established between flight schedule plan and flight
-            if (checkWhetherOverLapInPlans(flightSchedulePlan, flight)) {
-                // rollback the entire transaction as it violates the business rules
-                ejbContext.setRollbackOnly();
-            }
             
             // associate flight to fsp
             int initialise = flight.getFlightSchedulePlanList().size();
             flight.getFlightSchedulePlanList().add(flightSchedulePlan);
             
-            
+            // associate FSP to FS         
+            int init = flightSchedulePlan.getFlightScheduleList().size();
+            flightSchedulePlan.getFlightScheduleList().addAll(flightScheduleList);
             
             // make FCC AND FS 
             flightScheduleList.forEach(x -> createFCCsAndSeats(flight, x));
             // associate each fs with the new Fare
             updateAndPersistFare(faresForCabinClassList, flightSchedulePlan);
-            
-            
             return flightSchedulePlan;
     }
     
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    
     public FlightSchedule createFCCsAndSeats(Flight flight, FlightSchedule flightSchedule) {
         int size = flight.getAircraftConfiguration().getCabinClassList().size();
         int intialise = flightSchedule.getFccList().size();
@@ -564,7 +524,6 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
     }
     
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public List<FlightSchedulePlan> viewAllFlightSchedulePlan() {
         List<FlightSchedulePlan> collatedList = flightSchedulePlanEntitySessionBean.viewAllFlightSchedulePlan();
         Comparator<FlightSchedulePlan> compare = (x, y) -> {
@@ -591,29 +550,30 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
     
     @Override
     public void updateFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) throws UpdateFlightSchedulePlanException {
-        if (flightSchedulePlan.getId() != null && flightSchedulePlan != null) {
-           // find the oldOne 
-           long oldId = flightSchedulePlan.getId();
-           FlightSchedulePlan oldPlan = flightSchedulePlanEntitySessionBean.getFSPfromID(oldId);
-           // check for any flight schedules that ar enot inside the new FSP
-           int init = flightSchedulePlan.getFlightScheduleList().size();
-           int init2 = oldPlan.getFlightScheduleList().size();
-           // iterate through the old plans 
-           List<FlightSchedule> deletedPlans = oldPlan.getFlightScheduleList().stream().filter(x -> !(flightSchedulePlan.getFlightScheduleList().contains(x))).collect(Collectors.toList());
-           for (FlightSchedule fs : deletedPlans) {
-               int init3 = fs.getFlightBookingList().size();
-               if (fs.getFlightBookingList().size() > 0) {
-                   throw new UpdateFlightSchedulePlanException("You are trying to delete flight schedule plans that have current flight bookings ongoing!");
-               }
-           }
-           // ensure that the price of the booking is not affected, make each booking store their own fare 
-           oldPlan.setFares(flightSchedulePlan.getFares());
-           oldPlan.setFlightScheduleList(flightSchedulePlan.getFlightScheduleList());
+     if (flightSchedulePlan.getId() != null && flightSchedulePlan != null) {
+        // find the oldOne 
+        long oldId = flightSchedulePlan.getId();
+        FlightSchedulePlan oldPlan = flightSchedulePlanEntitySessionBean.getFSPfromID(oldId);
+        // check for any flight schedules that ar enot inside the new FSP
+        int init = flightSchedulePlan.getFlightScheduleList().size();
+        int init2 = oldPlan.getFlightScheduleList().size();
+        // iterate through the old plans 
+        List<FlightSchedule> deletedPlans = oldPlan.getFlightScheduleList().stream().filter(x -> !(flightSchedulePlan.getFlightScheduleList().contains(x))).collect(Collectors.toList());
+        for (FlightSchedule fs : deletedPlans) {
+            int init3 = fs.getFlightBookingList().size();
+            if (fs.getFlightBookingList().size() > 0) {
+                throw new UpdateFlightSchedulePlanException("You are trying to delete flight schedule plans that have current flight bookings ongoing!");
+            }
         }
+        // ensure that the price of the booking is not affected, make each booking store their own fare 
+        oldPlan.setFares(flightSchedulePlan.getFares());
+        oldPlan.setFlightScheduleList(flightSchedulePlan.getFlightScheduleList());
+     }
+     
+     
     }
     
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void deleteFlightSchedulePlan(FlightSchedulePlan flightSchedulePlan) {
         if (flightSchedulePlan != null) {
              // find the flightSchedulePlan
@@ -637,42 +597,6 @@ public class ScheduleManagerUseCaseSessionBean implements ScheduleManagerUseCase
              
         }
         
-    }
-    
-    public boolean checkWhetherOverLapInPlans(FlightSchedulePlan fsp,  Flight flight) {
-        // this method must be made before association between fsp and flight
-        
-        // flight schedule list for new fsp
-        fsp.getFlightScheduleList().size();
-        List<FlightSchedule> newFlightSchedules = fsp.getFlightScheduleList();
-        
-        // flight schedules (existing) combined from the old fsp
-        flight.getFlightSchedulePlanList().size();
-        List<FlightSchedulePlan> existingFSPs = flight.getFlightSchedulePlanList();
-        List<FlightSchedule> combinedExistingFS = new ArrayList<FlightSchedule>();
-        existingFSPs.stream().forEach(x -> {
-           x.getFlightScheduleList().size();
-           x.getFlightScheduleList().stream().forEach(y -> combinedExistingFS.add(y));
-        });
-        
-        
-        for (FlightSchedule newFS : newFlightSchedules) {
-            for (FlightSchedule existingFS : combinedExistingFS) {
-                Date newArrivalTime = newFS.getArrivalTime();
-                Date newDepartureTime = newFS.getDepartureTime();
-                Date existingArrivalTime = existingFS.getArrivalTime();
-                Date existingDepartureTime = existingFS.getDepartureTime();
-                
-                // once a flight schedule has been found to be overlapping we return true
-                if ((newArrivalTime.before(existingDepartureTime) || newArrivalTime.equals(existingDepartureTime))
-                && (newDepartureTime.after(existingArrivalTime) || newDepartureTime.equals(existingArrivalTime))) {
-                    return true;
-                }
-                
-            }
-        }
-        
-       return false;
     }
     
     
